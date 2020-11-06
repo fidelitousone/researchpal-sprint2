@@ -3,7 +3,7 @@
 An all-in-one research gathering app, complete with citation generators and other tools to make the research process a breeze. 
 
 ## Project Team
-Final Project for <b>CS 490: Design in Software Engineering</b>
+Final Project for **CS 490: Design in Software Engineering**
 
 Robert Argasinski, Eugene Cha, Mark Galesi, Jatinder Singh
 
@@ -23,7 +23,7 @@ npm install
 pip install -r dev-requirements.txt
 pip install -r requirements.txt
 ```
-- Note: You do not need `dev-requirements.txt` for production.
+- Note: `dev-requirements.txt` is not needed for production.
 
 ## Setup PostgreSQL
 1. Install PostgreSQL:
@@ -36,9 +36,9 @@ pip install -r requirements.txt
 5. Create a new database: `sudo -u postgres createdb $USER`
 - If you get an error saying "could not change directory", that's okay.  
 6. Make sure your user shows up:
-    a) `psql`
-    b) `\du` look for your username
-    c) `\l` look for your username as a database
+- a) `psql`
+- b) `\du` look for your username
+- c) `\l` look for your username as a database
 7. Edit the authentication method from `ident` to `md5`: `sudo vim /var/lib/pgsql9/data/pg_hba.conf`
 8. Restart PostgreSQL: `sudo service postgresql restart`
 9. Add a password to the user you added in step 4: `psql -c "ALTER ROLE $USER WITH PASSWORD '<your-password>'"`
@@ -46,9 +46,9 @@ pip install -r requirements.txt
 
 ## Local Deployment
 1. Build the app for production: `npm run watch`
-2. Create a `.env` file in the root directory with the following:
+2. Create a `.env` file in the root directory with the following content:
 ```sh
-DATABASE_URL=postgres://<your-username>:<your-password>@localhost/
+DATABASE_URL=postgresql://<your-username>:<your-password>@localhost/
 ```
 - Remember to replace `<your-username>` and `<your-password>`.
 3. In a separate terminal, run: `python app.py`
