@@ -1,44 +1,35 @@
 import os
-from os.path import join, dirname
 
 from dotenv import load_dotenv
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO
 
-import flask_sqlalchemy
-from sqlalchemy.exc import SQLAlchemyError
+from database import db
 
 
+# Environment variables
 load_dotenv()
-
 HOST = os.getenv("HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", "8080"))
+DATABASE_URL = os.getenv("DATABASE_URL", None)
 
 # Setup Flask app
-app = Flask(__name__)
+STATIC_FOLDER = "../static"
+TEMPLATE_FOLDER = "../templates"
+app = Flask(__name__, static_folder=STATIC_FOLDER, template_folder=TEMPLATE_FOLDER)
+
+# Setup SocketIO
 socketio = SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
-DOTENV_PATH = join(dirname(__file__), "sql.env")
-load_dotenv(DOTENV_PATH)
+# Setup SQLAlchemy and database tables
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db.init_app(app)
+with app.app_context():
+    db.create_all()
+    db.session.commit()
 
-# Configure psql database
-DATABASE_URI = os.environ["DATABASE_URL"]
-app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
-DB = flask_sqlalchemy.SQLAlchemy(app)
-DB.init_app(app)
-DB.app = app
-
-# Create a table
-try:
-    DB.session.execute(
-        "CREATE TABLE users (email VARCHAR(255) PRIMARY KEY,username VARCHAR(255) NOT NULL);"
-    )
-    DB.session.commit()
-    print("creating table:users")
-except SQLAlchemyError:
-    print("user table exists")
-    
 
 @app.route("/")
 def index():
