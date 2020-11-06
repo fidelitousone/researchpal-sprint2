@@ -9,58 +9,46 @@ Robert Argasinski, Eugene Cha, Mark Galesi, Jatinder Singh
 
 
 
-## Setup Process
-<b>(1)</b>
-Clone the repository:
+## Setup the App
+1. Clone the repository:
 ```bash
-git clone https://github.com/fidelitousone/researchpal
+git clone "https://github.com/fidelitousone/researchpal.git"
 ```
-
-<b>(2)</b>
-Install the Python packages by running the following:
-```bash
-pip install flask
-pip install flask-socketio
-pip install python-dotenv
-```
-
-<b>(3)</b>
-Setup a postgresql database by running the following:
-1. Install PostGreSQL: `sudo yum install postgresql postgresql-server postgresql-devel postgresql-contrib postgresql-docs`    
-    Enter yes to all prompts.    
-2. Initialize PSQL database: `sudo service postgresql initdb`    
-3. Start PSQL: `sudo service postgresql start`    
-4. Make a new superuser: `sudo -u postgres createuser --superuser $USER`    
-    If you get an error saying "could not change directory", that's okay. 
-5. Make a new database: `sudo -u postgres createdb $USER`    
-        If you get an error saying "could not change directory", that's okay.  
-6. Make sure your user shows up:    
-    a) `psql`
-    b) `\du` look for ec2-user as a user    
-    c) `\l` look for ec2-user as a database    
-7. Make a new user:    
-    a) `psql` (if you already quit out of psql)    
-    ## REPLACE THE [VALUES] IN THIS COMMAND! Type this with a new (short) unique password.   
-    b) I recommend 4-5 characters - it doesn't have to be very secure. Remember this password!  
-        `create user [some_username_here] superuser password '[some_unique_new_password_here]';`
-    c) `\q` to quit out of sql    
-8. `cd` into `researchpal` and make a new file called `sql.env` and add the following:
-    d)`export SQLALCHEMY_DATABASE_URI='postgresql://<your sql username>:<your sql password>@localhost/<your db>'`
-9. Fill in those values with the values you put in 7. b)
-
-<b>(4)</b>
-Install the JavaScript packages by running the following:
+2. Install the Node.js dependencies:
 ```bash
 npm install
 ```
+3. Install the Python dependencies:
+```bash
+pip install -r dev-requirements.txt
+pip install -r requirements.txt
+```
+- Note: You do not need `dev-requirements.txt` for production.
 
-## Running the Application
-### Local Deployment
-Build the JavaScript packages using:
-```bash
-npm run watch
+## Setup PostgreSQL
+1. Install PostgreSQL:
+- Amazon Linux/CentOS: `sudo yum install postgresql postgresql-server postgresql-devel postgresql-contrib postgresql-docs`
+- Ubuntu/Debian: `sudo apt install postgresql libpq-dev`
+2. Initialize PostgreSQL: `sudo service postgresql initdb`
+3. Start PostgreSQL: `sudo service postgresql start`
+4. Add yourself as a superuser on PostgreSQL: `sudo -u postgres createuser --superuser $USER`
+- If you get an error saying "could not change directory", that's okay.
+5. Create a new database: `sudo -u postgres createdb $USER`
+- If you get an error saying "could not change directory", that's okay.  
+6. Make sure your user shows up:
+    a) `psql`
+    b) `\du` look for your username
+    c) `\l` look for your username as a database
+7. Edit the authentication method from `ident` to `md5`: `sudo vim /var/lib/pgsql9/data/pg_hba.conf`
+8. Restart PostgreSQL: `sudo service postgresql restart`
+9. Add a password to the user you added in step 4: `psql -c "ALTER ROLE $USER WITH PASSWORD '<your-password>'"`
+- Remember to replace `<your-password>`. You will need to remember it for local deployment.
+
+## Local Deployment
+1. Build the app for production: `npm run watch`
+2. Create a `.env` file in the root directory with the following:
+```sh
+DATABASE_URL=postgres://<your-username>:<your-password>@localhost/
 ```
-Then, in a separate terminal, run:
-```bash
-python app.py
-```
+- Remember to replace `<your-username>` and `<your-password>`.
+3. In a separate terminal, run: `python app.py`
