@@ -1,0 +1,7 @@
+# To update packages for requirements.txt, run pip-upgrade in the root directory
+wheel
+pip-upgrader
+black
+pylint
+pylint-flask
+pylint-flask-sqlalchemy
