@@ -45,7 +45,7 @@ pip install -r requirements.txt
 - Remember to replace `<your-password>`. You will need to remember it for local deployment.
 
 ## Local Deployment
-1. Build the app for production: `npm run watch`
+1. Build the React app for production: `npm run watch`
 2. Create a `.env` file in the root directory with the following content:
 ```sh
 DATABASE_URL=postgresql://<your-username>:<your-password>@localhost/
