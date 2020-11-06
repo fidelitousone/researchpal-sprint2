@@ -52,6 +52,7 @@ Setup a postgresql database by running the following:
 Install the JavaScript packages by running the following:
 ```bash
 npm install
+```
 
 ## Running the Application
 ### Local Deployment
