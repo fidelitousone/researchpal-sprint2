@@ -12,6 +12,9 @@ with app.app_context():
     db.create_all()
     db.session.commit()
 
+@socketio.on("new_google_user")
+def on_new_username(data):
+    print(data["response"]["profileObj"])
 
 @app.route("/")
 def index():
