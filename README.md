@@ -54,7 +54,7 @@ pip install -r requirements.txt
 - create
 - copy your Client ID
 - Open scripts/GoogleButton.jsx
-- inside the GoogleAuth() function, replace clientId=<client id> with clientId="<your client id>"
+- inside the GoogleAuth() function, replace `clientId=<client id>` with `clientId=<your client id">`
 
 ## Local Deployment
 1. Build the React app for production: `npm run watch`
