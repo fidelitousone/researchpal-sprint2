@@ -48,13 +48,13 @@ pip install -r requirements.txt
 ## Setup Google Authentication
 1. Create your google API account [here](https://console.developers.google.com/apis/dashboard)
 2. Credentials>Create Credentials
-        - OAuth client ID
-        - Application type>Web App
-        - Name your client
-        - create
-        - copy your Client ID
-        - Open scripts/GoogleButton.jsx
-        - inside the GoogleAuth() function, replace clientId=<client id> with clientId="<your client id>"
+- OAuth client ID
+- Application type>Web App
+- Name your client
+- create
+- copy your Client ID
+- Open scripts/GoogleButton.jsx
+- inside the GoogleAuth() function, replace clientId=<client id> with clientId="<your client id>"
 
 ## Local Deployment
 1. Build the React app for production: `npm run watch`
