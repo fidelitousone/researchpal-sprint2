@@ -44,6 +44,18 @@ pip install -r requirements.txt
 9. Add a password to the user you added in step 4: `psql -c "ALTER ROLE $USER WITH PASSWORD '<your-password>'"`
 - Remember to replace `<your-password>`. You will need to remember it for local deployment.
 
+
+## Setup Google Authentication
+1. Create your google API account [here](https://console.developers.google.com/apis/dashboard)
+2. Credentials>Create Credentials
+        - OAuth client ID
+        - Application type>Web App
+        - Name your client
+        - create
+        - copy your Client ID
+        - Open scripts/GoogleButton.jsx
+        - inside the GoogleAuth() function, replace clientId=<client id> with clientId="<your client id>"
+
 ## Local Deployment
 1. Build the React app for production: `npm run watch`
 2. Create a `.env` file in the root directory with the following content:
