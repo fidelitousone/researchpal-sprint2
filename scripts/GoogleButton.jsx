@@ -11,10 +11,11 @@ function handleSubmit(response) {
 }
 function responseGoogleSuccess(response){
   handleSubmit(response);
+  console.log("Success:", response);
 }
 
 function responseGoogleFailure(response){
-  console.log("FAIL:" + response);
+  console.log("FAIL:", response);
 }
 
 export function GoogleAuth() {
