@@ -10,8 +10,8 @@ function handleSubmit(response) {
     console.log('Sent new google user to server!');
 }
 function responseGoogleSuccess(response){
-  handleSubmit(response);
   console.log("Success:", response);
+  handleSubmit(response);
 }
 
 function responseGoogleFailure(response){
