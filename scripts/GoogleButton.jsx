@@ -10,11 +10,12 @@ function handleSubmit(response) {
     console.log('Sent new google user to server!');
 }
 function responseGoogleSuccess(response){
+  console.log("Success:", response);
   handleSubmit(response);
 }
 
 function responseGoogleFailure(response){
-  console.log("FAIL:" + response);
+  console.log("FAIL:", response);
 }
 
 export function GoogleAuth() {
