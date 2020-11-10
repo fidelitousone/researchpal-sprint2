@@ -1,7 +1,7 @@
 from flask import render_template
 
 from server import create_app, run_app, db, socketio
-# TODO: import database models here from server.models
+from server.models import AuthType, Users, Projects, Sources
 
 
 # Setup Flask app
