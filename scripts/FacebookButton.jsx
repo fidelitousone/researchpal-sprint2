@@ -19,7 +19,7 @@ export function FacebookAuth() {
     return (
         <FacebookLogin
         appId="257908695617151"
-        autoLoad="false"
+        autoLoad={false}
         fields="name,email,picture"
         callback={responseFacebookSuccess} />
     );
