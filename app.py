@@ -21,6 +21,11 @@ def on_new_microsoft_user(data):
     print(data["response"]["account"]["name"])
     print(data["response"]["account"]["userName"])
     
+@socketio.on("new_facebook_user")
+def on_new_facebook_user(data):
+    print(data["response"]["name"])
+    print(data["response"]["picture"]["data"]["url"])
+    
 
 @app.route("/")
 def index():
