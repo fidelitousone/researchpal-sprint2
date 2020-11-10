@@ -13,8 +13,14 @@ with app.app_context():
     db.session.commit()
 
 @socketio.on("new_google_user")
-def on_new_username(data):
+def on_new_google_user(data):
     print(data["response"]["profileObj"])
+    
+@socketio.on("new_microsoft_user")
+def on_new_microsoft_user(data):
+    print(data["response"]["account"]["name"])
+    print(data["response"]["account"]["userName"])
+    
 
 @app.route("/")
 def index():

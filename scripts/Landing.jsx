@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom'
 import { Button } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.css';
 import { GoogleAuth } from './GoogleButton';
+import { MicrosoftAuth } from './MicrosoftButton';
+import 'bootstrap/dist/css/bootstrap.css';
 
 export default function Landing() {
     return (
@@ -11,6 +12,7 @@ export default function Landing() {
             <br />
             <Button className="btn-outline-primary">Login</Button>{' '}
             <GoogleAuth />
+            <MicrosoftAuth />
         </div>
     )
 }
