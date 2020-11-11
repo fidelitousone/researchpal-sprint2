@@ -1,8 +1,40 @@
+import uuid
 from flask import render_template
 
 from server import create_app, run_app, db, socketio
 from server.models import AuthType, Users, Projects, Sources
 
+
+
+
+def new_google_user(profile):
+    user_name = profile["name"]
+    email = profile["email"]
+    profile_picture = profile["imageUrl"]
+    auth_type = AuthType.GOOGLE
+    user_id = uuid.uuid4()
+    db.session.add(Users(user_id, user_name,auth_type,email,profile_picture));
+    db.session.commit();
+
+def new_facebook_user(profile):
+    user_name = profile["name"]
+    email = "sample email"#profile["email"]
+    profile_picture = profile["picture"]["data"]["url"]
+    auth_type = AuthType.FACEBOOK
+    user_id = uuid.uuid4()
+    
+    user_id = uuid.uuid4()
+    db.session.add(Users(user_id, user_name,auth_type,email,profile_picture));
+    db.session.commit();
+    
+def new_microsoft_user(profile):
+    user_name = profile["name"]
+    email = profile["userName"]
+    profile_picture = "Sample Image"#profile["imageUrl"]
+    auth_type = AuthType.MICROSOFT
+    user_id = uuid.uuid4()
+    db.session.add(Users(user_id, user_name,auth_type,email,profile_picture));
+    db.session.commit();
 
 # Setup Flask app
 STATIC_FOLDER = "../static"
@@ -14,18 +46,18 @@ with app.app_context():
 
 @socketio.on("new_google_user")
 def on_new_google_user(data):
-    print(data["response"]["profileObj"])
+    profile = data["response"]["profileObj"]
+    new_google_user(profile)
+ 
+@socketio.on("new_facebook_user")
+def on_new_facebook_user(data):
+    profile = data["response"]
+    new_facebook_user(profile)
     
 @socketio.on("new_microsoft_user")
 def on_new_microsoft_user(data):
-    print(data["response"]["account"]["name"])
-    print(data["response"]["account"]["userName"])
-    
-@socketio.on("new_facebook_user")
-def on_new_facebook_user(data):
-    print(data["response"]["name"])
-    print(data["response"]["picture"]["data"]["url"])
-    
+    profile = data["response"]["account"]
+    new_microsoft_user(profile)
 
 @app.route("/")
 def index():
