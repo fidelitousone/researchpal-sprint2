@@ -46,18 +46,27 @@ with app.app_context():
 
 @socketio.on("new_google_user")
 def on_new_google_user(data):
-    profile = data["response"]["profileObj"]
-    new_google_user(profile)
+    try:
+        profile = data["response"]["profileObj"]
+        new_google_user(profile)
+    except KeyError:
+        print("invalid user object")
  
 @socketio.on("new_facebook_user")
 def on_new_facebook_user(data):
-    profile = data["response"]
-    new_facebook_user(profile)
+    try:
+        profile = data["response"]
+        new_facebook_user(profile)
+    except KeyError:
+        print("invalid user object")
     
 @socketio.on("new_microsoft_user")
 def on_new_microsoft_user(data):
-    profile = data["response"]["account"]
-    new_microsoft_user(profile)
+    try:
+        profile = data["response"]["account"]
+        new_microsoft_user(profile)
+    except KeyError:
+        print("invalid user object")
 
 @app.route("/")
 def index():
