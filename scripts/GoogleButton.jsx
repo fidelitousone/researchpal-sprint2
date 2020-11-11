@@ -1,31 +1,31 @@
 import * as React from 'react';
-import { Socket } from './Socket';
 import GoogleLogin from 'react-google-login';
+import Socket from './Socket';
 
-function handleSubmit(response) {
+export default function GoogleAuth() {
+  function handleSubmit(response) {
     Socket.emit('new_google_user', {
-        'response': response,
+      response,
     });
-    
+
     console.log('Sent new google user to server!');
-}
-function responseGoogleSuccess(response){
-  console.log("Success:", response);
-  handleSubmit(response);
-}
+  }
+  function responseGoogleSuccess(response) {
+    console.log('Success:', response);
+    handleSubmit(response);
+  }
 
-function responseGoogleFailure(response){
-  console.log("FAIL:", response);
-}
+  function responseGoogleFailure(response) {
+    console.log('FAIL:', response);
+  }
 
-export function GoogleAuth() {
-    return (
-            <GoogleLogin
-            clientId="392545713863-91sppbihnj638rth8gg7upfvjoug9s98.apps.googleusercontent.com"
-            buttonText="Login"
-            onSuccess={responseGoogleSuccess}
-            onFailure={responseGoogleFailure}
-            cookiePolicy={'single_host_origin'}
-            />
-    );
+  return (
+    <GoogleLogin
+      clientId="392545713863-91sppbihnj638rth8gg7upfvjoug9s98.apps.googleusercontent.com"
+      buttonText="Login"
+      onSuccess={responseGoogleSuccess}
+      onFailure={responseGoogleFailure}
+      cookiePolicy="single_host_origin"
+    />
+  );
 }
