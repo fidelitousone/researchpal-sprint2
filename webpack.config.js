@@ -1,5 +1,7 @@
 module.exports = {
-    entry: './scripts/Main.jsx',
+    entry: {
+      main: './scripts/Main.jsx'
+    },
     output: {
       path: __dirname,
       filename: './static/script.js'
