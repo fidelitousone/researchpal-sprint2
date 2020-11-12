@@ -63,9 +63,8 @@ def mocked_invalid_response():
 
 
 @pytest.fixture()
-def mocked_login_request(mocked_uuid):
-    mocked_uuid = mocked_uuid()
-    mocked_request = {"user_id": str(mocked_uuid)}
+def mocked_login_request():
+    mocked_request = {"email": "fake@e.mail"}
     return mocked_request
 
 
@@ -163,3 +162,9 @@ class TestLoginFlow:
 
         db.session.add(mocked_user_model)
         socketio_client.emit("login_request", mocked_login_request)
+
+        recieved = socketio_client.get_received()
+        assert recieved[0]["name"] == "login_response"
+
+        [login_response] = recieved[0]["args"]
+        assert login_response == mocked_user_model.json()
