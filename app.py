@@ -5,7 +5,6 @@ from flask import render_template, session
 from server import create_app, run_app, db, socketio
 from server.models import AuthType, Users, Projects, Sources
 
-
 def new_google_user(profile):
     user_name = profile["name"]
     email = profile["email"]
@@ -101,10 +100,12 @@ def on_login_request(data):
         user_info = db.session.query(Users).filter(Users.email == email).one()
     response = {
         'user_name':user_info.user_name,
+        'user_id':user_info.user_id,
         'email':user_info.email,
         'profile_picture':user_info.profile_picture
     }
     socketio.emit("login_response", response)
+    
 
 
 @app.route("/")
