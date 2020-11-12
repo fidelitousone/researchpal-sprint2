@@ -18,9 +18,11 @@ export default function MicrosoftAuth() {
     });
   }
   function responseMicrosoftSuccess(err, response) {
-    console.log(err);
-    console.log('Response:', response);
-    handleSubmit(response);
+    if (err !== undefined) {
+      console.log(err);
+      console.log('Response:', response);
+      handleSubmit(response);
+    }
   }
 
   return (
