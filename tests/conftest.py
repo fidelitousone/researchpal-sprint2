@@ -2,7 +2,7 @@ import uuid
 
 import pytest
 
-from app import Users, AuthType
+from app import AuthType, Projects, Users
 
 
 # pylint: disable = redefined-outer-name
@@ -55,3 +55,20 @@ def mocked_user_model(mocked_uuid):
         AuthType.GOOGLE,
         "link",
     )
+
+
+@pytest.fixture()
+def mocked_project_model(mocked_uuid):
+    mocked_uuid = mocked_uuid()
+    return Projects(
+        str(mocked_uuid),
+        str(mocked_uuid),
+        "Test",
+        [],
+    )
+
+
+@pytest.fixture()
+def mocked_create_project_response(mocked_uuid, mocked_project_model):
+    mocked_uuid = mocked_uuid()
+    return {str(mocked_uuid): mocked_project_model.json()}

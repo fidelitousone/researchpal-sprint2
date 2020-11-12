@@ -1,5 +1,4 @@
 import uuid
-import json
 from flask import render_template, session
 
 
@@ -9,23 +8,24 @@ from server.models import AuthType, Users, Projects, Sources
 
 def emit_projects(user_id):
     with app.app_context():
-        user_info = (
+        user_projects = (
             db.session.query(Projects).filter(Projects.owner_id == user_id).all()
         )
-    response = {}
-    for x in user_info:
-        response[x.project_id] = {
-            "project_id": x.project_id,
-            "owner_id": x.owner_id,
-            "project_name": x.project_name,
+    response = {
+        project.project_id: {
+            "project_id": project.project_id,
+            "owner_id": project.owner_id,
+            "project_name": project.project_name,
+            "sources": []
         }
-    print(response)
+        for project in user_projects
+    }
     socketio.emit("all_projects", response)
 
 
 def new_google_user(profile):
-    user_name = profile["name"]
     email = profile["email"]
+    user_name = profile["name"]
     profile_picture = profile["imageUrl"]
     auth_type = AuthType.GOOGLE
     user_id = uuid.uuid4()
@@ -36,11 +36,8 @@ def new_google_user(profile):
 
 
 def new_facebook_user(profile):
+    email = profile["email"]
     user_name = profile["name"]
-    try:
-        email = profile["email"]
-    except KeyError:
-        email = None
     profile_picture = profile["picture"]["data"]["url"]
     auth_type = AuthType.FACEBOOK
     user_id = uuid.uuid4()
@@ -51,8 +48,8 @@ def new_facebook_user(profile):
 
 
 def new_microsoft_user(profile):
-    user_name = profile["name"]
     email = profile["userName"]
+    user_name = profile["name"]
     try:
         profile_picture = profile["imageUrl"]
     except KeyError:
@@ -102,7 +99,7 @@ def on_new_facebook_user(data):
 def on_new_microsoft_user(data):
     try:
         profile = data["response"]["account"]
-        email = profile["email"]
+        email = profile["userName"]
         with app.app_context():
             user_info = db.session.query(Users).filter(Users.email == email).first()
         if user_info:
@@ -125,7 +122,7 @@ def on_login_request(data):
 def on_new_project(data):
     project_id = uuid.uuid4()
     project_name = data["project_name"]
-    owner_id = "8aa7fcb2-8c5a-4c45-8336-d4eb8b8a03c4"  # TODO get owner_id somehow
+    owner_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"  # TODO get owner_id somehow
     sources = []
     with app.app_context():
         new_project = Projects(project_id, owner_id, project_name, sources)
