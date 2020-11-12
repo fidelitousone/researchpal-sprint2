@@ -18,10 +18,7 @@ export default function Dashboard() {
             });
         });
     }
-    
-    function alertClicked() {
-      alert('You clicked the third ListGroupItem');
-    }
+
   getAllProjects();
   return (
     <div className="Dashboard">
