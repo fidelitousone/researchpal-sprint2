@@ -1,18 +1,22 @@
 import * as React from 'react';
-import { Button, ButtonGroup, Badge, Nav, Image, DropdownButton } from 'react-bootstrap';
+import { Button, ButtonGroup, Badge, Image, DropdownButton } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 
 export default function Project() {
   return (
     <div className="Project">
-      <Nav>
-        <h1 align="center">Project Page <Badge className="badge-primary">Name</Badge></h1>
+      <div display="flex" flex="0 0 auto" align="center">
+       
+        <span className="h1" position="absolute" left="0">Project <Badge className="badge-primary">Name</Badge></span>
+        
+        
         <DropdownButton id="dropdown-basic-button" title={
           <Image src="static/profile-blank.jpg" className="rounded-circle border" width="50px" height="50px"/>
         }>
         </DropdownButton>
-      </Nav>
+       
+      </div>
       <br />
       <div className="d-flex justify-content-center">
         <ButtonGroup aria-label="Basic example">

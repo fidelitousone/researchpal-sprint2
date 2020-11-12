@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Socket from './Socket';
+import { Button } from 'react-bootstrap';
 
 function handleSubmit(event) {
     var projectName = document.getElementById("name_input");
@@ -15,9 +16,11 @@ function handleSubmit(event) {
 
 export function CreateButton() {
     return (
-        <form onSubmit={handleSubmit}>
-            <input id="name_input" placeholder="Enter name.."></input>
-            <button>Create!</button>
-        </form>
+        <div align="center">
+            <form onSubmit={handleSubmit}>
+                <input id="name_input" placeholder="Enter new project name"></input>
+                <Button type="submit" className="btn-primary">Create!</Button>
+            </form>
+        </div>
     );
 }
