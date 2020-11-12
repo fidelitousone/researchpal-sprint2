@@ -66,9 +66,3 @@ def mocked_project_model(mocked_uuid):
         "Test",
         [],
     )
-
-
-@pytest.fixture()
-def mocked_create_project_response(mocked_uuid, mocked_project_model):
-    mocked_uuid = mocked_uuid()
-    return {str(mocked_uuid): mocked_project_model.json()}

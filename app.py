@@ -3,7 +3,7 @@ from flask import render_template, session
 
 
 from server import create_app, run_app, db, socketio
-from server.models import AuthType, Users, Projects, Sources
+from server.models import AuthType, Projects, Sources, Users
 
 
 def emit_projects(user_id):
@@ -16,7 +16,7 @@ def emit_projects(user_id):
             "project_id": project.project_id,
             "owner_id": project.owner_id,
             "project_name": project.project_name,
-            "sources": []
+            "sources": [],
         }
         for project in user_projects
     }

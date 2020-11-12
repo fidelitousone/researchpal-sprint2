@@ -64,6 +64,12 @@ def mocked_new_project():
     return mocked_project
 
 
+@pytest.fixture()
+def mocked_create_project_response(mocked_uuid, mocked_project_model):
+    mocked_uuid = mocked_uuid()
+    return {str(mocked_uuid): mocked_project_model.json()}
+
+
 # pylint: disable = no-self-use
 # pylint: disable = unused-argument
 class TestRenderTemplate:
