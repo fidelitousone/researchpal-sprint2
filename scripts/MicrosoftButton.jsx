@@ -18,11 +18,12 @@ export default function MicrosoftAuth() {
     });
   }
   function responseMicrosoftSuccess(err, response) {
-    if (err !== undefined) {
+    if (response !== undefined) {
       console.log(err);
       console.log('Response:', response);
       handleSubmit(response);
     }
+    console.log("Microsoft Authentication Failure, user cancelled or undefined response given");
   }
 
   return (
