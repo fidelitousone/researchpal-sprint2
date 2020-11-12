@@ -3,7 +3,7 @@ import json
 from flask import render_template, session
 
 
-from server import create_app, run_app, db, socketio
+from server import create_app, run_app, db, socketio, join_room
 from server.models import AuthType, Users, Projects, Sources
 
 
@@ -64,6 +64,9 @@ def new_microsoft_user(profile):
 STATIC_FOLDER = "../static"
 TEMPLATE_FOLDER = "../templates"
 app = create_app(STATIC_FOLDER, TEMPLATE_FOLDER)
+app.config['SECRET_KEY'] = 'secret key'
+app.config['SESSION_TYPE'] = 'memcache'
+
 with app.app_context():
     db.create_all()
     db.session.commit()
@@ -110,11 +113,23 @@ def on_new_microsoft_user(data):
 @socketio.on("login_request")
 def on_login_request(data):
     email = data["email"]
+    print("session set")
+    session['user'] = email
+    join_room(email);
     with app.app_context():
         user_info = db.session.query(Users).filter(Users.email == email).one().json()
     socketio.emit("login_response", user_info)
     
-
+@socketio.on("request_user_info")
+def on_request_user_data():
+    if not session.get('user') is None:
+        email = session.get('user')
+        print('session:' + str(session.get('user')))
+        with app.app_context():
+            user_info = db.session.query(Users).filter(Users.email == email).one().json()
+        socketio.emit("user_info", user_info, room=email)
+    else:
+        print("not logged in")
 
 @socketio.on("create_project")
 def on_new_project(data):

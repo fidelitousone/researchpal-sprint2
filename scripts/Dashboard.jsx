@@ -8,11 +8,20 @@ import 'bootstrap/dist/css/bootstrap.css';
 
 export default function Dashboard() {
     const [projects, setProjects] = React.useState(0);
+    const [user, setUser] = React.useState(0);
+    
+    function  getUserData(){
+        Socket.emit('request_user_info');
+        Socket.on('user_info', (data) => {
+            console.log("Received user info from server: " + data);
+            setUser(data);
+        });
+    }
     
     function getAllProjects() {
         React.useEffect(() => {
             Socket.on('all_projects', (data) => {
-                console.log("Received messages from server: " + data);
+                console.log("Received projects from server: " + data);
                 setProjects(data);
             });
         });
@@ -21,11 +30,12 @@ export default function Dashboard() {
     function alertClicked() {
       alert('You clicked the third ListGroupItem');
     }
+  //getUserData();
   getAllProjects();
   return (
     <div className="Dashboard">
       <Nav>
-        <h1 align="center">Dashboard <Badge className="badge-primary">User</Badge></h1>
+        <h1 align="center">Dashboard <Badge className="badge-primary">{user['email']}</Badge></h1>
         <DropdownButton id="dropdown-basic-button" title={
           <Image src="static/profile-blank.jpg" className="rounded-circle border" width="50px" height="50px"/>
         }>
@@ -44,6 +54,7 @@ export default function Dashboard() {
             <Link to="/project">
             <Button className="btn-outline-primary">Project</Button>
             </Link>
+            <Button onClick={getUserData}className="btn-outline-primary">User</Button>
           </ButtonGroup>
         </div>
         <br />

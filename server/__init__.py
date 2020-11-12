@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask
 from flask_session import Session
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, join_room, leave_room
 from flask_sqlalchemy import SQLAlchemy
 
 
