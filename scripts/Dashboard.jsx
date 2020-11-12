@@ -1,9 +1,22 @@
 import * as React from 'react';
+import Socket from './Socket';
 import { Button, ButtonGroup, Badge, Image, Nav, DropdownButton } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { CreateButton } from './CreateProject';
 import 'bootstrap/dist/css/bootstrap.css';
 
 export default function Dashboard() {
+    const [projects, setProjects] = React.useState(0);
+    
+    function getAllProjects() {
+        React.useEffect(() => {
+            Socket.on('all_projects', (data) => {
+                console.log("Received messages from server: " + data);
+                setProjects(data);
+            });
+        });
+    }
+  getAllProjects();
   return (
     <div className="Dashboard">
       <Nav>
@@ -28,6 +41,12 @@ export default function Dashboard() {
             </Link>
           </ButtonGroup>
         </div>
+        <CreateButton />
+        <ul>
+        {Object.keys(projects).map((key,val) =>
+          <li key={key}>{projects[key]['project_name']}</li>
+        )}
+        </ul>
     </div>
   );
 }
