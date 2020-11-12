@@ -23,7 +23,7 @@ def create_app(
     static_folder: str = "static", template_folder: str = "templates"
 ) -> Flask:
     app = Flask(__name__, static_folder=static_folder, template_folder=template_folder)
-    SESSION_TYPE = 'sqlalchemy'
+    SESSION_TYPE = "sqlalchemy"
     app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 

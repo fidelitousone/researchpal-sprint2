@@ -1,10 +1,95 @@
+import uuid
+
 import pytest
 
-from app import app, socketio
+from app import socketio, Users, AuthType
 
 
 @pytest.fixture
-def client():
+def mocked_uuid(mocker):
+    mock_uuid = mocker.patch.object(uuid, "uuid4", autospec=True)
+    mock_uuid.return_value = uuid.UUID(hex="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+    return mock_uuid
+
+
+@pytest.fixture
+def mocked_google_response():
+    mocked_response = {
+        "response": {
+            "profileObj": {
+                "email": "fake@e.mail",
+                "name": "A Name",
+                "imageUrl": "link",
+            }
+        }
+    }
+    return mocked_response
+
+
+@pytest.fixture
+def mocked_facebook_response():
+    mocked_response = {
+        "response": {
+            "email": "fake@e.mail",
+            "name": "A Name",
+            "picture": {
+                "data": {
+                    "url": "link",
+                }
+            },
+        }
+    }
+    return mocked_response
+
+
+@pytest.fixture
+def mocked_microsoft_response():
+    mocked_response = {
+        "response": {
+            "account": {
+                "userName": "fake@e.mail",
+                "name": "A Name",
+                "imageUrl": "link",
+            }
+        }
+    }
+    return mocked_response
+
+
+@pytest.fixture
+def mocked_invalid_response():
+    mocked_response = {"invalid": "response"}
+    return mocked_response
+
+
+@pytest.fixture
+def mocked_login_request(mocked_uuid):
+    mocked_uuid = mocked_uuid()
+    mocked_request = {"user_id": str(mocked_uuid)}
+    return mocked_request
+
+
+@pytest.fixture
+def mocked_user_model(mocked_uuid):
+    mocked_uuid = mocked_uuid()
+    return Users(
+        "fake@e.mail",
+        str(mocked_uuid),
+        "A Name",
+        AuthType.GOOGLE,
+        "link",
+    )
+
+
+@pytest.fixture
+def app():
+    from app import app
+
+    return app
+
+
+@pytest.fixture
+def client(app):
     app.config["TESTING"] = True
 
     with app.test_client() as test_client:
@@ -12,20 +97,71 @@ def client():
 
 
 @pytest.fixture
-def socketio_client():
+def socketio_client(app):
     yield socketio.test_client(app)
 
 
-def test_main_page(client):
-    page = client.get("/")
-    assert b"ResearchPal" in page.data
+@pytest.fixture
+def db(app):
+    from app import db
+
+    with app.app_context():
+        db.create_all()
+        yield db
+        db.drop_all()
+        db.session.commit()
 
 
-def test_dashboard_page(client):
-    page = client.get("/home")
-    assert b"ResearchPal" in page.data
+class TestRenderTemplate:
+    def test_main_page(self, client):
+        page = client.get("/")
+        assert b"ResearchPal" in page.data
+
+    def test_dashboard_page(self, client):
+        page = client.get("/home")
+        assert b"ResearchPal" in page.data
+
+    def test_project_page(self, client):
+        page = client.get("/project")
+        assert b"ResearchPal" in page.data
 
 
-def test_project_page(client):
-    page = client.get("/project")
-    assert b"ResearchPal" in page.data
+class TestNewUser:
+    def test_on_new_google_user(
+        self, socketio_client, mocked_google_response, mocked_invalid_response
+    ):
+        with pytest.raises(TypeError):
+            socketio_client.emit("new_google_user")
+
+        socketio_client.emit("new_google_user", mocked_google_response)
+        socketio_client.emit("new_google_user", mocked_invalid_response)
+
+    def test_on_new_facebook_user(
+        self, socketio_client, mocked_facebook_response, mocked_invalid_response
+    ):
+        with pytest.raises(TypeError):
+            socketio_client.emit("new_facebook_user")
+
+        socketio_client.emit("new_facebook_user", mocked_facebook_response)
+        socketio_client.emit("new_facebook_user", mocked_invalid_response)
+
+    def test_on_new_microsoft_user(
+        self, socketio_client, mocked_microsoft_response, mocked_invalid_response
+    ):
+        with pytest.raises(TypeError):
+            socketio_client.emit("new_microsoft_user")
+
+        socketio_client.emit("new_microsoft_user", mocked_microsoft_response)
+        socketio_client.emit("new_microsoft_user", mocked_invalid_response)
+
+
+class TestLoginFlow:
+    def test_on_login_request(
+        self, socketio_client, mocked_login_request, mocked_user_model
+    ):
+        with pytest.raises(TypeError):
+            socketio_client.emit("login_request")
+
+        mocked_user_model = mocked_user_model()
+        db.add(mocked_user_model)
+        socketio_client.emit("login_request", mocked_login_request)
