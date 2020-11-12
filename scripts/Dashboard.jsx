@@ -2,6 +2,7 @@ import * as React from 'react';
 import Socket from './Socket';
 import { Button, ButtonGroup, Badge, Image, Nav, DropdownButton } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { ListGroup } from 'react-bootstrap';
 import { CreateButton } from './CreateProject';
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -15,6 +16,10 @@ export default function Dashboard() {
                 setProjects(data);
             });
         });
+    }
+    
+    function alertClicked() {
+      alert('You clicked the third ListGroupItem');
     }
   getAllProjects();
   return (
@@ -41,10 +46,16 @@ export default function Dashboard() {
             </Link>
           </ButtonGroup>
         </div>
+        <br />
         <CreateButton />
         <ul>
+        <br />
         {Object.keys(projects).map((key,val) =>
-          <li key={key}>{projects[key]['project_name']}</li>
+          <span>
+            <Button className="btn-outline-secondary" key={key}>{projects[key]['project_name']}</Button>
+            <br />
+            <br />
+          </span>
         )}
         </ul>
     </div>
