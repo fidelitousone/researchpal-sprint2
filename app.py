@@ -1,4 +1,5 @@
 import uuid
+import json
 from flask import render_template, session
 
 
@@ -97,14 +98,8 @@ def on_new_microsoft_user(data):
 def on_login_request(data):
     email = data["email"]
     with app.app_context():
-        user_info = db.session.query(Users).filter(Users.email == email).one()
-    response = {
-        'user_name':user_info.user_name,
-        'user_id':user_info.user_id,
-        'email':user_info.email,
-        'profile_picture':user_info.profile_picture
-    }
-    socketio.emit("login_response", response)
+        user_info = db.session.query(Users).filter(Users.email == email).one().json()
+    socketio.emit("login_response", user_info)
     
 
 
