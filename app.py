@@ -17,7 +17,6 @@ def emit_projects(user_id):
             'owner_id':x.owner_id,
             'project_name':x.project_name
         }
-    print(response)
     socketio.emit('all_projects', response)
 
 
