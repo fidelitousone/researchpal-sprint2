@@ -5,6 +5,7 @@ import pytest
 from app import socketio, Users, AuthType
 
 
+# pylint: disable = redefined-outer-name
 @pytest.fixture()
 def mocked_uuid(mocker):
     mock_uuid = mocker.patch.object(uuid, "uuid4", autospec=True)
@@ -82,7 +83,7 @@ def mocked_user_model(mocked_uuid):
 
 @pytest.fixture(scope="module")
 def app():
-    from app import app
+    from app import app  # pylint: disable = import-outside-toplevel
 
     yield app
 
@@ -102,7 +103,7 @@ def socketio_client(app):
 
 @pytest.fixture()
 def db(app):
-    from app import db
+    from app import db  # pylint: disable = import-outside-toplevel
 
     with app.app_context():
         db.create_all()
@@ -110,6 +111,8 @@ def db(app):
         db.drop_all()
 
 
+# pylint: disable = no-self-use
+# pylint: disable = unused-argument
 class TestRenderTemplate:
     def test_main_page(self, client):
         page = client.get("/")

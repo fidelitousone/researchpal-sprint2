@@ -9,16 +9,18 @@ from server.models import AuthType, Users, Projects, Sources
 
 def emit_projects(user_id):
     with app.app_context():
-        user_info = db.session.query(Projects).filter(Projects.owner_id == user_id).all()
-    response={}
+        user_info = (
+            db.session.query(Projects).filter(Projects.owner_id == user_id).all()
+        )
+    response = {}
     for x in user_info:
-        response[x.project_id]={
-            'project_id':x.project_id,
-            'owner_id':x.owner_id,
-            'project_name':x.project_name
+        response[x.project_id] = {
+            "project_id": x.project_id,
+            "owner_id": x.owner_id,
+            "project_name": x.project_name,
         }
     print(response)
-    socketio.emit('all_projects', response)
+    socketio.emit("all_projects", response)
 
 
 def new_google_user(profile):
@@ -71,6 +73,7 @@ with app.app_context():
     db.create_all()
     db.session.commit()
 
+
 @socketio.on("new_google_user")
 def on_new_google_user(data):
     try:
@@ -122,13 +125,14 @@ def on_login_request(data):
 def on_new_project(data):
     project_id = uuid.uuid4()
     project_name = data["project_name"]
-    owner_id="8aa7fcb2-8c5a-4c45-8336-d4eb8b8a03c4"#TODO get owner_id somehow
+    owner_id = "8aa7fcb2-8c5a-4c45-8336-d4eb8b8a03c4"  # TODO get owner_id somehow
     sources = []
     with app.app_context():
         new_project = Projects(project_id, owner_id, project_name, sources)
         db.session.add(new_project)
         db.session.commit()
     emit_projects(owner_id)
+
 
 @app.route("/")
 @app.route("/home")
