@@ -138,7 +138,7 @@ def on_request_user_data():
 
 @socketio.on("create_project")
 def on_new_project(data):
-    email=session['user']
+    email = session.get('user')
     with app.app_context():
         user_info = db.session.query(Users).filter(Users.email == email).one().json()
     owner_id=user_info['user_id']
