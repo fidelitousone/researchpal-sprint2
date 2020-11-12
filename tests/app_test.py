@@ -5,14 +5,14 @@ import pytest
 from app import socketio, Users, AuthType
 
 
-@pytest.fixture
+@pytest.fixture()
 def mocked_uuid(mocker):
     mock_uuid = mocker.patch.object(uuid, "uuid4", autospec=True)
     mock_uuid.return_value = uuid.UUID(hex="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
     return mock_uuid
 
 
-@pytest.fixture
+@pytest.fixture()
 def mocked_google_response():
     mocked_response = {
         "response": {
@@ -26,7 +26,7 @@ def mocked_google_response():
     return mocked_response
 
 
-@pytest.fixture
+@pytest.fixture()
 def mocked_facebook_response():
     mocked_response = {
         "response": {
@@ -42,7 +42,7 @@ def mocked_facebook_response():
     return mocked_response
 
 
-@pytest.fixture
+@pytest.fixture()
 def mocked_microsoft_response():
     mocked_response = {
         "response": {
@@ -56,20 +56,20 @@ def mocked_microsoft_response():
     return mocked_response
 
 
-@pytest.fixture
+@pytest.fixture()
 def mocked_invalid_response():
     mocked_response = {"invalid": "response"}
     return mocked_response
 
 
-@pytest.fixture
+@pytest.fixture()
 def mocked_login_request(mocked_uuid):
     mocked_uuid = mocked_uuid()
     mocked_request = {"user_id": str(mocked_uuid)}
     return mocked_request
 
 
-@pytest.fixture
+@pytest.fixture()
 def mocked_user_model(mocked_uuid):
     mocked_uuid = mocked_uuid()
     return Users(
@@ -81,14 +81,14 @@ def mocked_user_model(mocked_uuid):
     )
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def app():
     from app import app
 
-    return app
+    yield app
 
 
-@pytest.fixture
+@pytest.fixture()
 def client(app):
     app.config["TESTING"] = True
 
@@ -96,12 +96,12 @@ def client(app):
         yield test_client
 
 
-@pytest.fixture
+@pytest.fixture()
 def socketio_client(app):
     yield socketio.test_client(app)
 
 
-@pytest.fixture
+@pytest.fixture()
 def db(app):
     from app import db
 
@@ -109,7 +109,6 @@ def db(app):
         db.create_all()
         yield db
         db.drop_all()
-        db.session.commit()
 
 
 class TestRenderTemplate:
@@ -128,7 +127,7 @@ class TestRenderTemplate:
 
 class TestNewUser:
     def test_on_new_google_user(
-        self, socketio_client, mocked_google_response, mocked_invalid_response
+        self, db, socketio_client, mocked_google_response, mocked_invalid_response
     ):
         with pytest.raises(TypeError):
             socketio_client.emit("new_google_user")
@@ -137,7 +136,7 @@ class TestNewUser:
         socketio_client.emit("new_google_user", mocked_invalid_response)
 
     def test_on_new_facebook_user(
-        self, socketio_client, mocked_facebook_response, mocked_invalid_response
+        self, db, socketio_client, mocked_facebook_response, mocked_invalid_response
     ):
         with pytest.raises(TypeError):
             socketio_client.emit("new_facebook_user")
@@ -146,7 +145,7 @@ class TestNewUser:
         socketio_client.emit("new_facebook_user", mocked_invalid_response)
 
     def test_on_new_microsoft_user(
-        self, socketio_client, mocked_microsoft_response, mocked_invalid_response
+        self, db, socketio_client, mocked_microsoft_response, mocked_invalid_response
     ):
         with pytest.raises(TypeError):
             socketio_client.emit("new_microsoft_user")
@@ -157,11 +156,10 @@ class TestNewUser:
 
 class TestLoginFlow:
     def test_on_login_request(
-        self, socketio_client, mocked_login_request, mocked_user_model
+        self, db, socketio_client, mocked_login_request, mocked_user_model
     ):
         with pytest.raises(TypeError):
             socketio_client.emit("login_request")
 
-        mocked_user_model = mocked_user_model()
-        db.add(mocked_user_model)
+        db.session.add(mocked_user_model)
         socketio_client.emit("login_request", mocked_login_request)

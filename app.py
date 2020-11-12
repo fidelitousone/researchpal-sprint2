@@ -13,7 +13,8 @@ def new_google_user(profile):
     auth_type = AuthType.GOOGLE
     user_id = uuid.uuid4()
     with app.app_context():
-        db.session.add(Users(user_id, user_name, auth_type, email, profile_picture))
+        new_user = Users(email, user_id, user_name, auth_type, profile_picture)
+        db.session.add(new_user)
         db.session.commit()
 
 
@@ -27,7 +28,8 @@ def new_facebook_user(profile):
     auth_type = AuthType.FACEBOOK
     user_id = uuid.uuid4()
     with app.app_context():
-        db.session.add(Users(user_id, user_name, auth_type, email, profile_picture))
+        new_user = Users(email, user_id, user_name, auth_type, profile_picture)
+        db.session.add(new_user)
         db.session.commit()
 
 
@@ -41,7 +43,7 @@ def new_microsoft_user(profile):
     auth_type = AuthType.MICROSOFT
     user_id = uuid.uuid4()
     with app.app_context():
-        new_user = Users(user_id, user_name, auth_type, email, profile_picture)
+        new_user = Users(email, user_id, user_name, auth_type, profile_picture)
         db.session.add(new_user)
         db.session.commit()
 
@@ -88,7 +90,6 @@ def on_login_request(data):
 
     with app.app_context():
         user_info = db.session.query(Users).filter(Users.user_id == user_id).one()
-        print(user_info.json())
 
     socketio.emit("login_response", user_info.json())
 
