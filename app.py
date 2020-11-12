@@ -31,6 +31,13 @@ def on_new_facebook_user(data):
 def index():
     return render_template("index.html")
 
+@app.route("/home")
+def dashboard():
+    return render_template("index.html")
+    
+@app.route("/project")
+def project():
+    return render_template("index.html")
 
 if __name__ == "__main__":
     run_app(app)
