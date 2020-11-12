@@ -4,11 +4,19 @@ import Socket from './Socket';
 
 export default function GoogleAuth() {
   function handleSubmit(response) {
+    
     Socket.emit('new_google_user', {
       response,
     });
-
     console.log('Sent new google user to server!');
+    
+    Socket.emit('login_request', {
+        'email': response["profileObj"]["email"],
+    });
+    
+    Socket.on('login_response', (data) => {
+      console.log(data);
+    });
   }
   function responseGoogleSuccess(response) {
     console.log('Success:', response);

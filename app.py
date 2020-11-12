@@ -6,6 +6,7 @@ from flask import render_template, session
 from server import create_app, run_app, db, socketio
 from server.models import AuthType, Users, Projects, Sources
 
+
 def emit_projects(user_id):
     with app.app_context():
         user_info = db.session.query(Projects).filter(Projects.owner_id == user_id).all()
@@ -71,7 +72,13 @@ with app.app_context():
 def on_new_google_user(data):
     try:
         profile = data["response"]["profileObj"]
-        new_google_user(profile)
+        email = profile["email"]
+        with app.app_context():
+            user_info = db.session.query(Users).filter(Users.email == email).first()
+        if user_info:
+            print("user exists")
+        else:
+            new_google_user(profile)
     except KeyError:
         print("invalid user object")
 
@@ -89,20 +96,24 @@ def on_new_facebook_user(data):
 def on_new_microsoft_user(data):
     try:
         profile = data["response"]["account"]
-        new_microsoft_user(profile)
+        email = profile["email"]
+        with app.app_context():
+            user_info = db.session.query(Users).filter(Users.email == email).first()
+        if user_info:
+            print("user exists")
+        else:
+            new_microsoft_user(profile)
     except KeyError:
         print("invalid user object")
 
 
 @socketio.on("login_request")
 def on_login_request(data):
-    user_id = data["user_id"]
-
+    email = data["email"]
     with app.app_context():
-        user_info = db.session.query(Users).filter(Users.user_id == user_id).one()
-        print(user_info.json())
-
-    socketio.emit("login_response", user_info.json())
+        user_info = db.session.query(Users).filter(Users.email == email).one().json()
+    socketio.emit("login_response", user_info)
+    
 
 
 @socketio.on("create_project")
