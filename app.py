@@ -83,16 +83,6 @@ def on_new_microsoft_user(data):
         print("invalid user object")
 
 
-@app.route("/home")
-def dashboard():
-    return render_template("index.html")
-
-
-@app.route("/project")
-def project():
-    return render_template("index.html")
-
-
 @socketio.on("login_request")
 def on_login_request(data):
     user_id = data["user_id"]
@@ -105,6 +95,8 @@ def on_login_request(data):
 
 
 @app.route("/")
+@app.route("/home")
+@app.route("/project")
 def index():
     return render_template("index.html")
 
