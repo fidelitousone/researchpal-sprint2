@@ -12,6 +12,14 @@ jobs:
       - python/load-cache
       - python/install-deps
       - python/save-cache
+      - run:
+          name: Run unit tests
+          command: |
+            ~/.local/bin/coverage run -m pytest tests/
+            ~/.local/bin/coverage report
+            ~/.local/bin/coverage html
+      - store_artifacts:
+          path: htmlcov
 
 workflows:
   main:
