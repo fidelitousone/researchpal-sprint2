@@ -1,12 +1,15 @@
 import * as React from 'react';
-import { Button, ButtonGroup, Badge } from 'react-bootstrap';
+import { Button, ButtonGroup, Badge, Image, Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 
 export default function Dashboard() {
   return (
     <div className="Dashboard">
-      <h1 align="center">Dashboard <Badge className="badge-primary">User</Badge></h1>
+      <Nav>
+            <h1 align="center">Dashboard <Badge className="badge-primary">User</Badge></h1>
+            <Image src="static/profile-blank.jpg" className="rounded-circle border" width="50px" height="50px"/>
+      </Nav>
       <br />
       <div className="d-flex justify-content-center">
         <ButtonGroup aria-label="Basic example">
