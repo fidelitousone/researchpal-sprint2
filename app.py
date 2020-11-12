@@ -135,7 +135,6 @@ def on_request_user_data():
         emit_projects(email)
     else:
         print("not logged in")
-    socketio.emit("login_response", user_info.json())
 
 @socketio.on("create_project")
 def on_new_project(data):
