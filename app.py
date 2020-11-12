@@ -6,6 +6,20 @@ from flask import render_template, session
 from server import create_app, run_app, db, socketio
 from server.models import AuthType, Users, Projects, Sources
 
+
+def emit_projects(user_id):
+    with app.app_context():
+        user_info = db.session.query(Projects).filter(Projects.owner_id == user_id).all()
+    response={}
+    for x in user_info:
+        response[x.project_id]={
+            'project_id':x.project_id,
+            'owner_id':x.owner_id,
+            'project_name':x.project_name
+        }
+    socketio.emit('all_projects', json.dumps(response))
+
+
 def new_google_user(profile):
     user_name = profile["name"]
     email = profile["email"]
@@ -54,15 +68,14 @@ with app.app_context():
     db.create_all()
     db.session.commit()
 
-
 @socketio.on("new_google_user")
 def on_new_google_user(data):
     try:
         profile = data["response"]["profileObj"]
         email = profile["email"]
         with app.app_context():
-            user_count = db.session.query(Users).filter(Users.email == email).count()
-        if(user_count==1):
+            user_info = db.session.query(Users).filter(Users.email == email).first()
+        if user_info:
             print("user exists")
         else:
             new_google_user(profile)
@@ -85,8 +98,8 @@ def on_new_microsoft_user(data):
         profile = data["response"]["account"]
         email = profile["email"]
         with app.app_context():
-            user_info = db.session.query(Users).filter(Users.email == email)
-        if(len(user_info.all())==1):
+            user_info = db.session.query(Users).filter(Users.email == email).first()
+        if user_info:
             print("user exists")
         else:
             new_microsoft_user(profile)
@@ -102,6 +115,18 @@ def on_login_request(data):
     socketio.emit("login_response", user_info)
     
 
+
+@socketio.on("create_project")
+def on_new_project(data):
+    project_id = uuid.uuid4()
+    owner_id = data["user_id"]
+    project_name = data["project_name"]
+    sources = None
+    with app.app_context():
+        new_project = Projects(project_id, owner_id, project_name, sources)
+        db.session.add(new_project)
+        db.session.commit()
+    emit_projects(owner_id)
 
 @app.route("/")
 @app.route("/home")
