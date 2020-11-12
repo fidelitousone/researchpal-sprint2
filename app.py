@@ -5,9 +5,9 @@ from server import create_app, run_app, db, socketio, join_room
 from server.models import AuthType, Users, Projects, Sources
 
 
-def emit_projects(email):
+def emit_projects(email,owner_id):
     with app.app_context():
-        user_info = db.session.query(Projects).filter(Projects.owner_id == email).all()
+        user_info = db.session.query(Projects).filter(Projects.owner_id == owner_id).all()
     response={}
     for x in user_info:
         response[x.project_id]={
@@ -132,7 +132,7 @@ def on_request_user_data():
         with app.app_context():
             user_info = db.session.query(Users).filter(Users.email == email).one().json()
         socketio.emit("user_info", user_info, room=email)
-        emit_projects(email)
+        emit_projects(email,user_info['user_id'])
     else:
         print("not logged in")
 
@@ -149,7 +149,7 @@ def on_new_project(data):
         new_project = Projects(project_id, owner_id, project_name, sources)
         db.session.add(new_project)
         db.session.commit()
-    emit_projects(owner_id)
+    emit_projects(email,owner_id)
 
 
 @app.route("/")
