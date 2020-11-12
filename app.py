@@ -1,6 +1,7 @@
 import uuid
 from flask import render_template, session
 
+
 from server import create_app, run_app, db, socketio
 from server.models import AuthType, Users, Projects, Sources
 
@@ -24,8 +25,6 @@ def new_facebook_user(profile):
         email = None
     profile_picture = profile["picture"]["data"]["url"]
     auth_type = AuthType.FACEBOOK
-    user_id = uuid.uuid4()
-
     user_id = uuid.uuid4()
     with app.app_context():
         db.session.add(Users(user_id, user_name, auth_type, email, profile_picture))
