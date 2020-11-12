@@ -7,7 +7,6 @@ import 'bootstrap/dist/css/bootstrap.css';
 export default function MicrosoftAuth() {
   const history = useHistory();
   function handleSubmit(response) {
-    console.log('here');
     Socket.emit('new_microsoft_user', {
       response,
     });
@@ -22,6 +21,7 @@ export default function MicrosoftAuth() {
     });
     history.push("/home");
   }
+  
   function Microsoftresponse(err, response) {
     if(err==undefined){
       console.log('Response:', response);

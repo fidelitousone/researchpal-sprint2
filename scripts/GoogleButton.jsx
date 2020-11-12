@@ -4,8 +4,6 @@ import Socket from './Socket';
 import { useHistory  } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 
-
-
 export default function GoogleAuth() {
   const history = useHistory();
   function handleSubmit(response) {
@@ -24,6 +22,7 @@ export default function GoogleAuth() {
     });
     history.push("/home");
   }
+  
   function responseGoogleSuccess(response) {
     console.log('Success:', response);
     handleSubmit(response);

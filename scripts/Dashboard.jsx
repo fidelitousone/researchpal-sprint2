@@ -10,13 +10,16 @@ export default function Dashboard() {
     const [projects, setProjects] = React.useState(0);
     const [user, setUser] = React.useState(0);
     
-    function  getUserData(){
-        Socket.emit('request_user_info');
-        Socket.on('user_info', (data) => {
-            console.log("Received user info from server: " + data);
-            setUser(data);
-        });
+    function getUserInfo(){
+        React.useEffect(() => {
+          Socket.emit('request_user_info');
+          Socket.on('user_info', (data) => {
+              console.log("Received user info from server: " + data);
+              setUser(data);
+          });
+        },[]);
     }
+    getUserInfo();
     
     function getAllProjects() {
         React.useEffect(() => {
@@ -30,7 +33,6 @@ export default function Dashboard() {
     function alertClicked() {
       alert('You clicked the third ListGroupItem');
     }
-  //getUserData();
   getAllProjects();
   return (
     <div className="Dashboard">
@@ -54,7 +56,6 @@ export default function Dashboard() {
             <Link to="/project">
             <Button className="btn-outline-primary">Project</Button>
             </Link>
-            <Button onClick={getUserData}className="btn-outline-primary">User</Button>
           </ButtonGroup>
         </div>
         <br />

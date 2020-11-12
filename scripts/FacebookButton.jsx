@@ -11,16 +11,25 @@ export default function FacebookAuth() {
       response,
     });
     console.log('Sent new facebook user to server!');
+    
+    Socket.emit('login_request', {
+        'email': response["email"],
+    });
+    
+    Socket.on('login_response', (data) => {
+      console.log(data);
+    });
+    
     history.push("/home");
   }
 
   function responseFacebookSuccess(response) {
-    if(response['status']=='connected'){
-      handleSubmit(response);
-      console.log('success:', response);
+    if(response['status']=='unknown'){
+      console.log('failure:', response);
     }
     else{
-      console.log('failure:', response);
+      handleSubmit(response);
+      console.log('success:', response);
     }
   }
 
