@@ -16,7 +16,8 @@ def emit_projects(user_id):
             'owner_id':x.owner_id,
             'project_name':x.project_name
         }
-    socketio.emit('all_projects', json.dumps(response))
+    print(response)
+    socketio.emit('all_projects', response)
 
 
 def new_google_user(profile):
@@ -108,9 +109,9 @@ def on_login_request(data):
 @socketio.on("create_project")
 def on_new_project(data):
     project_id = uuid.uuid4()
-    owner_id = data["user_id"]
     project_name = data["project_name"]
-    sources = None
+    owner_id="8aa7fcb2-8c5a-4c45-8336-d4eb8b8a03c4"#TODO get owner_id somehow
+    sources = []
     with app.app_context():
         new_project = Projects(project_id, owner_id, project_name, sources)
         db.session.add(new_project)
