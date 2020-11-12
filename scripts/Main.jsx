@@ -7,13 +7,18 @@ import Project from './Project';
 import 'bootstrap/dist/css/bootstrap.css';
 
 ReactDOM.render(
-  <BrowserRouter>
-    <div>
-      <Switch>
-        <Route path="/" component={Landing} exact />
-        <Route path="/home" component={Dashboard} />
-        <Route path="/project" component={Project} />
-      </Switch>
-    </div>
-  </BrowserRouter>, document.getElementById('root'),
+    <BrowserRouter>
+        <div>
+            <Switch>
+             <Route path="/" component={Landing} exact/>
+             <Route path="/home" component={Dashboard}/>
+             <Route path="/project" component={Project}/>
+           </Switch>
+        </div> 
+    </BrowserRouter>, document.getElementById('root')
 );
+
+
+ 
+   
+       

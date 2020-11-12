@@ -1,9 +1,24 @@
 import uuid
+import json
 from flask import render_template, session
 
 
 from server import create_app, run_app, db, socketio
 from server.models import AuthType, Users, Projects, Sources
+
+
+def emit_projects(user_id):
+    with app.app_context():
+        user_info = db.session.query(Projects).filter(Projects.owner_id == user_id).all()
+    response={}
+    for x in user_info:
+        response[x.project_id]={
+            'project_id':x.project_id,
+            'owner_id':x.owner_id,
+            'project_name':x.project_name
+        }
+    print(response)
+    socketio.emit('all_projects', response)
 
 
 def new_google_user(profile):
@@ -56,12 +71,17 @@ with app.app_context():
     db.create_all()
     db.session.commit()
 
-
 @socketio.on("new_google_user")
 def on_new_google_user(data):
     try:
         profile = data["response"]["profileObj"]
-        new_google_user(profile)
+        email = profile["email"]
+        with app.app_context():
+            user_info = db.session.query(Users).filter(Users.email == email).first()
+        if user_info:
+            print("user exists")
+        else:
+            new_google_user(profile)
     except KeyError:
         print("invalid user object")
 
@@ -79,20 +99,36 @@ def on_new_facebook_user(data):
 def on_new_microsoft_user(data):
     try:
         profile = data["response"]["account"]
-        new_microsoft_user(profile)
+        email = profile["email"]
+        with app.app_context():
+            user_info = db.session.query(Users).filter(Users.email == email).first()
+        if user_info:
+            print("user exists")
+        else:
+            new_microsoft_user(profile)
     except KeyError:
         print("invalid user object")
 
 
 @socketio.on("login_request")
 def on_login_request(data):
-    user_id = data["user_id"]
-
+    email = data["email"]
     with app.app_context():
-        user_info = db.session.query(Users).filter(Users.user_id == user_id).one()
-
+        user_info = db.session.query(Users).filter(Users.email == email).one()
     socketio.emit("login_response", user_info.json())
 
+
+@socketio.on("create_project")
+def on_new_project(data):
+    project_id = uuid.uuid4()
+    project_name = data["project_name"]
+    owner_id="8aa7fcb2-8c5a-4c45-8336-d4eb8b8a03c4"#TODO get owner_id somehow
+    sources = []
+    with app.app_context():
+        new_project = Projects(project_id, owner_id, project_name, sources)
+        db.session.add(new_project)
+        db.session.commit()
+    emit_projects(owner_id)
 
 @app.route("/")
 @app.route("/home")
