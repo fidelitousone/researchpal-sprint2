@@ -5,9 +5,6 @@ orbs:
 
 jobs:
   build-and-test:
-    filters:
-      branches:
-        only: main
     executor: python/default
     steps:
       - checkout
@@ -23,4 +20,7 @@ workflows:
   main:
     jobs:
       - build-and-test
+        filters:
+          branches:
+            only: main
 
