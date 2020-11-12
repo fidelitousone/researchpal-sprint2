@@ -1,19 +1,12 @@
 import uuid
 from flask import render_template, session
 
-
-<<<<<<< HEAD
 from server import create_app, run_app, db, socketio, join_room
 from server.models import AuthType, Users, Projects, Sources
-=======
-from server import create_app, run_app, db, socketio
-from server.models import AuthType, Projects, Sources, Users
->>>>>>> bfda920492ae0ee45d49a2669f541b91cfce44b5
 
 
 def emit_projects(email):
     with app.app_context():
-<<<<<<< HEAD
         user_info = db.session.query(Projects).filter(Projects.owner_id == email).all()
     response={}
     for x in user_info:
@@ -23,21 +16,6 @@ def emit_projects(email):
             'project_name':x.project_name
         }
     socketio.emit('all_projects', response, room=email)
-=======
-        user_projects = (
-            db.session.query(Projects).filter(Projects.owner_id == user_id).all()
-        )
-    response = {
-        project.project_id: {
-            "project_id": project.project_id,
-            "owner_id": project.owner_id,
-            "project_name": project.project_name,
-            "sources": [],
-        }
-        for project in user_projects
-    }
-    socketio.emit("all_projects", response)
->>>>>>> bfda920492ae0ee45d49a2669f541b91cfce44b5
 
 
 def new_google_user(profile):
@@ -143,7 +121,6 @@ def on_login_request(data):
     session['user'] = email
     join_room(email);
     with app.app_context():
-<<<<<<< HEAD
         user_info = db.session.query(Users).filter(Users.email == email).one().json()
     socketio.emit("login_response", user_info, room=email)
     
@@ -158,21 +135,13 @@ def on_request_user_data():
         emit_projects(email)
     else:
         print("not logged in")
-=======
-        user_info = db.session.query(Users).filter(Users.email == email).one()
     socketio.emit("login_response", user_info.json())
-
->>>>>>> bfda920492ae0ee45d49a2669f541b91cfce44b5
 
 @socketio.on("create_project")
 def on_new_project(data):
     project_id = uuid.uuid4()
     project_name = data["project_name"]
-<<<<<<< HEAD
     owner_id=session['user']
-=======
-    owner_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"  # TODO get owner_id somehow
->>>>>>> bfda920492ae0ee45d49a2669f541b91cfce44b5
     sources = []
     with app.app_context():
         new_project = Projects(project_id, owner_id, project_name, sources)
