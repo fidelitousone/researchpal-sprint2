@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, ButtonGroup, Badge, Image, Nav, DropdownButton, Dropdown } from 'react-bootstrap';
+import { Button, ButtonGroup, Badge, Image, Nav, DropdownButton } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -11,7 +11,6 @@ export default function Dashboard() {
         <DropdownButton id="dropdown-basic-button" title={
           <Image src="static/profile-blank.jpg" className="rounded-circle border" width="50px" height="50px"/>
         }>
-          <p>Hello</p>
         </DropdownButton>
       </Nav>
       
