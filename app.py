@@ -1,14 +1,19 @@
 import uuid
-import json
 from flask import render_template, session
 
 
+<<<<<<< HEAD
 from server import create_app, run_app, db, socketio, join_room
 from server.models import AuthType, Users, Projects, Sources
+=======
+from server import create_app, run_app, db, socketio
+from server.models import AuthType, Projects, Sources, Users
+>>>>>>> bfda920492ae0ee45d49a2669f541b91cfce44b5
 
 
 def emit_projects(email):
     with app.app_context():
+<<<<<<< HEAD
         user_info = db.session.query(Projects).filter(Projects.owner_id == email).all()
     response={}
     for x in user_info:
@@ -18,36 +23,50 @@ def emit_projects(email):
             'project_name':x.project_name
         }
     socketio.emit('all_projects', response, room=email)
+=======
+        user_projects = (
+            db.session.query(Projects).filter(Projects.owner_id == user_id).all()
+        )
+    response = {
+        project.project_id: {
+            "project_id": project.project_id,
+            "owner_id": project.owner_id,
+            "project_name": project.project_name,
+            "sources": [],
+        }
+        for project in user_projects
+    }
+    socketio.emit("all_projects", response)
+>>>>>>> bfda920492ae0ee45d49a2669f541b91cfce44b5
 
 
 def new_google_user(profile):
-    user_name = profile["name"]
     email = profile["email"]
+    user_name = profile["name"]
     profile_picture = profile["imageUrl"]
     auth_type = AuthType.GOOGLE
     user_id = uuid.uuid4()
     with app.app_context():
-        db.session.add(Users(user_id, user_name, auth_type, email, profile_picture))
+        new_user = Users(email, user_id, user_name, auth_type, profile_picture)
+        db.session.add(new_user)
         db.session.commit()
 
 
 def new_facebook_user(profile):
+    email = profile["email"]
     user_name = profile["name"]
-    try:
-        email = profile["email"]
-    except KeyError:
-        email = None
     profile_picture = profile["picture"]["data"]["url"]
     auth_type = AuthType.FACEBOOK
     user_id = uuid.uuid4()
     with app.app_context():
-        db.session.add(Users(user_id, user_name, auth_type, email, profile_picture))
+        new_user = Users(email, user_id, user_name, auth_type, profile_picture)
+        db.session.add(new_user)
         db.session.commit()
 
 
 def new_microsoft_user(profile):
-    user_name = profile["name"]
     email = profile["userName"]
+    user_name = profile["name"]
     try:
         profile_picture = profile["imageUrl"]
     except KeyError:
@@ -55,7 +74,7 @@ def new_microsoft_user(profile):
     auth_type = AuthType.MICROSOFT
     user_id = uuid.uuid4()
     with app.app_context():
-        new_user = Users(user_id, user_name, auth_type, email, profile_picture)
+        new_user = Users(email, user_id, user_name, auth_type, profile_picture)
         db.session.add(new_user)
         db.session.commit()
 
@@ -70,6 +89,7 @@ app.config['SESSION_TYPE'] = 'memcache'
 with app.app_context():
     db.create_all()
     db.session.commit()
+
 
 @socketio.on("new_google_user")
 def on_new_google_user(data):
@@ -123,6 +143,7 @@ def on_login_request(data):
     session['user'] = email
     join_room(email);
     with app.app_context():
+<<<<<<< HEAD
         user_info = db.session.query(Users).filter(Users.email == email).one().json()
     socketio.emit("login_response", user_info, room=email)
     
@@ -137,18 +158,28 @@ def on_request_user_data():
         emit_projects(email)
     else:
         print("not logged in")
+=======
+        user_info = db.session.query(Users).filter(Users.email == email).one()
+    socketio.emit("login_response", user_info.json())
+
+>>>>>>> bfda920492ae0ee45d49a2669f541b91cfce44b5
 
 @socketio.on("create_project")
 def on_new_project(data):
     project_id = uuid.uuid4()
     project_name = data["project_name"]
+<<<<<<< HEAD
     owner_id=session['user']
+=======
+    owner_id = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"  # TODO get owner_id somehow
+>>>>>>> bfda920492ae0ee45d49a2669f541b91cfce44b5
     sources = []
     with app.app_context():
         new_project = Projects(project_id, owner_id, project_name, sources)
         db.session.add(new_project)
         db.session.commit()
     emit_projects(owner_id)
+
 
 @app.route("/")
 @app.route("/home")

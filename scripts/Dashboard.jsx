@@ -3,6 +3,7 @@ import Socket from './Socket';
 import { Button, ButtonGroup, Badge, Image, Nav, DropdownButton } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { ListGroup } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { CreateButton } from './CreateProject';
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -29,20 +30,22 @@ export default function Dashboard() {
             });
         });
     }
-    
-    function alertClicked() {
-      alert('You clicked the third ListGroupItem');
-    }
+
   getAllProjects();
   return (
     <div className="Dashboard">
-      <Nav>
-        <h1 align="center">Dashboard <Badge className="badge-primary">{user['email']}</Badge></h1>
+     
+      <div display="flex" flex="0 0 auto" align="center">
+       
+        <span className="h1" position="absolute" left="0">Dashboard <Badge className="badge-primary">{user['email']}</Badge></span>
+        
         <DropdownButton id="dropdown-basic-button" title={
           <Image src="static/profile-blank.jpg" className="rounded-circle border" width="50px" height="50px"/>
         }>
         </DropdownButton>
-      </Nav>
+       
+      </div>
+    
       
       <br />
       <div className="d-flex justify-content-center">
@@ -63,11 +66,11 @@ export default function Dashboard() {
         <ul>
         <br />
         {Object.keys(projects).map((key,val) =>
-          <span>
+          <div key={key} align="center">
             <Button className="btn-outline-secondary" key={key}>{projects[key]['project_name']}</Button>
             <br />
             <br />
-          </span>
+          </div>
         )}
         </ul>
     </div>

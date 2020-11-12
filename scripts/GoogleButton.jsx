@@ -7,16 +7,15 @@ import 'bootstrap/dist/css/bootstrap.css';
 export default function GoogleAuth() {
   const history = useHistory();
   function handleSubmit(response) {
-    
     Socket.emit('new_google_user', {
       response,
     });
     console.log('Sent new google user to server!');
-    
+
     Socket.emit('login_request', {
-        'email': response["profileObj"]["email"],
+      email: response.profileObj.email,
     });
-    
+
     Socket.on('login_response', (data) => {
       console.log(data);
     });

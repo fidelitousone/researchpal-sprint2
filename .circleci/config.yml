@@ -6,12 +6,29 @@ orbs:
 
 jobs:
   build-and-test:
+    docker:
+      - image: circleci/python:3.6.2-stretch-browsers
+        environment:
+          DATABASE_URL: postgresql://postgres@localhost/circle_test?sslmode=disable
+      - image: circleci/postgres:9.6.5-alpine-ram
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: circle_test
+          POSTGRES_PASSWORD: ''
     executor: python/default
     steps:
       - checkout
       - python/load-cache
       - python/install-deps
       - python/save-cache
+      - run:
+          name: Run unit tests
+          command: |
+            python -m coverage run -m pytest tests/
+            python -m coverage report
+            python -m coverage html
+      - store_artifacts:
+          path: htmlcov
 
 workflows:
   main:
