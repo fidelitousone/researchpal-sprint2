@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from flask import Flask
+from flask_session import Session
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 
@@ -13,6 +14,7 @@ PORT = int(os.getenv("PORT", "8080"))
 DATABASE_URL = os.getenv("DATABASE_URL", None)
 
 # Flask app extensions
+session = Session()
 socketio = SocketIO()
 db = SQLAlchemy()
 
@@ -21,9 +23,11 @@ def create_app(
     static_folder: str = "static", template_folder: str = "templates"
 ) -> Flask:
     app = Flask(__name__, static_folder=static_folder, template_folder=template_folder)
+    SESSION_TYPE = 'sqlalchemy'
     app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+    session.init_app(app)
     socketio.init_app(app, cors_allowed_origins="*")
     db.init_app(app)
     return app
