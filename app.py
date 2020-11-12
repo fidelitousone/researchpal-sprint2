@@ -59,7 +59,13 @@ with app.app_context():
 def on_new_google_user(data):
     try:
         profile = data["response"]["profileObj"]
-        new_google_user(profile)
+        email = profile["email"]
+        with app.app_context():
+            user_count = db.session.query(Users).filter(Users.email == email).count()
+        if(user_count==1):
+            print("user exists")
+        else:
+            new_google_user(profile)
     except KeyError:
         print("invalid user object")
 
@@ -77,20 +83,28 @@ def on_new_facebook_user(data):
 def on_new_microsoft_user(data):
     try:
         profile = data["response"]["account"]
-        new_microsoft_user(profile)
+        email = profile["email"]
+        with app.app_context():
+            user_info = db.session.query(Users).filter(Users.email == email)
+        if(len(user_info.all())==1):
+            print("user exists")
+        else:
+            new_microsoft_user(profile)
     except KeyError:
         print("invalid user object")
 
 
 @socketio.on("login_request")
 def on_login_request(data):
-    user_id = data["user_id"]
-
+    email = data["email"]
     with app.app_context():
-        user_info = db.session.query(Users).filter(Users.user_id == user_id).one()
-        print(user_info.json())
-
-    socketio.emit("login_response", user_info.json())
+        user_info = db.session.query(Users).filter(Users.email == email).one()
+    response = {
+        'user_name':user_info.user_name,
+        'email':user_info.email,
+        'profile_picture':user_info.profile_picture
+    }
+    socketio.emit("login_response", response)
 
 
 @app.route("/")

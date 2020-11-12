@@ -8,6 +8,14 @@ export default function MicrosoftAuth() {
       response,
     });
     console.log('Sent new Microsoft user to server!');
+    
+    Socket.emit('login_request', {
+        'email': response["account"]["userName"],
+    });
+    
+    Socket.on('login_response', (data) => {
+      console.log(data);
+    });
   }
   function responseMicrosoftSuccess(err, response) {
     console.log(err);
