@@ -23,7 +23,7 @@ export default function MicrosoftAuth() {
       console.log('Response:', response);
       handleSubmit(response);
     }
-    console.log("Microsoft Authentication Failure, user cancelled or undefined response given");
+    console.log('Microsoft auth failure.');
   }
 
   return (

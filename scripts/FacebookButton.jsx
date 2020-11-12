@@ -11,8 +11,12 @@ export default function FacebookAuth() {
   }
 
   function responseFacebookSuccess(response) {
-    console.log('Success:', response);
-    handleSubmit(response);
+    if (response.status !== 'unknown') {
+      console.log('Success:', response);
+      handleSubmit(response);
+    } else {
+      console.log('Facebook auth failure.');
+    }
   }
 
   return (
