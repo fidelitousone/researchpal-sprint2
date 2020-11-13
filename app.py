@@ -118,8 +118,10 @@ def on_new_microsoft_user(data):
 @socketio.on("login_request")
 def on_login_request(data):
     email = data["email"]
+    print(email, " from Facebook button")
     print("session set")
     session['user'] = email
+    print("In login_request", session.get('user'))
     join_room(email);
     with app.app_context():
         user_info = db.session.query(Users).filter(Users.email == email).one().json()
@@ -127,6 +129,7 @@ def on_login_request(data):
     
 @socketio.on("request_user_info")
 def on_request_user_data():
+    print("In request_user_info", session.get('user'))
     if not session.get('user') is None:
         email = session.get('user')
         print('session:' + str(session.get('user')))

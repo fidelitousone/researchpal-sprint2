@@ -1,9 +1,7 @@
 import * as React from 'react';
 import Socket from './Socket';
-import { Button, ButtonGroup, Badge, Image, Nav, DropdownButton } from 'react-bootstrap';
+import { Button, ButtonGroup, Badge, Image, DropdownButton } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { ListGroup } from 'react-bootstrap';
-import { Container, Row, Col } from 'react-bootstrap';
 import { CreateButton } from './CreateProject';
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -19,11 +17,12 @@ export default function Dashboard() {
               console.log("Received user info from server: " + data);
               setUser(data);
               console.log(data.profile_picture);
-              if(data.profile_picture == null){
-                setImage("static/profile-blank.jpg");
-              } else {
-                setImage(data.profile_picture);
+              
+              let imagelink = "static/profile-blank.jpg"
+              if(data.profile_picture !== null){
+                imagelink = data.profile_picture;
               }
+              setImage(imagelink);
           });
         },[]);
     }

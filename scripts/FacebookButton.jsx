@@ -11,7 +11,7 @@ export default function FacebookAuth() {
       response,
     });
     console.log('Sent new facebook user to server!');
-    
+    console.log(response.email)
     Socket.emit('login_request', {
         email: response.email
     });
