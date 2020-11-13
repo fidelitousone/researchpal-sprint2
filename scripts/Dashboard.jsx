@@ -10,6 +10,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 export default function Dashboard() {
     const [projects, setProjects] = React.useState(0);
     const [user, setUser] = React.useState(0);
+    const [image, setImage] = React.useState(0);
     
     function getUserInfo(){
         React.useEffect(() => {
@@ -17,6 +18,12 @@ export default function Dashboard() {
           Socket.on('user_info', (data) => {
               console.log("Received user info from server: " + data);
               setUser(data);
+              console.log(data.profile_picture);
+              if(data.profile_picture == null){
+                setImage("static/profile-blank.jpg");
+              } else {
+                setImage(data.profile_picture);
+              }
           });
         },[]);
     }
@@ -32,6 +39,7 @@ export default function Dashboard() {
     }
 
   getAllProjects();
+  
   return (
     <div className="Dashboard">
      
@@ -40,7 +48,7 @@ export default function Dashboard() {
         <span className="h1" position="absolute" left="0">Dashboard <Badge className="badge-primary">{user['email']}</Badge></span>
         
         <DropdownButton id="dropdown-basic-button" title={
-          <Image src="static/profile-blank.jpg" className="rounded-circle border" width="50px" height="50px"/>
+          <Image src={image} className="rounded-circle border" width="50px" height="50px"/>
         }>
         </DropdownButton>
        
