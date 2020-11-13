@@ -53,7 +53,8 @@ export default function Dashboard() {
           <Image src={image} className="rounded-circle border" width="50px" height="50px"/>
         }>
         </DropdownButton>
-       
+        
+        <Logout />
       </div>
     
       
@@ -69,7 +70,6 @@ export default function Dashboard() {
             <Link to="/project">
             <Button className="btn-outline-primary">Project</Button>
             </Link>
-            <Logout />
           </ButtonGroup>
         </div>
         <br />
