@@ -13,7 +13,7 @@ def app():
     yield app
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def client(app):
     app.config["TESTING"] = True
 
@@ -21,11 +21,11 @@ def client(app):
         yield test_client
 
 
-@pytest.fixture
-def socketio_client(app):
+@pytest.fixture(scope="module")
+def socketio_client(app, client):
     from app import socketio  # pylint: disable = import-outside-toplevel
 
-    yield socketio.test_client(app)
+    yield socketio.test_client(app, flask_test_client=client)
 
 
 @pytest.fixture

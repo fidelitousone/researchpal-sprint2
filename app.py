@@ -1,4 +1,5 @@
 import uuid
+
 from flask import render_template, session
 from flask_socketio import join_room
 
