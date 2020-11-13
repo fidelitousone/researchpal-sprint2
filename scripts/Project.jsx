@@ -18,7 +18,7 @@ export default function Project() {
 
   function renderProject() {
     if (projectSelected()) {
-      return (<CreateSource />);
+      return (<CreateSource usingProject={projectName} />);
     }
     return (
       <div>
