@@ -13,8 +13,8 @@ function handleSubmit(event) {
         var exists;
         
         Socket.emit('check_project_exists', {
-            'project_name': projectName.value,
-            'socketid': Socket.id,
+            'project_name': projectName,
+            'socketid': Socket.id
         });
         
         Socket.on('get_project_exists', (data) => {
