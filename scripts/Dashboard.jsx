@@ -2,6 +2,7 @@ import * as React from 'react';
 import Socket from './Socket';
 import { Button, ButtonGroup, Badge, Image, Nav, DropdownButton } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { Logout } from './LogoutButton';
 import { ListGroup } from 'react-bootstrap';
 import { Container, Row, Col } from 'react-bootstrap';
 import { CreateButton } from './CreateProject';
@@ -59,6 +60,7 @@ export default function Dashboard() {
             <Link to="/project">
             <Button className="btn-outline-primary">Project</Button>
             </Link>
+            <Logout />
           </ButtonGroup>
         </div>
         <br />
