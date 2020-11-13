@@ -32,7 +32,7 @@ def create_app(
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     session.init_app(app)
-    socketio.init_app(app, cors_allowed_origins="*")
+    socketio.init_app(app, cors_allowed_origins="*", manage_session=False)
     db.init_app(app)
     return app
 
