@@ -89,6 +89,7 @@ def on_new_facebook_user(data):
     try:
         profile = data["response"]
         email = profile["email"]
+        print(email)
         with app.app_context():
             user_info = db.session.query(Users).filter(Users.email == email).first()
         if user_info:
