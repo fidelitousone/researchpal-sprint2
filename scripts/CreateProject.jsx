@@ -23,7 +23,7 @@ function handleSubmit(event) {
           console.log(exists);
         });
         
-        return exists;
+        return exists === "true";
     }
         
     if(/\s/g.test(projectName.value) || projectName.value === ''){
@@ -32,8 +32,9 @@ function handleSubmit(event) {
     //else if(exists){
         //ReactDOM.render(<Alert className="alert-warning">Warning: Project name already exists.  Please try again with a unique project name.</Alert>, document.getElementById("notif_project"));
     else {
-         
+        
         var exists = checkProjectName(projectName.value);
+        console.log("FINAL CHECK");
         console.log(exists);
         
         if(exists !== false){

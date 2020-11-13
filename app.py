@@ -174,7 +174,13 @@ def on_check_project(data):
         project_name = data['project_name']
         
         with app.app_context():
-            exists = { 'exists': db.session.query(Projects).filter(Projects.project_name == project_name).filter(Projects.owner_id == owner_id).one() is not None }
+            value = db.session.query(Projects.project_name).filter(Projects.project_name == project_name, Projects.owner_id == owner_id).first() is not None
+            if value == True:
+                value = "true"
+            else:
+                value = "false"
+            exists = { 'exists': value }
+            print(exists) 
         
         socketio.emit('get_project_exists', exists, room=email)
     else:
