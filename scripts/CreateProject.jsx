@@ -8,9 +8,10 @@ function handleSubmit(event) {
     var projectName = document.getElementById("name_input");
     console.log("PROJECT: ");
     console.log(projectName.value);
+    var exists = "false";
     
     function checkProjectName(projectName){
-        var exists;
+        var doExist = exists;
         
         Socket.emit('check_project_exists', {
             'project_name': projectName,
@@ -18,12 +19,19 @@ function handleSubmit(event) {
         });
         
         Socket.on('get_project_exists', (data) => {
-          exists = data['exists'];
-          console.log("CHECK");
-          console.log(exists);
+            console.log("Visible");
+            console.log(doExist);
+            doExist="true";
+            console.log(doExist);
+        //   let newExist = data['exists'];
+        //   console.log("CHECK");
+        //   console.log(newExist);
+        //   return newExist;
+
         });
-        
-        return exists === "true";
+        console.log("CHECK");
+        console.log(doExist);
+        return doExist;
     }
         
     if(/\s/g.test(projectName.value) || projectName.value === ''){
@@ -33,11 +41,11 @@ function handleSubmit(event) {
         //ReactDOM.render(<Alert className="alert-warning">Warning: Project name already exists.  Please try again with a unique project name.</Alert>, document.getElementById("notif_project"));
     else {
         
-        var exists = checkProjectName(projectName.value);
+        var doesExist = checkProjectName(projectName.value);
         console.log("FINAL CHECK");
-        console.log(exists);
+        console.log(doesExist);
         
-        if(exists !== false){
+        if(doesExist == "true"){
             ReactDOM.render(<Alert className="alert-warning">Warning: Project name already exists.  Please try again with a unique project name.</Alert>, document.getElementById("notif_project"));
         } else {
             ReactDOM.render(<span></span>, document.getElementById("notif_project"))
