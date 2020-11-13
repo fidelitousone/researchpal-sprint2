@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Socket from './Socket';
-import { Button, ButtonGroup, Badge, Image, Nav, DropdownButton } from 'react-bootstrap';
+import { Button, ButtonGroup, Badge, Image, DropdownButton } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Logout } from './LogoutButton';
 import { ListGroup } from 'react-bootstrap';
@@ -11,6 +11,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 export default function Dashboard() {
     const [projects, setProjects] = React.useState(0);
     const [user, setUser] = React.useState(0);
+    const [image, setImage] = React.useState(0);
     
     function getUserInfo(){
         React.useEffect(() => {
@@ -18,6 +19,13 @@ export default function Dashboard() {
           Socket.on('user_info', (data) => {
               console.log("Received user info from server: " + data);
               setUser(data);
+              console.log(data.profile_picture);
+              
+              let imagelink = "static/profile-blank.jpg"
+              if(data.profile_picture !== null){
+                imagelink = data.profile_picture;
+              }
+              setImage(imagelink);
           });
         },[]);
     }
@@ -33,6 +41,7 @@ export default function Dashboard() {
     }
 
   getAllProjects();
+  
   return (
     <div className="Dashboard">
      
@@ -41,7 +50,7 @@ export default function Dashboard() {
         <span className="h1" position="absolute" left="0">Dashboard <Badge className="badge-primary">{user['email']}</Badge></span>
         
         <DropdownButton id="dropdown-basic-button" title={
-          <Image src="static/profile-blank.jpg" className="rounded-circle border" width="50px" height="50px"/>
+          <Image src={image} className="rounded-circle border" width="50px" height="50px"/>
         }>
         </DropdownButton>
        
