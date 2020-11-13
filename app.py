@@ -162,7 +162,18 @@ def on_new_project(data):
         emit_projects(email,owner_id)
     else:
         print("not logged in")
-        
+
+
+@socketio.on("select_project")
+def on_select_project(data):
+    project_name = data["project_name"]
+    print(project_name)
+    socketio.emit(
+        "set_project",
+        {
+            "project_name": project_name
+        }
+    )
 
 @app.route("/")
 @app.route("/home")

@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import * as React from 'react';
 import {
   Button, ButtonGroup, Badge, Image, DropdownButton, ListGroup, Container, Row, Col,
@@ -13,6 +14,17 @@ export default function Dashboard() {
   const [projects, setProjects] = React.useState(0);
   const [user, setUser] = React.useState(0);
   const [image, setImage] = React.useState(0);
+
+  function getStatus(key) {
+    console.log(key);
+    console.log('Button Clicked');
+    Socket.emit(
+      'select_project',
+      {
+        project_name: key,
+      },
+    );
+  }
 
   function getUserInfo() {
     React.useEffect(() => {
@@ -83,7 +95,7 @@ export default function Dashboard() {
         <br />
         {Object.keys(projects).map((key, val) => (
           <div key={key} align="center">
-            <Button className="btn-outline-secondary" key={key}>{projects[key].project_name}</Button>
+            <Button onClick={() => getStatus(projects[key].project_name)} className="btn-outline-secondary" key={key}>{projects[key].project_name}</Button>
             <br />
             <br />
           </div>

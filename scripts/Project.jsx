@@ -1,11 +1,34 @@
 import * as React from 'react';
 import {
-  Button, ButtonGroup, Badge, Image, DropdownButton,
+  Button, ButtonGroup, Badge, Image, DropdownButton, Alert,
 } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
+import { render } from 'react-dom';
 
 export default function Project() {
+  const [projectName, setProjectName] = React.useState('');
+
+  function projectSelected() {
+    if (projectName === '') {
+      return false;
+    }
+    return true;
+  }
+
+  function renderProject() {
+    if (projectSelected) {
+      // TODO Handle project selection
+    }
+    return (
+      <div>
+        <span className="d-flex justify-content-center">
+          A project is not selected, please select a project from the Dashboard.
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div className="Project">
       <div display="flex" flex="0 0 auto" align="center">
@@ -36,7 +59,9 @@ export default function Project() {
             <Button className="btn-outline-primary">Project</Button>
           </Link>
         </ButtonGroup>
+        <br />
       </div>
+      {renderProject()}
     </div>
   );
 }
