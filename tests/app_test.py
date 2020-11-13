@@ -132,6 +132,25 @@ class TestLoginFlow:
         assert login_response == mocked_user_model.json()
 
 
+class TestLogoutFlow:
+    def test_on_logout_no_login(self, db, socketio_client):
+        socketio_client.emit("logout")
+        recieved = socketio_client.get_received()
+        assert recieved == []
+
+    def test_on_logout(self, db, socketio_client, mocked_user_model, mocked_login_request):
+        # Simulate login
+        db.session.add(mocked_user_model)
+        db.session.commit()
+        socketio_client.emit("login_request", mocked_login_request)
+        socketio_client.get_received()  # Clear data emitted from login_request
+
+        # Test original flow
+        socketio_client.emit("logout")
+        recieved = socketio_client.get_received()
+        assert recieved == []
+
+
 class TestProjectFlow:
     def test_on_create_project_no_login(self, db, socketio_client, mocked_new_project):
         with pytest.raises(TypeError):
@@ -163,3 +182,25 @@ class TestProjectFlow:
 
         [all_projects] = recieved[0]["args"]
         assert all_projects == mocked_create_project_response
+
+
+class TestUserInfo:
+    def test_on_request_user_info_no_login(self, db, socketio_client):
+        socketio_client.emit("request_user_info")
+        recieved = socketio_client.get_received()
+        assert recieved == []
+
+    def test_on_request_user_info(self, db, socketio_client, mocked_user_model, mocked_login_request):
+        # Simulate login
+        db.session.add(mocked_user_model)
+        db.session.commit()
+        socketio_client.emit("login_request", mocked_login_request)
+        socketio_client.get_received()  # Clear data emitted from login_request
+
+        # Test original flow
+        socketio_client.emit("request_user_info")
+        recieved = socketio_client.get_received()
+        assert recieved[0]["name"] == "user_info"
+
+        [user_info] = recieved[0]["args"]
+        assert user_info == mocked_user_model.json()
