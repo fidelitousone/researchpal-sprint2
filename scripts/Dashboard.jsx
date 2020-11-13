@@ -1,9 +1,8 @@
 import * as React from 'react';
 import {
-  Button, ButtonGroup, Badge, Image, DropdownButton, 
-, ListGroup , Container, Row, Col } from 'react-bootstrap';
+  Button, ButtonGroup, Badge, Image, DropdownButton, ListGroup, Container, Row, Col,
+} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-
 
 import { Logout } from './LogoutButton';
 import Socket from './Socket';
@@ -19,7 +18,7 @@ export default function Dashboard() {
     React.useEffect(() => {
       Socket.emit('request_user_info');
       Socket.on('user_info', (data) => {
-        console.log(`Received user info from server: ${ data}`);
+        console.log(`Received user info from server: ${data}`);
         setUser(data);
         console.log(data.profile_picture);
 
@@ -36,7 +35,7 @@ export default function Dashboard() {
   function getAllProjects() {
     React.useEffect(() => {
       Socket.on('all_projects', (data) => {
-        console.log(`Received projects from server: ${ data}`);
+        console.log(`Received projects from server: ${data}`);
         setProjects(data);
       });
     });
@@ -51,15 +50,15 @@ export default function Dashboard() {
 
         <span className="h1" position="absolute" left="0">
           Dashboard
-<Badge className="badge-primary">{user.email}</Badge>
+          <Badge className="badge-primary">{user.email}</Badge>
         </span>
 
         <DropdownButton
           id="dropdown-basic-button"
-title={
-  <Image src={image} className="rounded-circle border" width="50px" height="50px" />
+          title={
+            <Image src={image} className="rounded-circle border" width="50px" height="50px" />
         }
-         />
+        />
 
         <Logout />
       </div>
@@ -84,11 +83,11 @@ title={
         <br />
         {Object.keys(projects).map((key, val) => (
           <div key={key} align="center">
-              <Button className="btn-outline-secondary" key={key}>{projects[key].project_name}</Button>
-              <br />
-              <br />
-            </div>
-        ),)}
+            <Button className="btn-outline-secondary" key={key}>{projects[key].project_name}</Button>
+            <br />
+            <br />
+          </div>
+        ))}
       </ul>
     </div>
   );
