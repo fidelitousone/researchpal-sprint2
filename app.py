@@ -152,29 +152,6 @@ def on_new_project(data):
     else:
         print("not logged in")
 
-@socketio.on("check_project_exists")
-def on_check_project(data):
-    if not session.get('user') is None:
-        email = session.get('user')
-        with app.app_context():
-            user_info = db.session.query(Users).filter(Users.email == email).one().json()
-        owner_id=user_info['user_id']
-        print(data)
-        project_name = data['project_name']
-        
-        with app.app_context():
-            value = db.session.query(Projects.project_name).filter(Projects.project_name == project_name, Projects.owner_id == owner_id).first() is not None
-            if value == True:
-                value = "true"
-            else:
-                value = "false"
-            exists = { 'exists': value }
-            print(exists) 
-        
-        socketio.emit('get_project_exists', exists, room=email)
-    else:
-        print("not logged in")
-
 @app.route("/")
 @app.route("/home")
 @app.route("/project")
