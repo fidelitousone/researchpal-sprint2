@@ -4,7 +4,7 @@ import {
 } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
-import { render } from 'react-dom';
+import CreateSource from './CreateSource';
 
 export default function Project() {
   const [projectName, setProjectName] = React.useState('');
@@ -18,7 +18,7 @@ export default function Project() {
 
   function renderProject() {
     if (projectSelected) {
-      // TODO Handle project selection
+      <CreateSource />;
     }
     return (
       <div>
