@@ -25,7 +25,9 @@ def create_app(
 ) -> Flask:
     app = Flask(__name__, static_folder=static_folder, template_folder=template_folder)
     app.config["SECRET_KEY"] = SECRET_KEY
+    app.config["SESSION_PERMANENT"] = True
     app.config["SESSION_TYPE"] = "sqlalchemy"
+    app.config["SESSION_SQLALCHEMY"] = db
     app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 

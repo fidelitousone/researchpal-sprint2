@@ -1,6 +1,5 @@
 import uuid
 from flask import render_template, session
-from flask_session import SqlAlchemySessionInterface
 from flask_socketio import join_room
 
 from server import create_app, run_app, db, socketio
@@ -39,7 +38,6 @@ def add_new_user(email, user_id, user_name, auth_type, profile_picture):
 STATIC_FOLDER = "../static"
 TEMPLATE_FOLDER = "../templates"
 app = create_app(STATIC_FOLDER, TEMPLATE_FOLDER)
-SqlAlchemySessionInterface(app, db, "sessions", "sess_")
 with app.app_context():
     db.create_all()
     db.session.commit()
