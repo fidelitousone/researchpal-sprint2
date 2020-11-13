@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { Button, ButtonGroup } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 
+
 export default function Landing() {
   return (
     <div className="Landing">
@@ -16,13 +17,15 @@ export default function Landing() {
       <h2 align="center">Log in below:</h2>
       <div className="d-flex justify-content-center">
           <div className="align-self-center px-2">
-            <GoogleAuth />
+              <GoogleAuth />
           </div>
           <div className="align-self-center px-2">
-            <MicrosoftAuth />
+              <MicrosoftAuth />
           </div>
           <div className="align-self-center px-2">
-            <FacebookAuth />
+            <Link to="/home">
+              <FacebookAuth />
+            </Link>
           </div>
       </div>
       <br /><br />

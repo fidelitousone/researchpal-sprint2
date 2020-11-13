@@ -1,21 +1,35 @@
 import * as React from 'react';
 import FacebookLogin from 'react-facebook-login';
 import Socket from './Socket';
+import { useHistory  } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.css';
 
 export default function FacebookAuth() {
+  const history = useHistory();
   function handleSubmit(response) {
     Socket.emit('new_facebook_user', {
       response,
     });
     console.log('Sent new facebook user to server!');
+    
+    Socket.emit('login_request', {
+        'email': response["email"],
+    });
+    
+    Socket.on('login_response', (data) => {
+      console.log(data);
+    });
+    
+    history.push("/home");
   }
 
   function responseFacebookSuccess(response) {
-    if (response.status !== 'unknown') {
-      console.log('Success:', response);
+    if(response['status']=='unknown'){
+      console.log('failure:', response);
+    }
+    else{
       handleSubmit(response);
-    } else {
-      console.log('Facebook auth failure.');
+      console.log('success:', response);
     }
   }
 

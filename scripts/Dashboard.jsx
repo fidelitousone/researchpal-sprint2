@@ -9,11 +9,23 @@ import 'bootstrap/dist/css/bootstrap.css';
 
 export default function Dashboard() {
     const [projects, setProjects] = React.useState(0);
+    const [user, setUser] = React.useState(0);
+    
+    function getUserInfo(){
+        React.useEffect(() => {
+          Socket.emit('request_user_info');
+          Socket.on('user_info', (data) => {
+              console.log("Received user info from server: " + data);
+              setUser(data);
+          });
+        },[]);
+    }
+    getUserInfo();
     
     function getAllProjects() {
         React.useEffect(() => {
             Socket.on('all_projects', (data) => {
-                console.log("Received messages from server: " + data);
+                console.log("Received projects from server: " + data);
                 setProjects(data);
             });
         });
@@ -25,8 +37,7 @@ export default function Dashboard() {
      
       <div display="flex" flex="0 0 auto" align="center">
        
-        <span className="h1" position="absolute" left="0">Dashboard <Badge className="badge-primary">User</Badge></span>
-        
+        <span className="h1" position="absolute" left="0">Dashboard <Badge className="badge-primary">{user['email']}</Badge></span>
         
         <DropdownButton id="dropdown-basic-button" title={
           <Image src="static/profile-blank.jpg" className="rounded-circle border" width="50px" height="50px"/>

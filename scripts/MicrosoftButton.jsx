@@ -1,8 +1,11 @@
 import * as React from 'react';
 import MicrosoftLogin from 'react-microsoft-login';
 import Socket from './Socket';
+import { useHistory  } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.css';
 
 export default function MicrosoftAuth() {
+  const history = useHistory();
   function handleSubmit(response) {
     Socket.emit('new_microsoft_user', {
       response,
@@ -16,20 +19,23 @@ export default function MicrosoftAuth() {
     Socket.on('login_response', (data) => {
       console.log(data);
     });
+    history.push("/home");
   }
-  function responseMicrosoftSuccess(err, response) {
-    if (response !== undefined) {
-      console.log(err);
+  
+  function Microsoftresponse(err, response) {
+    if(err==undefined){
       console.log('Response:', response);
       handleSubmit(response);
     }
-    console.log('Microsoft auth failure.');
+    else{
+      console.log(err);
+    }
   }
 
   return (
     <MicrosoftLogin
       clientId="3a9de6a1-f0fa-480b-bed0-7856d8079de1"
-      authCallback={responseMicrosoftSuccess}
+      authCallback={Microsoftresponse}
       buttonTheme="light_short"
       withUserData="true"
       graphScopes={['profile']}
