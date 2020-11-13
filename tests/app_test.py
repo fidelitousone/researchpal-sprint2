@@ -2,7 +2,7 @@ import pytest
 
 
 # pylint: disable = redefined-outer-name
-@pytest.fixture()
+@pytest.fixture
 def mocked_google_response():
     mocked_response = {
         "response": {
@@ -16,7 +16,7 @@ def mocked_google_response():
     return mocked_response
 
 
-@pytest.fixture()
+@pytest.fixture
 def mocked_facebook_response():
     mocked_response = {
         "response": {
@@ -32,7 +32,7 @@ def mocked_facebook_response():
     return mocked_response
 
 
-@pytest.fixture()
+@pytest.fixture
 def mocked_microsoft_response():
     mocked_response = {
         "response": {
@@ -46,28 +46,25 @@ def mocked_microsoft_response():
     return mocked_response
 
 
-@pytest.fixture()
+@pytest.fixture
 def mocked_invalid_response():
     mocked_response = {"invalid": "response"}
     return mocked_response
 
 
-@pytest.fixture()
+@pytest.fixture
 def mocked_login_request():
     mocked_request = {"email": "fake@e.mail"}
     return mocked_request
 
 
-@pytest.fixture()
+@pytest.fixture
 def mocked_new_project():
     mocked_project = {"project_name": "Test"}
     return mocked_project
- 
-@pytest.fixture()   
-def mocked_session_get():
-    return mock_get
 
-@pytest.fixture()
+
+@pytest.fixture
 def mocked_create_project_response(mocked_uuid, mocked_project_model):
     mocked_uuid = mocked_uuid()
     return {str(mocked_uuid): mocked_project_model.json()}
@@ -120,7 +117,7 @@ class TestNewUser:
 
 class TestLoginFlow:
     def test_on_login_request(
-        self, db, socketio_client, mocked_login_request, mocked_user_model
+        self, db, socketio_client, mocked_user_model, mocked_login_request
     ):
         with pytest.raises(TypeError):
             socketio_client.emit("login_request")
@@ -135,18 +132,34 @@ class TestLoginFlow:
         assert login_response == mocked_user_model.json()
 
 
-"""class TestProjectFlow:
-    def test_on_create_project(
-        self, db, socketio_client, mocked_new_project, mocked_create_project_response, mocked_session_get
-    ):
+class TestProjectFlow:
+    def test_on_create_project_no_login(self, db, socketio_client, mocked_new_project):
         with pytest.raises(TypeError):
             socketio_client.emit("create_project")
-        
-        if not mocked_session_get is None:
-            socketio_client.emit("create_project", mocked_new_project)
-            recieved = socketio_client.get_received()
-            print("HERE:" + str(recieved))
-            assert recieved[0]["name"] == "all_projects"
-    
-            [all_projects] = recieved[0]["args"]
-            assert all_projects == mocked_create_project_response"""
+
+        socketio_client.emit("create_project", mocked_new_project)
+        recieved = socketio_client.get_received()
+        assert recieved == []
+
+    def test_on_create_project(
+        self,
+        db,
+        socketio_client,
+        mocked_user_model,
+        mocked_login_request,
+        mocked_new_project,
+        mocked_create_project_response,
+    ):
+        # Simulate login
+        db.session.add(mocked_user_model)
+        db.session.commit()
+        socketio_client.emit("login_request", mocked_login_request)
+        socketio_client.get_received()  # Clear data emitted from login_request
+
+        # Test original flow
+        socketio_client.emit("create_project", mocked_new_project)
+        recieved = socketio_client.get_received()
+        assert recieved[0]["name"] == "all_projects"
+
+        [all_projects] = recieved[0]["args"]
+        assert all_projects == mocked_create_project_response

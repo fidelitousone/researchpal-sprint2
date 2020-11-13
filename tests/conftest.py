@@ -13,7 +13,7 @@ def app():
     yield app
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(app):
     app.config["TESTING"] = True
 
@@ -21,14 +21,14 @@ def client(app):
         yield test_client
 
 
-@pytest.fixture()
+@pytest.fixture
 def socketio_client(app):
     from app import socketio  # pylint: disable = import-outside-toplevel
 
     yield socketio.test_client(app)
 
 
-@pytest.fixture()
+@pytest.fixture
 def db(app):
     from app import db  # pylint: disable = import-outside-toplevel
 
@@ -38,14 +38,14 @@ def db(app):
         db.drop_all()
 
 
-@pytest.fixture()
+@pytest.fixture
 def mocked_uuid(mocker):
     mock_uuid = mocker.patch.object(uuid, "uuid4", autospec=True)
     mock_uuid.return_value = uuid.UUID(hex="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
     return mock_uuid
 
 
-@pytest.fixture()
+@pytest.fixture
 def mocked_user_model(mocked_uuid):
     mocked_uuid = mocked_uuid()
     return Users(
@@ -57,7 +57,7 @@ def mocked_user_model(mocked_uuid):
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def mocked_project_model(mocked_uuid):
     mocked_uuid = mocked_uuid()
     return Projects(
