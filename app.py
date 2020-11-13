@@ -152,7 +152,6 @@ def on_new_project(data):
     else:
         print("not logged in")
 
-
 @app.route("/")
 @app.route("/home")
 @app.route("/project")
