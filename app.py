@@ -167,11 +167,14 @@ def on_new_project(data):
 @socketio.on("select_project")
 def on_select_project(data):
     project_name = data["project_name"]
-    print(project_name)
+    session["selected_project"] = project_name
+
+@socketio.on("request_selected_project")
+def on_request_project():
     socketio.emit(
-        "set_project",
+        "give_project_name",
         {
-            "project_name": project_name
+            "project_name": session.get("selected_project")
         }
     )
 

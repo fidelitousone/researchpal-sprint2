@@ -5,12 +5,24 @@ import {
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import CreateSource from './CreateSource';
+import Socket from './Socket';
 
 export default function Project() {
   const [projectName, setProjectName] = React.useState('');
 
+  function getProject() {
+    React.useEffect(() => {
+      Socket.emit('request_selected_project');
+      Socket.on('give_project_name', (data) => {
+        console.log(data.project_name);
+        setProjectName(data.project_name);
+        console.log(`project name is ${projectName}`);
+      });
+    }, []);
+  }
+
   function projectSelected() {
-    if (projectName === '') {
+    if (projectName === '' || projectName === null) {
       return false;
     }
     return true;
@@ -28,6 +40,8 @@ export default function Project() {
       </div>
     );
   }
+
+  getProject();
 
   return (
     <div className="Project">
