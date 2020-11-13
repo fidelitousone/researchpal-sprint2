@@ -10,22 +10,22 @@ from app import AuthType, Projects, Users
 def app():
     from app import app  # pylint: disable = import-outside-toplevel
 
-    yield app
+    return app
 
 
 @pytest.fixture(scope="module")
 def client(app):
     app.config["TESTING"] = True
+    app.config["PRESERVE_CONTEXT_ON_EXCEPTION"] = False
 
-    with app.test_client() as test_client:
-        yield test_client
+    return app.test_client()
 
 
 @pytest.fixture(scope="module")
 def socketio_client(app, client):
     from app import socketio  # pylint: disable = import-outside-toplevel
 
-    yield socketio.test_client(app, flask_test_client=client)
+    return socketio.test_client(app, flask_test_client=client)
 
 
 @pytest.fixture
