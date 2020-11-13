@@ -49,7 +49,7 @@ export default function Project() {
 
         <span className="h1" position="absolute" left="0">
           Project
-          <Badge className="badge-primary">Name</Badge>
+          <Badge className="badge-primary">{projectName}</Badge>
         </span>
 
         <DropdownButton
