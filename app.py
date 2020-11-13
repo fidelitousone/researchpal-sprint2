@@ -123,7 +123,12 @@ def on_login_request(data):
     with app.app_context():
         user_info = db.session.query(Users).filter(Users.email == email).one().json()
     socketio.emit("login_response", user_info, room=email)
-    
+
+@socketio.on("logout")
+def on_logout():
+    if not session.get('user') is None:
+        socketio.close_room(session.get('user'))
+
 @socketio.on("request_user_info")
 def on_request_user_data():
     if not session.get('user') is None:
@@ -154,7 +159,6 @@ def on_new_project(data):
     else:
         print("not logged in")
         
-
 
 @app.route("/")
 @app.route("/home")
