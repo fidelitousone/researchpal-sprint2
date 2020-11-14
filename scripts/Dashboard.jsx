@@ -71,7 +71,6 @@ export default function Dashboard() {
             <Image src={image} className="rounded-circle border" width="50px" height="50px" />
         }
         />
-
         <Logout />
       </div>
 

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import CreateSource from './CreateSource';
 import Socket from './Socket';
+import { Logout } from './LogoutButton';
 
 export default function Project() {
   const [projectName, setProjectName] = React.useState('');
@@ -51,13 +52,13 @@ export default function Project() {
           Project
           <Badge className="badge-primary">{projectName}</Badge>
         </span>
-
         <DropdownButton
           id="dropdown-basic-button"
           title={
             <Image src="static/profile-blank.jpg" className="rounded-circle border" width="50px" height="50px" />
         }
         />
+        <Logout />
 
       </div>
       <br />
