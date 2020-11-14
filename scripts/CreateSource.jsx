@@ -19,6 +19,11 @@ export default function CreateSource(props) {
 
   function getAllSources() {
     React.useEffect(() => {
+      Socket.emit('get_all_sources', {
+        project_name: projectName,
+      });
+    }, []);
+    React.useEffect(() => {
       Socket.on('all_sources', (data) => {
         console.log(`Received projects from server: ${data}`);
         setSourcesList(data.sources);

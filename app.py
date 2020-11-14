@@ -172,6 +172,16 @@ def add_source(data):
         print(project_info)
         socketio.emit("all_sources", project_info, room=email)
 
+@socketio.on("get_all_sources")
+def get_all_sources(data):
+        email = session.get("user")
+        name = data["project_name"]
+        with app.app_context():
+            project_info = (
+                db.session.query(Projects).filter(Projects.project_name == name).first().json()
+            )
+        socketio.emit("all_sources", project_info, room=email)
+
 
 @socketio.on("select_project")
 def on_select_project(data):
