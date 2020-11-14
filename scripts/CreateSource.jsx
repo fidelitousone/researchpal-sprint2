@@ -11,8 +11,10 @@ export default function CreateSource(props) {
   const projectName = props.usingProject;
   function handleSubmit(event) {
     const sourceLink = document.getElementById('name_input');
-    if (validator.isEmpty(sourceLink)) {
-      ReactDOM.render(<Alert className="alert-warning">Warning: Project name was empty or only whitespace.  Please try again with a valid project name.</Alert>, document.getElementById('notif_project'));
+    event.preventDefault();
+    if (validator.isEmpty(validator.trim(sourceLink.value))) {
+      ReactDOM.render(<Alert className="alert-warning">Warning: Source name was empty or only whitespace.  Please try again with a valid project name.</Alert>, document.getElementById('notif_project'));
+      event.preventDefault();
     } else {
       console.log(`Got source link: ${sourceLink.value}`);
       Socket.emit('add_source_to_project', {
