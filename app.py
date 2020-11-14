@@ -155,6 +155,7 @@ def on_new_project(data):
 
 @socketio.on("add_source_to_project")
 def add_source(data):
+    email = session.get("user")
     name = data["project_name"]
     source_link = data["source_link"]
     with app.app_context():
@@ -165,7 +166,11 @@ def add_source(data):
         project_info.sources.append(source_link)
         db.session.merge(project_info)
         db.session.commit()
-        print(project_info.sources)
+        project_info = (
+            db.session.query(Projects).filter(Projects.project_name == name).first().json()
+        )
+        print(project_info)
+        socketio.emit("all_sources", project_info, room=email)
 
 
 @socketio.on("select_project")
