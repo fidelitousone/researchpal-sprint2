@@ -138,13 +138,13 @@ class TestLogoutFlow:
         assert recieved == []
 
     def test_on_logout(
-        self, db, socketio_client, mocked_user_model, mocked_login_request
+        self, client, db, socketio_client, mocked_user_model, mocked_login_request
     ):
         # Simulate login
+        with client.session_transaction() as sess:
+            sess["user"] = mocked_user_model.email
         db.session.add(mocked_user_model)
         db.session.commit()
-        socketio_client.emit("login_request", mocked_login_request)
-        socketio_client.get_received()  # Clear data emitted from login_request
 
         # Test original flow
         socketio_client.emit("logout")
@@ -163,18 +163,18 @@ class TestProjectFlow:
 
     def test_on_create_project(
         self,
+        client,
         db,
         socketio_client,
         mocked_user_model,
-        mocked_login_request,
         mocked_new_project,
         mocked_create_project_response,
     ):
         # Simulate login
+        with client.session_transaction() as sess:
+            sess["user"] = mocked_user_model.email
         db.session.add(mocked_user_model)
         db.session.commit()
-        socketio_client.emit("login_request", mocked_login_request)
-        socketio_client.get_received()  # Clear data emitted from login_request
 
         # Test original flow
         socketio_client.emit("create_project", mocked_new_project)
@@ -192,13 +192,13 @@ class TestUserInfo:
         assert recieved == []
 
     def test_on_request_user_info(
-        self, db, socketio_client, mocked_user_model, mocked_login_request
+        self, client, db, socketio_client, mocked_user_model, mocked_login_request
     ):
         # Simulate login
+        with client.session_transaction() as sess:
+            sess["user"] = mocked_user_model.email
         db.session.add(mocked_user_model)
         db.session.commit()
-        socketio_client.emit("login_request", mocked_login_request)
-        socketio_client.get_received()  # Clear data emitted from login_request
 
         # Test original flow
         socketio_client.emit("request_user_info")

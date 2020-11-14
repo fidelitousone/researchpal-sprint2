@@ -1,14 +1,13 @@
 import uuid
 
-from flask import render_template, session
-from flask_socketio import join_room
+from flask import render_template, request, session
 
 from server import create_app, run_app, db, socketio
 from server.models import AuthType, Users, Projects, Sources
 
 
 # pylint: disable = no-member
-def emit_projects(email, owner_id):
+def emit_projects(owner_id):
     with app.app_context():
         user_projects = (
             db.session.query(Projects).filter(Projects.owner_id == owner_id).all()
@@ -22,7 +21,7 @@ def emit_projects(email, owner_id):
         }
         for project in user_projects
     }
-    socketio.emit("all_projects", response, room=email)
+    socketio.emit("all_projects", response, room=request.sid)
 
 
 def add_new_user(email, user_id, user_name, auth_type, profile_picture):
@@ -100,8 +99,7 @@ def on_login_request(data):
     with app.app_context():
         user_info = db.session.query(Users).filter(Users.email == email).one().json()
     session["user"] = email
-    join_room(email)
-    socketio.emit("login_response", user_info, room=email)
+    socketio.emit("login_response", user_info, room=request.sid)
 
 
 @socketio.on("logout")
@@ -124,14 +122,14 @@ def on_request_user_info():
             user_info = (
                 db.session.query(Users).filter(Users.email == email).one().json()
             )
-        socketio.emit("user_info", user_info, room=email)
-        emit_projects(email, user_info["user_id"])
+        socketio.emit("user_info", user_info, room=request.sid)
+        emit_projects(user_info["user_id"])
     else:
         print("not logged in")
 
 
 @socketio.on("create_project")
-def on_new_project(data):
+def on_create_project(data):
     email = session.get("user")
     print("create_project:", email)
     if email:
@@ -147,14 +145,13 @@ def on_new_project(data):
             new_project = Projects(project_id, owner_id, project_name, sources)
             db.session.add(new_project)
             db.session.commit()
-        emit_projects(email, owner_id)
+        emit_projects(owner_id)
     else:
         print("not logged in")
 
 
 @socketio.on("add_source_to_project")
 def add_source(data):
-    email = session.get("user")
     name = data["project_name"]
     source_link = data["source_link"]
     with app.app_context():
@@ -172,12 +169,11 @@ def add_source(data):
             .json()
         )
         print(project_info)
-        socketio.emit("all_sources", project_info, room=email)
+        socketio.emit("all_sources", project_info, room=request.sid)
 
 
 @socketio.on("get_all_sources")
 def get_all_sources(data):
-    email = session.get("user")
     name = data["project_name"]
     with app.app_context():
         project_info = (
@@ -186,7 +182,7 @@ def get_all_sources(data):
             .first()
             .json()
         )
-    socketio.emit("all_sources", project_info, room=email)
+    socketio.emit("all_sources", project_info, room=request.sid)
 
 
 @socketio.on("select_project")
