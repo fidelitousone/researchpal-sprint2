@@ -54,6 +54,12 @@ Robert Argasinski, Eugene Cha, Mark Galesi, Jatinder Singh
 ## Known Issues
 * Facebook authentication is not behaving properly.  It works, but it takes two login attempts back-to-back (without logging out) in order for the session to be set.  It seems to be specifically related to the Facebook button, since the same issue does not exist on either the Google or Microsoft button.  We will be actively looking into fixing this bug for the next project milestone.
 
+## Deviations from MVP Proposal
+* In the original mockups, the logout option was supposed to be placed in a dropdown menu, but in our current implementation, it is a standalone button.
+* Our Dashboard interface is a little different, but the same basic functionality is there.
+* Our navigation to the Project Page interface is very different in this implementation.  What you have to do is first select the button, then click the "Project" button.  This will take you to the Project Page for the specified project.  In future iterations, we will improve this workflow so that users are redirected automatically after selecting their desired project.
+* Bulk import support is missing, although it will likely be added in future iterations.
+
 ## Setup the App
 1. Clone the repository:
 ```bash
