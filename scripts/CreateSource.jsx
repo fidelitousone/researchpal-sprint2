@@ -1,19 +1,28 @@
 import * as React from 'react';
 import { Button } from 'react-bootstrap';
-import { render } from 'react-dom';
+import * as ReactDOM from 'react-dom';
+import validator from 'validator';
+import { Alert } from 'react-bootstrap';
 import Socket from './Socket';
+
 
 export default function CreateSource(props) {
   const [sourcesList, setSourcesList] = React.useState([]);
   const projectName = props.usingProject;
   function handleSubmit(event) {
     const sourceLink = document.getElementById('name_input');
-    console.log(`Got source link: ${sourceLink.value}`);
-    Socket.emit('add_source_to_project', {
-      project_name: projectName,
-      source_link: sourceLink.value,
-    });
-    sourceLink.value = '';
+    event.preventDefault();
+    if (validator.isEmpty(validator.trim(sourceLink.value))) {
+      ReactDOM.render(<Alert className="alert-warning">Warning: Source name was empty or only whitespace.  Please try again with a valid project name.</Alert>, document.getElementById('notif_project'));
+      event.preventDefault();
+    } else {
+      console.log(`Got source link: ${sourceLink.value}`);
+      Socket.emit('add_source_to_project', {
+        project_name: projectName,
+        source_link: sourceLink.value,
+      });
+      sourceLink.value = '';
+    }
     event.preventDefault();
   }
 
@@ -37,6 +46,7 @@ export default function CreateSource(props) {
     <div align="center">
       <br />
       <p name="h3">{projectName}</p>
+      <div id="notif_project" />
       {sourcesList.map((value, index) => <li key={index}>{value}</li>)}
       <form onSubmit={handleSubmit}>
         <input id="name_input" placeholder="Enter source name" />
