@@ -1,6 +1,9 @@
 # IDE / editor specific configs
 .vscode/
 
+# AWS Cloud9 temporary files
+.~c9_invoke_*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
