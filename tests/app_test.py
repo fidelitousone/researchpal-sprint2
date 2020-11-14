@@ -1,7 +1,7 @@
 import pytest
 
 
-# pylint: disable = redefined-outer-name
+# pylint: disable = redefined-outer-name,too-few-public-methods,too-many-arguments
 @pytest.fixture
 def mocked_google_response():
     mocked_response = {
@@ -65,13 +65,18 @@ def mocked_new_project():
 
 
 @pytest.fixture
+def mocked_add_source():
+    mocked_request = {"project_name": "Test", "source_link": "link"}
+    return mocked_request
+
+
+@pytest.fixture
 def mocked_create_project_response(mocked_uuid, mocked_project_model):
     mocked_uuid = mocked_uuid()
     return {str(mocked_uuid): mocked_project_model.json()}
 
 
-# pylint: disable = no-self-use
-# pylint: disable = unused-argument
+# pylint: disable = invalid-name,no-self-use,unused-argument
 class TestRenderTemplate:
     def test_main_page(self, client):
         page = client.get("/")
@@ -138,12 +143,14 @@ class TestLogoutFlow:
         recieved = socketio_client.get_received()
         assert recieved == []
 
-    def test_on_logout(self, db, socketio_client, mocked_user_model, mocked_login_request):
+    def test_on_logout(
+        self, client, db, socketio_client, mocked_user_model, mocked_login_request
+    ):
         # Simulate login
+        with client.session_transaction() as sess:
+            sess["user"] = mocked_user_model.email
         db.session.add(mocked_user_model)
         db.session.commit()
-        socketio_client.emit("login_request", mocked_login_request)
-        socketio_client.get_received()  # Clear data emitted from login_request
 
         # Test original flow
         socketio_client.emit("logout")
@@ -162,18 +169,18 @@ class TestProjectFlow:
 
     def test_on_create_project(
         self,
+        client,
         db,
         socketio_client,
         mocked_user_model,
-        mocked_login_request,
         mocked_new_project,
         mocked_create_project_response,
     ):
         # Simulate login
+        with client.session_transaction() as sess:
+            sess["user"] = mocked_user_model.email
         db.session.add(mocked_user_model)
         db.session.commit()
-        socketio_client.emit("login_request", mocked_login_request)
-        socketio_client.get_received()  # Clear data emitted from login_request
 
         # Test original flow
         socketio_client.emit("create_project", mocked_new_project)
@@ -183,6 +190,61 @@ class TestProjectFlow:
         [all_projects] = recieved[0]["args"]
         assert all_projects == mocked_create_project_response
 
+    def test_on_select_project(self, db, socketio_client, mocked_new_project):
+        with pytest.raises(TypeError):
+            socketio_client.emit("select_project")
+
+        socketio_client.emit("select_project", mocked_new_project)
+
+    def test_on_request_project(self, client, db, socketio_client, mocked_new_project):
+        with client.session_transaction() as sess:
+            sess["selected_project"] = mocked_new_project["project_name"]
+
+        socketio_client.emit("request_selected_project")
+        recieved = socketio_client.get_received()
+        assert recieved[0]["name"] == "give_project_name"
+
+        [give_project_name] = recieved[0]["args"]
+        assert give_project_name == mocked_new_project
+
+
+class TestSourceFlow:
+    def test_source_model(self, db, mocked_source_model):
+        assert mocked_source_model.url == "link"
+        assert mocked_source_model.json() is not None
+
+    def test_add_source(
+        self, db, socketio_client, mocked_project_model, mocked_add_source
+    ):
+        with pytest.raises(TypeError):
+            socketio_client.emit("add_source_to_project")
+
+        db.session.add(mocked_project_model)
+        db.session.commit()
+
+        socketio_client.emit("add_source_to_project", mocked_add_source)
+        recieved = socketio_client.get_received()
+        assert recieved[0]["name"] == "all_sources"
+
+        [all_sources] = recieved[0]["args"]
+        assert all_sources == mocked_project_model.json()
+
+    def test_get_all_sources(
+        self, db, socketio_client, mocked_project_model, mocked_new_project
+    ):
+        with pytest.raises(TypeError):
+            socketio_client.emit("get_all_sources")
+
+        db.session.add(mocked_project_model)
+        db.session.commit()
+
+        socketio_client.emit("get_all_sources", mocked_new_project)
+        recieved = socketio_client.get_received()
+        assert recieved[0]["name"] == "all_sources"
+
+        [all_sources] = recieved[0]["args"]
+        assert all_sources == mocked_project_model.json()
+
 
 class TestUserInfo:
     def test_on_request_user_info_no_login(self, db, socketio_client):
@@ -190,12 +252,14 @@ class TestUserInfo:
         recieved = socketio_client.get_received()
         assert recieved == []
 
-    def test_on_request_user_info(self, db, socketio_client, mocked_user_model, mocked_login_request):
+    def test_on_request_user_info(
+        self, client, db, socketio_client, mocked_user_model, mocked_login_request
+    ):
         # Simulate login
+        with client.session_transaction() as sess:
+            sess["user"] = mocked_user_model.email
         db.session.add(mocked_user_model)
         db.session.commit()
-        socketio_client.emit("login_request", mocked_login_request)
-        socketio_client.get_received()  # Clear data emitted from login_request
 
         # Test original flow
         socketio_client.emit("request_user_info")

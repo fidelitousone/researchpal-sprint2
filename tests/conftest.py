@@ -2,7 +2,7 @@ import uuid
 
 import pytest
 
-from app import AuthType, Projects, Users
+from app import AuthType, Projects, Sources, Users
 
 
 # pylint: disable = redefined-outer-name
@@ -29,7 +29,7 @@ def socketio_client(app, client):
 
 
 @pytest.fixture
-def db(app):
+def db(app):  # pylint: disable = invalid-name
     from app import db  # pylint: disable = import-outside-toplevel
 
     with app.app_context():
@@ -66,3 +66,9 @@ def mocked_project_model(mocked_uuid):
         "Test",
         [],
     )
+
+
+@pytest.fixture
+def mocked_source_model(mocked_uuid):
+    mocked_uuid = mocked_uuid()
+    return Sources(str(mocked_uuid), "link")
