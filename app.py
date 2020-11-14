@@ -152,6 +152,51 @@ def on_new_project(data):
     else:
         print("not logged in")
 
+
+@socketio.on("add_source_to_project")
+def add_source(data):
+    email = session.get("user")
+    name = data["project_name"]
+    source_link = data["source_link"]
+    with app.app_context():
+        project_info = (
+            db.session.query(Projects).filter(Projects.project_name == name).first()
+        )
+        project_info.sources = list(project_info.sources)
+        project_info.sources.append(source_link)
+        db.session.merge(project_info)
+        db.session.commit()
+        project_info = (
+            db.session.query(Projects).filter(Projects.project_name == name).first().json()
+        )
+        print(project_info)
+        socketio.emit("all_sources", project_info, room=email)
+
+@socketio.on("get_all_sources")
+def get_all_sources(data):
+        email = session.get("user")
+        name = data["project_name"]
+        with app.app_context():
+            project_info = (
+                db.session.query(Projects).filter(Projects.project_name == name).first().json()
+            )
+        socketio.emit("all_sources", project_info, room=email)
+
+
+@socketio.on("select_project")
+def on_select_project(data):
+    project_name = data["project_name"]
+    session["selected_project"] = project_name
+
+@socketio.on("request_selected_project")
+def on_request_project():
+    socketio.emit(
+        "give_project_name",
+        {
+            "project_name": session.get("selected_project")
+        }
+    )
+
 @app.route("/")
 @app.route("/home")
 @app.route("/project")
