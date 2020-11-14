@@ -60,6 +60,11 @@ Robert Argasinski, Eugene Cha, Mark Galesi, Jatinder Singh
 * Our navigation to the Project Page interface is very different in this implementation.  What you have to do is first select the button, then click the "Project" button.  This will take you to the Project Page for the specified project.  In future iterations, we will improve this workflow so that users are redirected automatically after selecting their desired project.
 * Bulk import support is missing, although it will likely be added in future iterations.
 
+## Linting
+- We have one pylint warning where the `Sources` model was not used in `app.py`. This table was not used yet because it will be implemented during Sprint 2.
+- ESLint returned 28 errors. Most of them are due to `react-bootstrap` being installed under devDependencies instead of the regular dependencies.
+- We tried autofixing some errors, but it caused the React app to behave in unexpected ways. This will be addressed in Sprint 2.
+
 ## Setup the App
 1. Clone the repository:
 ```bash
