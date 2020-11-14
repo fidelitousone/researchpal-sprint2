@@ -10,6 +10,23 @@ import { Logout } from './LogoutButton';
 
 export default function Project() {
   const [projectName, setProjectName] = React.useState('');
+  const [image, setImage] = React.useState(0);
+  function getUserInfo() {
+    React.useEffect(() => {
+      Socket.emit('request_user_info');
+      Socket.on('user_info', (data) => {
+        console.log(`Received user info from server: ${data}`);
+        console.log(data.profile_picture);
+
+        let imagelink = 'static/profile-blank.jpg';
+        if (data.profile_picture !== null) {
+          imagelink = data.profile_picture;
+        }
+        setImage(imagelink);
+      });
+    }, []);
+  }
+  getUserInfo();
 
   function getProject() {
     React.useEffect(() => {
@@ -55,7 +72,7 @@ export default function Project() {
         <DropdownButton
           id="dropdown-basic-button"
           title={
-            <Image src="static/profile-blank.jpg" className="rounded-circle border" width="50px" height="50px" />
+            <Image src={image} className="rounded-circle border" width="50px" height="50px" />
         }
         />
         <Logout />
