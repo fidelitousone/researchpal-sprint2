@@ -33,15 +33,26 @@ Robert Argasinski, Eugene Cha, Mark Galesi, Jatinder Singh
 
 #### Jatinder Singh
 * Set up GitHub and Heroku
-* Set up CircleCI for automatic deployment and 
+* Set up CircleCI for automatic deployment and integration testing
+* Add support for source input and retrieval
+* Link each project button to a unique project page with corresponding sources
 * Create basic React app
 * Add error handling to OAuth buttons
 
 ## MVP Pending Work
+#### Dashboard functionality
+* Detect duplicate project name and notify user
+* Detect invalid project names
+* Improve styling and layout
 
+#### Project Page functionality
+* Provide the option of a bulk import (comma or whitespace separated list of URLs)
+* Detect duplicate sources and notify user
+* Detect invalid source URLs
+* Improve styling and layout
 
 ## Known Issues
-
+* Facebook authentication is not behaving properly.  It works, but it takes two login attempts back-to-back (without logging out) in order for the session to be set.  It seems to be specifically related to the Facebook button, since the same issue does not exist on either the Google or Microsoft button.  We will be actively looking into fixing this bug for the next project milestone.
 
 ## Setup the App
 1. Clone the repository:
