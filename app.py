@@ -161,8 +161,11 @@ def add_source(data):
         project_info = (
             db.session.query(Projects).filter(Projects.project_name == name).first()
         )
-        project_info.sources = [source_link]
+        project_info.sources = list(project_info.sources)
+        project_info.sources.append(source_link)
+        db.session.merge(project_info)
         db.session.commit()
+        print(project_info.sources)
 
 
 @socketio.on("select_project")
