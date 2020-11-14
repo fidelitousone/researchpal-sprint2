@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 import { Logout } from './LogoutButton';
 import Socket from './Socket';
-import CreateButton from './CreateProject';
+import { CreateButton } from './CreateProject';
 import 'bootstrap/dist/css/bootstrap.css';
 
 export default function Dashboard() {

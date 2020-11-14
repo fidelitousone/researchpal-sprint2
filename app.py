@@ -153,6 +153,18 @@ def on_new_project(data):
         print("not logged in")
 
 
+@socketio.on("add_source_to_project")
+def add_source(data):
+    name = data["project_name"]
+    source_link = data["source_link"]
+    with app.app_context():
+        project_info = (
+            db.session.query(Projects).filter(Projects.project_name == name).first()
+        )
+        project_info.sources = [source_link]
+        db.session.commit()
+
+
 @socketio.on("select_project")
 def on_select_project(data):
     project_name = data["project_name"]
