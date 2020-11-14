@@ -7,6 +7,7 @@ from server import create_app, run_app, db, socketio
 from server.models import AuthType, Users, Projects, Sources
 
 
+# pylint: disable = no-member
 def emit_projects(email, owner_id):
     with app.app_context():
         user_projects = (
@@ -27,9 +28,7 @@ def emit_projects(email, owner_id):
 def add_new_user(email, user_id, user_name, auth_type, profile_picture):
     with app.app_context():
         user_info = db.session.query(Users).filter(Users.email == email).first()
-        if user_info:
-            print("user exists")
-        else:
+        if not user_info:
             new_user = Users(email, user_id, user_name, auth_type, profile_picture)
             db.session.add(new_user)
             db.session.commit()
@@ -167,20 +166,27 @@ def add_source(data):
         db.session.merge(project_info)
         db.session.commit()
         project_info = (
-            db.session.query(Projects).filter(Projects.project_name == name).first().json()
+            db.session.query(Projects)
+            .filter(Projects.project_name == name)
+            .first()
+            .json()
         )
         print(project_info)
         socketio.emit("all_sources", project_info, room=email)
 
+
 @socketio.on("get_all_sources")
 def get_all_sources(data):
-        email = session.get("user")
-        name = data["project_name"]
-        with app.app_context():
-            project_info = (
-                db.session.query(Projects).filter(Projects.project_name == name).first().json()
-            )
-        socketio.emit("all_sources", project_info, room=email)
+    email = session.get("user")
+    name = data["project_name"]
+    with app.app_context():
+        project_info = (
+            db.session.query(Projects)
+            .filter(Projects.project_name == name)
+            .first()
+            .json()
+        )
+    socketio.emit("all_sources", project_info, room=email)
 
 
 @socketio.on("select_project")
@@ -188,14 +194,13 @@ def on_select_project(data):
     project_name = data["project_name"]
     session["selected_project"] = project_name
 
+
 @socketio.on("request_selected_project")
 def on_request_project():
     socketio.emit(
-        "give_project_name",
-        {
-            "project_name": session.get("selected_project")
-        }
+        "give_project_name", {"project_name": session.get("selected_project")}
     )
+
 
 @app.route("/")
 @app.route("/home")

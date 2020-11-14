@@ -29,7 +29,7 @@ def socketio_client(app, client):
 
 
 @pytest.fixture
-def db(app):
+def db(app):  # pylint: disable = invalid-name
     from app import db  # pylint: disable = import-outside-toplevel
 
     with app.app_context():

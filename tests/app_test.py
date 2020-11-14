@@ -1,7 +1,7 @@
 import pytest
 
 
-# pylint: disable = redefined-outer-name
+# pylint: disable = redefined-outer-name,too-few-public-methods,too-many-arguments
 @pytest.fixture
 def mocked_google_response():
     mocked_response = {
@@ -70,8 +70,7 @@ def mocked_create_project_response(mocked_uuid, mocked_project_model):
     return {str(mocked_uuid): mocked_project_model.json()}
 
 
-# pylint: disable = no-self-use
-# pylint: disable = unused-argument
+# pylint: disable = invalid-name,no-self-use,unused-argument
 class TestRenderTemplate:
     def test_main_page(self, client):
         page = client.get("/")
@@ -138,7 +137,9 @@ class TestLogoutFlow:
         recieved = socketio_client.get_received()
         assert recieved == []
 
-    def test_on_logout(self, db, socketio_client, mocked_user_model, mocked_login_request):
+    def test_on_logout(
+        self, db, socketio_client, mocked_user_model, mocked_login_request
+    ):
         # Simulate login
         db.session.add(mocked_user_model)
         db.session.commit()
@@ -190,7 +191,9 @@ class TestUserInfo:
         recieved = socketio_client.get_received()
         assert recieved == []
 
-    def test_on_request_user_info(self, db, socketio_client, mocked_user_model, mocked_login_request):
+    def test_on_request_user_info(
+        self, db, socketio_client, mocked_user_model, mocked_login_request
+    ):
         # Simulate login
         db.session.add(mocked_user_model)
         db.session.commit()
