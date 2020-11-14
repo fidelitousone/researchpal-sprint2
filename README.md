@@ -9,6 +9,38 @@ Final Project for **CS 490: Design in Software Engineering**
 
 Robert Argasinski, Eugene Cha, Mark Galesi, Jatinder Singh
 
+## MVP Work Completed
+#### Robert Argasinski
+* Facebook OAuth
+* Add Bootstrap integration to front-end
+* Add navigation and multi-page support
+* Pull profile picture on login
+* Detect empty project name and notify user
+
+#### Eugene Cha
+* Set up PostgreSQL database
+* Build database models
+* Set up Python back-end, including SocketIO and SQLAlchemy
+* Set up back-end unit testing
+* Deploy production on gunicorn
+* Set up coverage tests on CircleCI
+
+#### Mark Galesi
+* Google and Microsoft OAuth
+* Add support for project creation and retrieval
+* Login and logout flow with sessions
+* Pull email on login
+
+#### Jatinder Singh
+* Set up GitHub and Heroku
+* Set up CircleCI for automatic deployment and 
+* Create basic React app
+* Add error handling to OAuth buttons
+
+## MVP Pending Work
+
+
+## Known Issues
 
 
 ## Setup the App
