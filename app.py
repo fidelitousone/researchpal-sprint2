@@ -169,7 +169,7 @@ def add_source(data):
             .json()
         )
         print(project_info)
-        socketio.emit("all_sources", project_info, room=request.sid)
+    socketio.emit("all_sources", project_info, room=request.sid)
 
 
 @socketio.on("get_all_sources")
