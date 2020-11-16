@@ -1,14 +1,15 @@
+/* eslint-disable react/no-array-index-key */
 import * as React from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Alert } from 'react-bootstrap';
 import * as ReactDOM from 'react-dom';
 import validator from 'validator';
-import { Alert } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 import Socket from './Socket';
-
 
 export default function CreateSource(props) {
   const [sourcesList, setSourcesList] = React.useState([]);
-  const projectName = props.usingProject;
+  const { usingProject } = props;
+  const projectName = usingProject;
   function handleSubmit(event) {
     const sourceLink = document.getElementById('name_input');
     event.preventDefault();
@@ -55,3 +56,7 @@ export default function CreateSource(props) {
     </div>
   );
 }
+
+CreateSource.propTypes = {
+  usingProject: PropTypes.string.isRequired,
+};

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import GoogleLogin from 'react-google-login';
+import { useHistory } from 'react-router-dom';
 import Socket from './Socket';
-import { useHistory  } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 
 export default function GoogleAuth() {
@@ -19,9 +19,9 @@ export default function GoogleAuth() {
     Socket.on('login_response', (data) => {
       console.log(data);
     });
-    history.push("/home");
+    history.push('/home');
   }
-  
+
   function responseGoogleSuccess(response) {
     console.log('Success:', response);
     handleSubmit(response);

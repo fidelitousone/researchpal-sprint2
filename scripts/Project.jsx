@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {
-  Button, ButtonGroup, Badge, Image, DropdownButton, Alert,
+  Button, ButtonGroup, Badge, Image, DropdownButton,
 } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import CreateSource from './CreateSource';
 import Socket from './Socket';
-import { Logout } from './LogoutButton';
+import Logout from './LogoutButton';
 
 export default function Project() {
   const [projectName, setProjectName] = React.useState('');

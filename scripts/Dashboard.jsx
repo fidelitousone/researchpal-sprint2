@@ -1,13 +1,14 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-restricted-globals */
 import * as React from 'react';
 import {
-  Button, ButtonGroup, Badge, Image, DropdownButton, ListGroup, Container, Row, Col,
+  Button, ButtonGroup, Badge, Image, DropdownButton,
 } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import { Logout } from './LogoutButton';
+import Logout from './LogoutButton';
 import Socket from './Socket';
-import { CreateButton } from './CreateProject';
+import CreateButton from './CreateProject';
 import 'bootstrap/dist/css/bootstrap.css';
 
 export default function Dashboard() {
