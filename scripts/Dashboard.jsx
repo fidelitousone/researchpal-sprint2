@@ -1,14 +1,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-restricted-globals */
 import * as React from 'react';
-import {
-  Button, ButtonGroup, Badge, Image, DropdownButton,
-} from 'react-bootstrap';
-import Logout from './LogoutButton';
+import { Button } from 'react-bootstrap';
 import Socket from './Socket';
 import CreateButton from './CreateProject';
 import 'bootstrap/dist/css/bootstrap.css';
 import NavigationBar from './NavigationBar';
+import UserInfoBar from './UserInfoBar';
 
 export default function Dashboard() {
   const [projects, setProjects] = React.useState(0);
@@ -57,23 +55,7 @@ export default function Dashboard() {
 
   return (
     <div className="Dashboard">
-
-      <div display="flex" flex="0 0 auto" align="center">
-
-        <span className="h1" position="absolute" left="0">
-          Dashboard
-          <Badge className="badge-primary">{user.email}</Badge>
-        </span>
-
-        <DropdownButton
-          id="dropdown-basic-button"
-          title={
-            <Image src={image} className="rounded-circle border" width="50px" height="50px" />
-        }
-        />
-        <Logout />
-      </div>
-
+      <UserInfoBar headerInfo="Dashboard" badgeInfo={user.email} profilePicture={image} />
       <br />
       <NavigationBar />
       <br />
