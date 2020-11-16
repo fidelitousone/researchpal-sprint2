@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {
-  Button, ButtonGroup, Badge, Image, DropdownButton,
+  Badge, Image, DropdownButton,
 } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import CreateSource from './CreateSource';
 import Socket from './Socket';
 import Logout from './LogoutButton';
+import NavigationBar from './NavigationBar';
 
 export default function Project() {
   const [projectName, setProjectName] = React.useState('');
@@ -79,20 +79,7 @@ export default function Project() {
 
       </div>
       <br />
-      <div className="d-flex justify-content-center">
-        <ButtonGroup aria-label="Basic example">
-          <Link to="/">
-            <Button className="btn-outline-primary">Landing</Button>
-          </Link>
-          <Link to="/home">
-            <Button className="btn-outline-primary">Dashboard</Button>
-          </Link>
-          <Link to="/project">
-            <Button className="btn-outline-primary">Project</Button>
-          </Link>
-        </ButtonGroup>
-        <br />
-      </div>
+      <NavigationBar />
       {renderProject()}
     </div>
   );

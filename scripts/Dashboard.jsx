@@ -4,12 +4,11 @@ import * as React from 'react';
 import {
   Button, ButtonGroup, Badge, Image, DropdownButton,
 } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-
 import Logout from './LogoutButton';
 import Socket from './Socket';
 import CreateButton from './CreateProject';
 import 'bootstrap/dist/css/bootstrap.css';
+import NavigationBar from './NavigationBar';
 
 export default function Dashboard() {
   const [projects, setProjects] = React.useState(0);
@@ -76,19 +75,7 @@ export default function Dashboard() {
       </div>
 
       <br />
-      <div className="d-flex justify-content-center">
-        <ButtonGroup aria-label="Basic example">
-          <Link to="/">
-            <Button className="btn-outline-primary">Landing</Button>
-          </Link>
-          <Link to="/home">
-            <Button className="btn-outline-primary">Dashboard</Button>
-          </Link>
-          <Link to="/project">
-            <Button className="btn-outline-primary">Project</Button>
-          </Link>
-        </ButtonGroup>
-      </div>
+      <NavigationBar />
       <br />
       <CreateButton />
       <ul>
