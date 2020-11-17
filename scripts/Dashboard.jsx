@@ -1,14 +1,12 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-restricted-globals */
 import * as React from 'react';
-import {
-  Button, ButtonGroup, Badge, Image, DropdownButton, ListGroup, Container, Row, Col,
-} from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-
-import { Logout } from './LogoutButton';
+import { Button } from 'react-bootstrap';
 import Socket from './Socket';
-import { CreateButton } from './CreateProject';
+import CreateButton from './CreateProject';
 import 'bootstrap/dist/css/bootstrap.css';
+import NavigationBar from './NavigationBar';
+import UserInfoBar from './UserInfoBar';
 
 export default function Dashboard() {
   const [projects, setProjects] = React.useState(0);
@@ -57,37 +55,9 @@ export default function Dashboard() {
 
   return (
     <div className="Dashboard">
-
-      <div display="flex" flex="0 0 auto" align="center">
-
-        <span className="h1" position="absolute" left="0">
-          Dashboard
-          <Badge className="badge-primary">{user.email}</Badge>
-        </span>
-
-        <DropdownButton
-          id="dropdown-basic-button"
-          title={
-            <Image src={image} className="rounded-circle border" width="50px" height="50px" />
-        }
-        />
-        <Logout />
-      </div>
-
+      <UserInfoBar headerInfo="Dashboard" badgeInfo={user.email} profilePicture={image} />
       <br />
-      <div className="d-flex justify-content-center">
-        <ButtonGroup aria-label="Basic example">
-          <Link to="/">
-            <Button className="btn-outline-primary">Landing</Button>
-          </Link>
-          <Link to="/home">
-            <Button className="btn-outline-primary">Dashboard</Button>
-          </Link>
-          <Link to="/project">
-            <Button className="btn-outline-primary">Project</Button>
-          </Link>
-        </ButtonGroup>
-      </div>
+      <NavigationBar />
       <br />
       <CreateButton />
       <ul>

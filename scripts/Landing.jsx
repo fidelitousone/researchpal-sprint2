@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Button, ButtonGroup } from 'react-bootstrap';
 import GoogleAuth from './GoogleButton';
 import FacebookAuth from './FacebookButton';
 import MicrosoftAuth from './MicrosoftButton';
 import 'bootstrap/dist/css/bootstrap.css';
+import NavigationBar from './NavigationBar';
 
 export default function Landing() {
   return (
@@ -29,19 +29,7 @@ export default function Landing() {
       </div>
       <br />
       <br />
-      <div className="d-flex justify-content-center">
-        <ButtonGroup aria-label="Basic example">
-          <Link to="/">
-            <Button className="btn-outline-primary">Landing</Button>
-          </Link>
-          <Link to="/home">
-            <Button className="btn-outline-primary">Dashboard</Button>
-          </Link>
-          <Link to="/project">
-            <Button className="btn-outline-primary">Project</Button>
-          </Link>
-        </ButtonGroup>
-      </div>
+      <NavigationBar />
     </div>
   );
 }
