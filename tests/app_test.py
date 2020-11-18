@@ -190,14 +190,27 @@ class TestProjectFlow:
         [all_projects] = recieved[0]["args"]
         assert all_projects == mocked_create_project_response
 
-    def test_on_select_project(self, db, socketio_client, mocked_new_project):
+    def test_on_select_project(self, client, db, socketio_client, mocked_new_project):
         with pytest.raises(TypeError):
             socketio_client.emit("select_project")
 
         socketio_client.emit("select_project", mocked_new_project)
+        with client.session_transaction() as sess:
+            assert sess["selected_project"] == mocked_new_project["project_name"]
+
+    def test_on_request_project_no_login(
+        self, client, db, socketio_client, mocked_new_project
+    ):
+        with client.session_transaction() as sess:
+            sess["selected_project"] = mocked_new_project["project_name"]
+
+        socketio_client.emit("request_selected_project")
+        recieved = socketio_client.get_received()
+        assert recieved == []
 
     def test_on_request_project(self, client, db, socketio_client, mocked_new_project):
         with client.session_transaction() as sess:
+            sess["user"] = "fake@e.mail"
             sess["selected_project"] = mocked_new_project["project_name"]
 
         socketio_client.emit("request_selected_project")

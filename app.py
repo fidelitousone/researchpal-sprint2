@@ -194,9 +194,10 @@ def on_select_project(data):
 
 @socketio.on("request_selected_project")
 def on_request_project():
-    socketio.emit(
-        "give_project_name", {"project_name": session.get("selected_project")}
-    )
+    if "user" in session:
+        socketio.emit(
+            "give_project_name", {"project_name": session.get("selected_project")}
+        )
 
 
 @app.route("/")
