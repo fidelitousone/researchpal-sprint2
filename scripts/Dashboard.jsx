@@ -59,7 +59,7 @@ export default function Dashboard() {
       <br />
       <NavigationBar />
       <br />
-      <CreateButton />
+      <CreateButton projects={projects}/>
       <ul>
         <br />
         {Object.keys(projects).map((key, val) => (
@@ -72,4 +72,4 @@ export default function Dashboard() {
       </ul>
     </div>
   );
-}
+} 
