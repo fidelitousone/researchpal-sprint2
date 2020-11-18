@@ -9,9 +9,15 @@ export default function CreateButton({projects}) {
     const projectName = document.getElementById('name_input');
     console.log('PROJECT: ');
     console.log(projectName.value);
+    console.log('PROJECTS: ');
+    console.log(projects);
+    let projectList = Object.values(projects).map(obj => obj.project_name);
+    console.log(projectList);
   
     if (/\s/g.test(projectName.value) || projectName.value === '') {
       ReactDOM.render(<Alert className="alert-warning">Warning: Project name was empty or only whitespace.  Please try again with a valid project name.</Alert>, document.getElementById('notif_project'));
+    } else if (projectList.some(name => projectName.value === name)){
+      ReactDOM.render(<Alert className="alert-warning">Warning: Project name is taken.  Please try again with a unique project name.</Alert>, document.getElementById('notif_project'));
     } else {
       ReactDOM.render(<span />, document.getElementById('notif_project'));
       Socket.emit('create_project', {
