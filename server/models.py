@@ -153,17 +153,20 @@ class Citations(db.Model):
     citation_id = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(db.String(36))
     source_id = db.Column(db.String(36))
-    citation = db.Column(db.Text)
+    mla_citation = db.Column(db.Text)
+    apa_citation = db.Column(db.Text)
 
-    def __init__(self, project_id, source_id, citation):
+    def __init__(self, project_id: str, source_id: str, mla_citation: str, apa_citation: str):
         self.project_id = project_id
         self.source_id = source_id
-        self.citation = citation
+        self.mla_citation = mla_citation
+        self.apa_citation = apa_citation
 
     def json(self) -> dict:
         data = {
             "project_id": self.project_id,
             "source_id": self.source_id,
-            "citation": self.citation,
+            "mla_citation": self.mla_citation,
+            "apa_citation": self.apa_citation,
         }
         return data
