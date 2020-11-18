@@ -25,7 +25,9 @@ function handleSubmit(event) {
   event.preventDefault();
 }
 
-export default function CreateButton() {
+export default function CreateButton({projects}) {
+  console.log(projects);
+  
   return (
     <div align="center">
       <form onSubmit={handleSubmit}>
