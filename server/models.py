@@ -9,6 +9,11 @@ class AuthType(Enum):
     MICROSOFT = "microsoft"
 
 
+class CitationType(Enum):
+    MLA = "mla"
+    APA = "apa"
+
+
 class Users(db.Model):
     email = db.Column(db.String(128), primary_key=True)
     user_id = db.Column(db.String(36))
@@ -55,24 +60,30 @@ class Projects(db.Model):
     owner_id = db.Column(db.String(36))
     project_name = db.Column(db.Text)
     sources = db.Column(db.ARRAY(db.String))
+    citation_type = db.Column(db.Text)
 
     def __init__(
-        self, project_id: str, owner_id: str, project_name: str, sources: list
+        self,
+        project_id: str,
+        owner_id: str,
+        project_name: str,
+        sources: list,
+        citation_type: CitationType = CitationType.MLA,
     ):
         self.project_id = project_id
         self.owner_id = owner_id
         self.project_name = project_name
         self.sources = []
         self.sources.extend(sources)
+        self.citation_type = citation_type.value
 
     def __repr__(self):
-        return (
-            "Project(project_id={}, owner_id={}, project_name={}, sources={})".format(
-                self.project_id,
-                self.owner_id,
-                self.project_name,
-                self.sources,
-            )
+        return "Project(project_id={}, owner_id={}, project_name={}, sources={}, citation_type={})".format(
+            self.project_id,
+            self.owner_id,
+            self.project_name,
+            self.sources,
+            self.citation_type,
         )
 
     def json(self) -> dict:
@@ -81,6 +92,7 @@ class Projects(db.Model):
             "owner_id": self.owner_id,
             "project_name": self.project_name,
             "sources": self.sources,
+            "citation_type": self.citation_type,
         }
         return data
 
@@ -133,5 +145,28 @@ class Sources(db.Model):  # pylint: disable = too-many-instance-attributes
             "image": self.image,
             "publisher": self.publisher,
             "title": self.title,
+        }
+        return data
+
+
+class Citations(db.Model):
+    citation_id = db.Column(db.Integer, primary_key=True)
+    project_id = db.Column(db.String(36))
+    source_id = db.Column(db.String(36))
+    mla_citation = db.Column(db.Text)
+    apa_citation = db.Column(db.Text)
+
+    def __init__(self, project_id: str, source_id: str, mla_citation: str, apa_citation: str):
+        self.project_id = project_id
+        self.source_id = source_id
+        self.mla_citation = mla_citation
+        self.apa_citation = apa_citation
+
+    def json(self) -> dict:
+        data = {
+            "project_id": self.project_id,
+            "source_id": self.source_id,
+            "mla_citation": self.mla_citation,
+            "apa_citation": self.apa_citation,
         }
         return data

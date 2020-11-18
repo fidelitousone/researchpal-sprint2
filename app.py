@@ -18,6 +18,7 @@ def emit_projects(owner_id):
             "owner_id": project.owner_id,
             "project_name": project.project_name,
             "sources": project.sources,
+            "citation_type": project.citation_type,
         }
         for project in user_projects
     }
@@ -193,9 +194,10 @@ def on_select_project(data):
 
 @socketio.on("request_selected_project")
 def on_request_project():
-    socketio.emit(
-        "give_project_name", {"project_name": session.get("selected_project")}
-    )
+    if "user" in session:
+        socketio.emit(
+            "give_project_name", {"project_name": session.get("selected_project")}
+        )
 
 
 @app.route("/")
