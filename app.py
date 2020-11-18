@@ -34,11 +34,12 @@ def add_new_user(email, user_id, user_name, auth_type, profile_picture):
             db.session.add(new_user)
             db.session.commit()
 
+
 def get_new_citation(url):
-    if(re.match(regex, url) is not None):
-        #response=python_requests.get(url)
-        #---Sample of a successful response with null values
-        responseNull="""{
+    if re.match(regex, url) is not None:
+        # response=python_requests.get(url)
+        # ---Sample of a successful response with null values
+        responseNull = """{
            "status":"success",
            "data":{
               "title":"10.1.1.83.5248.pdf",
@@ -59,8 +60,8 @@ def get_new_citation(url):
               }
            }
         }"""
-        #---Sample of a successful response with no null values
-        responseFull="""{
+        # ---Sample of a successful response with no null values
+        responseFull = """{
                "status":"success",
                "data":{
                   "title":"Ethics of AI: how should we treat rational, sentient robots â€“ if they existed?",
@@ -88,8 +89,8 @@ def get_new_citation(url):
                   }
                }
             }"""
-        #---Sample of a fail response
-        responseFail="""{
+        # ---Sample of a fail response
+        responseFail = """{
                "status":"fail",
                "data":{
                   "url":"The URL `no` is not valid. Ensure it has protocol, hostname and is reachable."
@@ -99,29 +100,32 @@ def get_new_citation(url):
                "report":"mailto:hello@microlink.io?subject=%5Bmicrolink%5D%20Request%20failed&body=Hello%2C%20The%20following%20API%20request%20wasn't%20processed%20properly%3A%0A%0A%20%20-%20request%20id%20%20%3A%20bAC1aDoYaFvOw4wwo2pLE%0A%20%20-%20request%20uri%20%3A%20https%3A%2F%2F138.197.58.27%3A80%2F%3Furl%3Dno%0A%20%20-%20error%20code%20%20%3A%20EINVALURL%20(https%3A%2F%2Fmicrolink.io%2Feinvalurl).%0A%0ACan%20you%20take%20a%20look%3F%20Thanks!%0A",
                "message":"The request has been not processed. See the errors above to know why."
             }"""
-        response=responseFull
-        status=json.loads(response)["status"]
-        if(status!="fail"):
-            data=json.loads(response)["data"] 
+        response = responseFull
+        status = json.loads(response)["status"]
+        if status != "fail":
+            data = json.loads(response)["data"]
             source_id = uuid.uuid4()
             author = data["author"]
             date = data["date"]
             description = data["description"]
-            if(data["image"]):
+            if data["image"]:
                 image = data["image"]["url"]
             else:
-                image=None
+                image = None
             publisher = data["publisher"]
             title = data["title"]
             with app.app_context():
-                new_Source = Sources(source_id, url, author, date, description, image, publisher, title)
+                new_Source = Sources(
+                    source_id, url, author, date, description, image, publisher, title
+                )
                 db.session.add(new_Source)
                 db.session.commit()
         else:
             print(response)
     else:
         print("invalid url")
-    
+
+
 # Setup Flask app and create tables
 STATIC_FOLDER = "../static"
 TEMPLATE_FOLDER = "../templates"
@@ -131,12 +135,15 @@ with app.app_context():
     db.session.commit()
 
 regex = re.compile(
-        r'^(?:http|ftp)s?://' # http:// or https://
-        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
-        r'localhost|' #localhost...
-        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
-        r'(?::\d+)?' # optional port
-        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+    r"^(?:http|ftp)s?://"  # http:// or https://
+    r"(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|"  # domain...
+    r"localhost|"  # localhost...
+    r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"  # ...or ip
+    r"(?::\d+)?"  # optional port
+    r"(?:/?|[/?]\S+)$",
+    re.IGNORECASE,
+)
+
 
 @socketio.on("new_google_user")
 def on_new_google_user(data):
@@ -303,5 +310,7 @@ def index():
 
 
 if __name__ == "__main__":
-    get_new_citation("https://theconversation.com/ethics-of-ai-how-should-we-treat-rational-sentient-robots-if-they-existed-118647")
+    get_new_citation(
+        "https://theconversation.com/ethics-of-ai-how-should-we-treat-rational-sentient-robots-if-they-existed-118647"
+    )
     run_app(app)
