@@ -105,7 +105,7 @@ def get_new_citation(url):
             data=json.loads(response)["data"] 
             source_id = uuid.uuid4()
             author = data["author"]
-            date = data["date"][9:]
+            date = data["date"]
             description = data["description"]
             if(data["image"]):
                 image = data["image"]["url"]
@@ -114,11 +114,11 @@ def get_new_citation(url):
             publisher = data["publisher"]
             title = data["title"]
             with app.app_context():
-                new_Source = Sources(source_id, author, date, description, image, publisher, title)
+                new_Source = Sources(source_id, url, author, date, description, image, publisher, title)
                 db.session.add(new_Source)
                 db.session.commit()
         else:
-            print(responseFail)
+            print(response)
     else:
         print("invalid url")
     
@@ -250,6 +250,7 @@ def on_create_project(data):
 def add_source(data):
     name = data["project_name"]
     source_link = data["source_link"]
+    get_new_citation(source_link)
     with app.app_context():
         project_info = (
             db.session.query(Projects).filter(Projects.project_name == name).first()
