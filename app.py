@@ -18,6 +18,7 @@ def emit_projects(owner_id):
             "owner_id": project.owner_id,
             "project_name": project.project_name,
             "sources": project.sources,
+            "citation_type": project.citation_type,
         }
         for project in user_projects
     }
