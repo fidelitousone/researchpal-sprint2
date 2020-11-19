@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import * as React from 'react';
-import { Button, Alert } from 'react-bootstrap';
+import { Button, Alert, Glyphicon } from 'react-bootstrap';
 import * as ReactDOM from 'react-dom';
 import validator from 'validator';
 import PropTypes from 'prop-types';
@@ -29,6 +29,30 @@ export default function CreateSource(props) {
     }
     event.preventDefault();
   }
+  
+  function deleteSource(index, projectName){
+    console.log("DELETE");
+    console.log(index);
+    Socket.emit(
+      'delete_source',
+      {
+        url: index,
+        project_name: projectName
+      }
+    );
+  }
+  
+  function getSourcesFromServer(){
+    React.useEffect(() => {
+      Socket.on('all_sources_server', (data) => {
+        console.log(`Received projects from server: ${data}`);
+        setSourcesList(data.sources);
+      });
+    });
+    console.log(sourcesList)
+  }
+  
+  getSourcesFromServer();
 
   function getAllSources() {
     React.useEffect(() => {
@@ -42,6 +66,7 @@ export default function CreateSource(props) {
         setSourcesList(data.sources);
       });
     });
+    console.log(sourcesList)
   }
 
   getAllSources();
@@ -49,9 +74,20 @@ export default function CreateSource(props) {
   return (
     <div align="center">
       <br />
-      <p name="h3">{projectName}</p>
+      <div className="h3">{projectName}</div>
       <div id="notif_project" />
-      {sourcesList.map((value, index) => <li key={index}>{value}</li>)}
+      
+      {sourcesList.map((value, index) => (
+        <div key={index} align="center">
+          <Button className="btn-outline-secondary" key={index}>{value}</Button>
+          {' '}
+          <Button className="btn-outline-danger" onClick={() => deleteSource(sourcesList[index], projectName)}><Glyphicon glyph="remove">X</Glyphicon></Button>
+          <br/>
+          <br/>
+        </div>
+          
+        ))}
+      <br/>
       <form onSubmit={handleSubmit}>
         <input id="name_input" placeholder="Enter source name" />
         <Button type="submit" className="btn-primary">Add Source</Button>

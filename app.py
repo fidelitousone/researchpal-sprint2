@@ -170,7 +170,7 @@ def add_source(data):
             .json()
         )
         print(project_info)
-    socketio.emit("all_sources", project_info, room=request.sid)
+    socketio.emit("all_sources_server", project_info, room=request.sid)
 
 
 @socketio.on("get_all_sources")
@@ -190,6 +190,66 @@ def get_all_sources(data):
 def on_select_project(data):
     project_name = data["project_name"]
     session["selected_project"] = project_name
+
+@socketio.on("delete_source")
+def on_delete_source(data):
+    url = data["url"]
+    email = session.get("user")
+    project_name = data["project_name"]
+    
+    with app.app_context():    
+        #db.session.delete(Sources).where()
+        #DELETE PROJECT
+        user_info = (
+            db.session.query(Users)
+            .filter(Users.email == email)
+            .one()
+            .json()
+        )
+        owner_id = user_info["user_id"]
+        
+        project_info = (
+            db.session.query(Projects)
+            .filter(Projects.project_name == project_name, Projects.owner_id == owner_id)
+            .one()
+            .json()
+        )
+        #project_id = project_info["project_id"]
+        source_list = project_info["sources"]
+        print(source_list)
+        print("URL")
+        print(url)
+        
+        source_info = (
+            db.session.query(Sources)
+            .filter(Sources.url == url, Sources.source_id in source_list)
+            .one()
+            .json()
+        )
+        source_id = source_info["source_id"]
+        
+        #db.session.delete(Citations).where(Citations.project_id == project_id)
+        Citations.query.filter(Citations.source_id == source_id).delete()
+        print("DELETE citations for ", url)
+        db.session.commit()
+        
+      
+        #db.session.delete(Sources).where(Sources.source.id in sources)
+        ## CHECK SOURCE_ID IN SOURCES
+        Sources.query.filter(Sources.url == url).delete()
+        print("DELETE sources for ", url)
+        db.session.commit()
+        
+        
+        with app.app_context():
+            project_info = (
+                db.session.query(Projects)
+                .filter(Projects.project_name == project_name)
+                .first()
+                .json()
+            )
+        socketio.emit("all_sources", project_info, room=request.sid)
+    
 
 @socketio.on("delete_project")
 def on_delete_project(data):
@@ -220,7 +280,9 @@ def on_delete_project(data):
             .json()
         )
         sources = project_info["sources"]
+        print(sources)
         #db.session.delete(Sources).where(Sources.source.id in sources)
+        ## FIX SOURCE_ID IN SOURCES
         Sources.query.filter(Sources.source_id in sources).delete()
         print("DELETE sources for ", project_info["project_name"])
         db.session.commit()
