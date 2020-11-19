@@ -35,7 +35,7 @@ def add_new_user(email, user_id, user_name, auth_type, profile_picture):
             db.session.commit()
 
 
-def get_citation(url: str):
+def get_source(url: str):
     microlink_api = "https://api.microlink.io"
     request_url = "{}?url={}".format(microlink_api, url)
 
