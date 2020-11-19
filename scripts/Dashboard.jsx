@@ -17,6 +17,12 @@ export default function Dashboard() {
   function deleteProject(key){
     console.log("DELETE");
     console.log(key);
+    Socket.emit(
+      'delete_project',
+      {
+        project_name: key,
+      }
+    );
   }
 
   function getStatus(key) {

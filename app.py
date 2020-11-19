@@ -3,7 +3,7 @@ import uuid
 from flask import render_template, request, session
 
 from server import create_app, run_app, db, socketio
-from server.models import AuthType, Users, Projects, Sources
+from server.models import AuthType, Users, Projects, Sources, Citations
 
 
 # pylint: disable = no-member
@@ -191,6 +191,57 @@ def on_select_project(data):
     project_name = data["project_name"]
     session["selected_project"] = project_name
 
+@socketio.on("delete_project")
+def on_delete_project(data):
+    name = data["project_name"]
+    email = session.get("user")
+    print("IN DELETE PROJECT")
+    
+    with app.app_context():    
+        #db.session.delete(Sources).where()
+        #DELETE PROJECT
+        project_info = (
+            db.session.query(Projects)
+            .filter(Users.email == email, Projects.project_name == name)
+            .one()
+            .json()
+        )
+        project_id = project_info["project_id"]
+        #db.session.delete(Citations).where(Citations.project_id == project_id)
+        Citations.query.filter(Citations.project_id == project_id).delete()
+        print("DELETE citations for ", project_info["project_name"])
+        db.session.commit()
+        
+      
+        project_info = (
+            db.session.query(Projects)
+            .filter(Users.email == email, Projects.project_name == name)
+            .one()
+            .json()
+        )
+        sources = project_info["sources"]
+        #db.session.delete(Sources).where(Sources.source.id in sources)
+        Sources.query.filter(Sources.source_id in sources).delete()
+        print("DELETE sources for ", project_info["project_name"])
+        db.session.commit()
+    
+    
+        
+        project_info = (
+            db.session.query(Projects)
+            .filter(Users.email == email, Projects.project_name == name)
+            .one()
+            .json()
+        )
+        project_id = project_info["project_id"]
+        # db.session.delete(Projects).where(Projects.project_id == project_id)
+        Projects.query.filter(Projects.project_id == project_id).delete()
+        print("DELETE project: ", project_info["project_name"])
+        db.session.commit()
+    
+        user_info = ( db.session.query(Users).filter(Users.email == email).first().json() )
+        print(user_info["user_id"])
+        emit_projects(user_info["user_id"])
 
 @socketio.on("request_selected_project")
 def on_request_project():
