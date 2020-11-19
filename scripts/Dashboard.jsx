@@ -23,6 +23,13 @@ export default function Dashboard() {
         project_name: key,
       }
     );
+    
+    Socket.emit(
+      'select_project',
+      {
+        project_name: '',
+      },
+    );
   }
 
   function getStatus(key) {
