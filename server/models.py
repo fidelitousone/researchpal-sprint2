@@ -156,7 +156,9 @@ class Citations(db.Model):
     mla_citation = db.Column(db.Text)
     apa_citation = db.Column(db.Text)
 
-    def __init__(self, project_id: str, source_id: str, mla_citation: str, apa_citation: str):
+    def __init__(
+        self, project_id: str, source_id: str, mla_citation: str, apa_citation: str
+    ):
         self.project_id = project_id
         self.source_id = source_id
         self.mla_citation = mla_citation
