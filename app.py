@@ -1,5 +1,6 @@
 import uuid
 
+import requests as python_requests
 from flask import render_template, request, session
 
 from server import create_app, run_app, db, socketio
@@ -32,6 +33,44 @@ def add_new_user(email, user_id, user_name, auth_type, profile_picture):
             new_user = Users(email, user_id, user_name, auth_type, profile_picture)
             db.session.add(new_user)
             db.session.commit()
+
+
+def get_citation(url: str):
+    microlink_api = "https://api.microlink.io"
+    request_url = "{}?url={}".format(microlink_api, url)
+
+    response = python_requests.get(request_url)
+    if response.status_code == 200:
+        response = response.json()
+        status = response["status"]
+        if status == "success":
+            source_id = uuid.uuid4()
+            data = response["data"]
+            author = data["author"]
+            date = data["date"]
+            description = data["description"]
+            if data["image"]:
+                image = data["image"]["url"]
+            else:
+                image = None
+            publisher = data["publisher"]
+            title = data["title"]
+            with app.app_context():
+                new_source = Sources(
+                    source_id, url, author, date, description, image, publisher, title
+                )
+                db.session.add(new_source)
+                db.session.commit()
+        else:
+            print(
+                "Microlink API responded with error code: {}".format(response["code"])
+            )
+    else:
+        print(
+            "Microlink API request failed with HTTP {} Error".format(
+                response.status_code
+            )
+        )
 
 
 # Setup Flask app and create tables
