@@ -283,7 +283,31 @@ def on_delete_source(data):
                 .first()
                 .json()
             )
-        # socketio.emit("all_sources_server", project_info, room=request.sid)
+        
+        with app.app_context():
+            project_info = (
+                db.session.query(Projects)
+                .filter(Projects.project_name == project_name)
+                .first()
+            )
+        
+        sources = project_info.sources
+        print(sources)
+        
+        source_map = {}
+        
+        for source in sources:
+            print(source)
+            with app.app_context():
+                source_info = ( 
+                    db.session.query(Sources).filter(Sources.source_id == source).one().json()
+                )
+            source_map[source] = source_info["url"]
+            
+        socketio.emit("all_sources_server", {
+            "source_list": sources,
+            "source_map": source_map
+        }, room=request.sid)
     
 
 @socketio.on("delete_project")
