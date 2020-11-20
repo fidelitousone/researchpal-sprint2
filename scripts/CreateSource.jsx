@@ -8,6 +8,7 @@ import Socket from './Socket';
 
 export default function CreateSource(props) {
   const [sourcesList, setSourcesList] = React.useState([]);
+  const [sourcesIDList, setSourcesIDList] = React.useState([]);
   const { usingProject } = props;
   const projectName = usingProject;
   function handleSubmit(event) {

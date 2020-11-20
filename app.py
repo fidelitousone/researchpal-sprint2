@@ -155,12 +155,33 @@ def on_create_project(data):
 def add_source(data):
     name = data["project_name"]
     source_link = data["source_link"]
+    source_ids = uuid.uuid4()
+    with app.app_context():
+        new_source = Sources(source_ids, source_link, None, None, None, None, None, None)
+        db.session.add(new_source)
+        db.session.commit()
+        
     with app.app_context():
         project_info = (
             db.session.query(Projects).filter(Projects.project_name == name).first()
         )
+        
         project_info.sources = list(project_info.sources)
-        project_info.sources.append(source_link)
+        
+        sources = project_info.sources
+        
+        
+        
+        print(sources)
+        for source in sources:
+            source_info = ( 
+                db.session.query(Sources).filter(Sources.source_id == source).one().json()
+            )
+            print(source, source_info["url"])
+        
+        print("New source: ", source_link, "with id: ", source_ids)
+        project_info.sources = list(project_info.sources)
+        project_info.sources.append(source_ids)
         db.session.merge(project_info)
         db.session.commit()
         project_info = (
@@ -169,6 +190,9 @@ def add_source(data):
             .first()
             .json()
         )
+        
+        
+        
         print(project_info)
     socketio.emit("all_sources_server", project_info, room=request.sid)
 
