@@ -194,6 +194,7 @@ def on_create_project(data):
 def add_source(data):
     name = data["project_name"]
     source_link = data["source_link"]
+    get_source(source_link)
     with app.app_context():
         project_info = (
             db.session.query(Projects).filter(Projects.project_name == name).first()
