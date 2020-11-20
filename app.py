@@ -1,5 +1,7 @@
 import uuid
-
+import re
+import json
+import requests as python_requests
 from flask import render_template, request, session
 
 from server import create_app, run_app, db, socketio
@@ -34,6 +36,35 @@ def add_new_user(email, user_id, user_name, auth_type, profile_picture):
             db.session.commit()
 
 
+def get_source_info(url):
+    if re.match(regex, url) is not None:
+        request="https://api.microlink.io?url="+url
+        response=python_requests.get(request)
+        status = response.json()["status"]
+        if status != "fail":
+            data = response.json()["data"]
+            source_id = uuid.uuid4()
+            author = data["author"]
+            date = data["date"]
+            description = data["description"]
+            if data["image"]:
+                image = data["image"]["url"]
+            else:
+                image = None
+            publisher = data["publisher"]
+            title = data["title"]
+            with app.app_context():
+                new_Source = Sources(
+                    source_id, url, author, date, description, image, publisher, title
+                )
+                db.session.add(new_Source)
+                db.session.commit()
+        else:
+            print(response)
+    else:
+        print("invalid url")
+
+
 # Setup Flask app and create tables
 STATIC_FOLDER = "../static"
 TEMPLATE_FOLDER = "../templates"
@@ -41,6 +72,16 @@ app = create_app(STATIC_FOLDER, TEMPLATE_FOLDER)
 with app.app_context():
     db.create_all()
     db.session.commit()
+
+regex = re.compile(
+    r"^(?:http|ftp)s?://"  # http:// or https://
+    r"(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|"  # domain...
+    r"localhost|"  # localhost...
+    r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"  # ...or ip
+    r"(?::\d+)?"  # optional port
+    r"(?:/?|[/?]\S+)$",
+    re.IGNORECASE,
+)
 
 
 @socketio.on("new_google_user")
@@ -160,6 +201,8 @@ def add_source(data):
         new_source = Sources(source_ids, source_link, None, None, None, None, None, None)
         db.session.add(new_source)
         db.session.commit()
+
+    get_source_info(source_link)
 
     with app.app_context():
         project_info = (
