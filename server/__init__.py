@@ -17,7 +17,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", None)
 # Flask app extensions
 session = Session()
 socketio = SocketIO()
-db = SQLAlchemy()
+db = SQLAlchemy(session_options={"expire_on_commit": False})
 
 
 def create_app(

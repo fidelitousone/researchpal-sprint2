@@ -1,4 +1,8 @@
+import json
+
 import pytest
+
+from app import AuthType, Users
 
 
 # pylint: disable = redefined-outer-name,too-few-public-methods,too-many-arguments
@@ -93,30 +97,69 @@ class TestRenderTemplate:
 
 class TestNewUser:
     def test_on_new_google_user(
-        self, db, socketio_client, mocked_google_response, mocked_invalid_response
+        self,
+        db,
+        socketio_client,
+        mocked_google_response,
+        mocked_invalid_response,
+        mocked_user_model,
     ):
         with pytest.raises(TypeError):
             socketio_client.emit("new_google_user")
 
         socketio_client.emit("new_google_user", mocked_google_response)
+        mocked_user_model.auth_type = AuthType.GOOGLE.value
+        user_info = (
+            db.session.query(Users)
+            .filter(Users.email == mocked_user_model.email)
+            .first()
+        )
+        assert user_info.json() == mocked_user_model.json()
+
         socketio_client.emit("new_google_user", mocked_invalid_response)
 
     def test_on_new_facebook_user(
-        self, db, socketio_client, mocked_facebook_response, mocked_invalid_response
+        self,
+        db,
+        socketio_client,
+        mocked_facebook_response,
+        mocked_invalid_response,
+        mocked_user_model,
     ):
         with pytest.raises(TypeError):
             socketio_client.emit("new_facebook_user")
 
         socketio_client.emit("new_facebook_user", mocked_facebook_response)
+        mocked_user_model.auth_type = AuthType.FACEBOOK.value
+        user_info = (
+            db.session.query(Users)
+            .filter(Users.email == mocked_user_model.email)
+            .first()
+        )
+        assert user_info.json() == mocked_user_model.json()
+
         socketio_client.emit("new_facebook_user", mocked_invalid_response)
 
     def test_on_new_microsoft_user(
-        self, db, socketio_client, mocked_microsoft_response, mocked_invalid_response
+        self,
+        db,
+        socketio_client,
+        mocked_microsoft_response,
+        mocked_invalid_response,
+        mocked_user_model,
     ):
         with pytest.raises(TypeError):
             socketio_client.emit("new_microsoft_user")
 
         socketio_client.emit("new_microsoft_user", mocked_microsoft_response)
+        mocked_user_model.auth_type = AuthType.MICROSOFT.value
+        user_info = (
+            db.session.query(Users)
+            .filter(Users.email == mocked_user_model.email)
+            .first()
+        )
+        assert user_info.json() == mocked_user_model.json()
+
         socketio_client.emit("new_microsoft_user", mocked_invalid_response)
 
 
@@ -222,12 +265,15 @@ class TestProjectFlow:
 
 
 class TestSourceFlow:
-    def test_source_model(self, db, mocked_source_model):
-        assert mocked_source_model.url == "link"
-        assert mocked_source_model.json() is not None
-
     def test_add_source(
-        self, db, socketio_client, mocked_project_model, mocked_add_source
+        self,
+        db,
+        socketio_client,
+        mocked_project_model,
+        mocked_add_source,
+        requests_mock,
+        mocked_microlink_api,
+        mocked_microlink_response_success_null,
     ):
         with pytest.raises(TypeError):
             socketio_client.emit("add_source_to_project")
@@ -235,6 +281,13 @@ class TestSourceFlow:
         db.session.add(mocked_project_model)
         db.session.commit()
 
+        mocked_add_source["source_link"] = mocked_microlink_response_success_null[
+            "data"
+        ]["url"]
+        requests_mock.get(
+            mocked_microlink_api + mocked_add_source["source_link"],
+            text=json.dumps(mocked_microlink_response_success_null),
+        )
         socketio_client.emit("add_source_to_project", mocked_add_source)
         recieved = socketio_client.get_received()
         assert recieved[0]["name"] == "all_sources"

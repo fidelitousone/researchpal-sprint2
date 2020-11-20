@@ -8,9 +8,6 @@ Flask-SQLAlchemy==2.4.4
 psycopg2==2.8.6
 pytest==6.1.2
 pytest-mock==3.3.1
-<<<<<<< HEAD
 requests==2.25.0
-=======
-requests==2.24.0
->>>>>>> main
+requests-mock==1.8.0
 coverage

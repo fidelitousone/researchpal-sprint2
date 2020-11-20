@@ -35,7 +35,7 @@ def add_new_user(email, user_id, user_name, auth_type, profile_picture):
             db.session.commit()
 
 
-def get_source(url: str):
+def get_source(source_id: str, url: str):
     microlink_api = "https://api.microlink.io"
     request_url = "{}?url={}".format(microlink_api, url)
 
@@ -44,7 +44,6 @@ def get_source(url: str):
         response = response.json()
         status = response["status"]
         if status == "success":
-            source_id = uuid.uuid4()
             data = response["data"]
             author = data["author"]
             date = data["date"]
@@ -61,16 +60,13 @@ def get_source(url: str):
                 )
                 db.session.add(new_source)
                 db.session.commit()
-        else:
-            print(
-                "Microlink API responded with error code: {}".format(response["code"])
-            )
-    else:
-        print(
-            "Microlink API request failed with HTTP {} Error".format(
-                response.status_code
-            )
-        )
+            return True
+        print("Microlink API responded with error code: {}".format(response["code"]))
+        return False
+    print(
+        "Microlink API request failed with HTTP {} Error".format(response.status_code)
+    )
+    return False
 
 
 # Setup Flask app and create tables
@@ -194,15 +190,18 @@ def on_create_project(data):
 def add_source(data):
     name = data["project_name"]
     source_link = data["source_link"]
-    get_source(source_link)
+
     with app.app_context():
         project_info = (
             db.session.query(Projects).filter(Projects.project_name == name).first()
         )
-        project_info.sources = list(project_info.sources)
-        project_info.sources.append(source_link)
-        db.session.merge(project_info)
-        db.session.commit()
+
+        source_id = str(uuid.uuid4())
+        if get_source(source_id, source_link):
+            project_info.sources = list(project_info.sources)
+            project_info.sources.append(source_id)
+            db.session.merge(project_info)
+            db.session.commit()
         project_info = (
             db.session.query(Projects)
             .filter(Projects.project_name == name)
