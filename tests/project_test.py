@@ -10,7 +10,9 @@ def mocked_create_project_response(mocked_uuid, mocked_project_model):
 
 
 class TestProjectFlow:
-    def test_on_create_project_no_login(self, db, socketio_client, mocked_project_request):
+    def test_on_create_project_no_login(
+        self, db, socketio_client, mocked_project_request
+    ):
         with pytest.raises(TypeError):
             socketio_client.emit("create_project")
 

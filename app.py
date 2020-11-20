@@ -4,7 +4,7 @@ import requests as python_requests
 from flask import render_template, request, session
 
 from server import create_app, run_app, db, socketio
-from server.models import AuthType, Users, Projects, Sources
+from server.models import AuthType, Users, Projects, Sources, Citations
 
 
 # pylint: disable = no-member
@@ -35,7 +35,7 @@ def add_new_user(email, user_id, user_name, auth_type, profile_picture):
             db.session.commit()
 
 
-def get_source(source_id: str, url: str):
+def get_source_info(source_id: str, url: str):
     microlink_api = "https://api.microlink.io"
     request_url = "{}?url={}".format(microlink_api, url)
 
@@ -190,26 +190,52 @@ def on_create_project(data):
 def add_source(data):
     name = data["project_name"]
     source_link = data["source_link"]
+    source_id = str(uuid.uuid4())
+    get_source_info(source_id, source_link)
 
     with app.app_context():
         project_info = (
             db.session.query(Projects).filter(Projects.project_name == name).first()
         )
 
-        source_id = str(uuid.uuid4())
-        if get_source(source_id, source_link):
-            project_info.sources = list(project_info.sources)
-            project_info.sources.append(source_id)
-            db.session.merge(project_info)
-            db.session.commit()
+        project_info.sources = list(project_info.sources)
+
+        sources = project_info.sources
+
+        source_map = {}
+
+        print(sources)
+        for source in sources:
+            source_info = (
+                db.session.query(Sources)
+                .filter(Sources.source_id == source)
+                .one()
+                .json()
+            )
+            source_map[source] = source_info["url"]
+
+        source_map[source_id] = source_link
+
+        print("MAP:", source_map)
+
+        # print("New source: ", source_link, "with id: ", source_ids)
+        project_info.sources = list(project_info.sources)
+        project_info.sources.append(source_id)
+        db.session.merge(project_info)
+        db.session.commit()
         project_info = (
             db.session.query(Projects)
             .filter(Projects.project_name == name)
             .first()
             .json()
         )
+
         print(project_info)
-    socketio.emit("all_sources", project_info, room=request.sid)
+    socketio.emit(
+        "all_sources_server",
+        {"source_list": project_info["sources"], "source_map": source_map},
+        room=request.sid,
+    )
 
 
 @socketio.on("get_all_sources")
@@ -217,18 +243,160 @@ def get_all_sources(data):
     name = data["project_name"]
     with app.app_context():
         project_info = (
-            db.session.query(Projects)
-            .filter(Projects.project_name == name)
-            .first()
-            .json()
+            db.session.query(Projects).filter(Projects.project_name == name).first()
         )
-    socketio.emit("all_sources", project_info, room=request.sid)
+
+    sources = project_info.sources
+    print(sources)
+
+    source_map = {}
+
+    for source in sources:
+        print(source)
+        with app.app_context():
+            source_info = (
+                db.session.query(Sources)
+                .filter(Sources.source_id == source)
+                .one()
+                .json()
+            )
+        source_map[source] = source_info["url"]
+
+    socketio.emit(
+        "all_sources",
+        {"source_list": sources, "source_map": source_map},
+        room=request.sid,
+    )
 
 
 @socketio.on("select_project")
 def on_select_project(data):
     project_name = data["project_name"]
     session["selected_project"] = project_name
+
+
+@socketio.on("delete_source")
+def on_delete_source(data):
+    source_id = data["source_id"]
+    email = session.get("user")
+    project_name = data["project_name"]
+
+    with app.app_context():
+
+        user_info = db.session.query(Users).filter(Users.email == email).one().json()
+        owner_id = user_info["user_id"]
+
+        project_info = (
+            db.session.query(Projects)
+            .filter(
+                Projects.owner_id == owner_id, Projects.project_name == project_name
+            )
+            .one()
+        )
+
+        project_info.sources = list(project_info.sources)
+        project_info.sources.remove(source_id)
+        db.session.merge(project_info)
+        db.session.commit()
+
+        Citations.query.filter(Citations.source_id == source_id).delete()
+        print("DELETE citations for ", source_id)
+        db.session.commit()
+
+        Sources.query.filter(Sources.source_id == source_id).delete()
+        print("DELETE sources for ", source_id)
+        db.session.commit()
+
+        with app.app_context():
+            project_info = (
+                db.session.query(Projects)
+                .filter(Projects.project_name == project_name)
+                .first()
+                .json()
+            )
+
+        with app.app_context():
+            project_info = (
+                db.session.query(Projects)
+                .filter(Projects.project_name == project_name)
+                .first()
+            )
+
+        sources = project_info.sources
+        print(sources)
+
+        source_map = {}
+
+        for source in sources:
+            print(source)
+            with app.app_context():
+                source_info = (
+                    db.session.query(Sources)
+                    .filter(Sources.source_id == source)
+                    .one()
+                    .json()
+                )
+            source_map[source] = source_info["url"]
+
+        socketio.emit(
+            "all_sources_server",
+            {"source_list": sources, "source_map": source_map},
+            room=request.sid,
+        )
+
+
+@socketio.on("delete_project")
+def on_delete_project(data):
+    name = data["project_name"]
+    email = session.get("user")
+    print("IN DELETE PROJECT")
+
+    with app.app_context():
+
+        project_info = (
+            db.session.query(Projects)
+            .filter(Users.email == email, Projects.project_name == name)
+            .one()
+            .json()
+        )
+
+        project_id = project_info["project_id"]
+
+        Citations.query.filter(Citations.project_id == project_id).delete()
+        print("DELETE citations for ", project_info["project_name"])
+        db.session.commit()
+
+        project_info = (
+            db.session.query(Projects)
+            .filter(Users.email == email, Projects.project_name == name)
+            .one()
+            .json()
+        )
+
+        sources = project_info["sources"]
+        print(sources)
+
+        for source in sources:
+            Sources.query.filter(Sources.source_id == source).delete()
+            print("DELETE source ", source, " for ", project_info["project_name"])
+            db.session.commit()
+
+        project_info = (
+            db.session.query(Projects)
+            .filter(Users.email == email, Projects.project_name == name)
+            .one()
+            .json()
+        )
+
+        project_id = project_info["project_id"]
+
+        Projects.query.filter(Projects.project_id == project_id).delete()
+        print("DELETE project: ", project_info["project_name"])
+        db.session.commit()
+
+        user_info = db.session.query(Users).filter(Users.email == email).first().json()
+        print(user_info["user_id"])
+        emit_projects(user_info["user_id"])
 
 
 @socketio.on("request_selected_project")

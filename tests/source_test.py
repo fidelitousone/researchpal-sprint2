@@ -11,6 +11,14 @@ def mocked_source_request(mocked_project_request):
     return mocked_request
 
 
+def mocked_source_response_empty(mocked_uuid):
+    return {"source_list": [], "source_map": {}}
+
+
+def mocked_source_response(mocked_uuid, link):
+    return {"source_list": [str(mocked_uuid)], "source_map": {str(mocked_uuid): link}}
+
+
 @pytest.fixture
 def microlink_api():
     return "https://api.microlink.io?url="
@@ -101,6 +109,7 @@ class TestSourceFlow:
         self,
         db,
         socketio_client,
+        mocked_uuid,
         mocked_project_model,
         mocked_source_request,
         requests_mock,
@@ -122,13 +131,20 @@ class TestSourceFlow:
 
         socketio_client.emit("add_source_to_project", mocked_source_request)
         recieved = socketio_client.get_received()
-        assert recieved[0]["name"] == "all_sources"
+        assert recieved[0]["name"] == "all_sources_server"
 
         [all_sources] = recieved[0]["args"]
-        assert all_sources == mocked_project_model.json()
+        assert all_sources == mocked_source_response(
+            str(mocked_uuid()), mocked_source_request["source_link"]
+        )
 
-    def test_get_all_sources(
-        self, db, socketio_client, mocked_project_model, mocked_project_request
+    def test_get_all_sources_empty(
+        self,
+        db,
+        socketio_client,
+        mocked_uuid,
+        mocked_project_model,
+        mocked_project_request,
     ):
         with pytest.raises(TypeError):
             socketio_client.emit("get_all_sources")
@@ -141,4 +157,4 @@ class TestSourceFlow:
         assert recieved[0]["name"] == "all_sources"
 
         [all_sources] = recieved[0]["args"]
-        assert all_sources == mocked_project_model.json()
+        assert all_sources == mocked_source_response_empty(str(mocked_uuid))

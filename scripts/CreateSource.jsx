@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import * as React from 'react';
-import { Button, Alert } from 'react-bootstrap';
+import { Button, Alert, Glyphicon } from 'react-bootstrap';
 import * as ReactDOM from 'react-dom';
 import validator from 'validator';
 import PropTypes from 'prop-types';
@@ -8,6 +8,7 @@ import Socket from './Socket';
 
 export default function CreateSource(props) {
   const [sourcesList, setSourcesList] = React.useState([]);
+  const [sourcesMapList, setSourcesMapList] = React.useState([]);
   const { usingProject } = props;
   const projectName = usingProject;
   function handleSubmit(event) {
@@ -29,6 +30,32 @@ export default function CreateSource(props) {
     }
     event.preventDefault();
   }
+  
+  function deleteSource(index, projectName){
+    console.log("DELETE");
+    console.log(index);
+    Socket.emit(
+      'delete_source',
+      {
+        source_id: index,
+        project_name: projectName
+      }
+    );
+  }
+  
+  function getSourcesFromServer(){
+    React.useEffect(() => {
+      Socket.on('all_sources_server', (data) => {
+        console.log(`Received projects from server: ${data}`);
+        setSourcesList(data.source_list);
+        setSourcesMapList(data.source_map);
+      });
+    });
+    console.log(sourcesList)
+    console.log(sourcesMapList)
+  }
+  
+  getSourcesFromServer();
 
   function getAllSources() {
     React.useEffect(() => {
@@ -39,9 +66,11 @@ export default function CreateSource(props) {
     React.useEffect(() => {
       Socket.on('all_sources', (data) => {
         console.log(`Received projects from server: ${data}`);
-        setSourcesList(data.sources);
+        setSourcesList(data.source_list);
+        setSourcesMapList(data.source_map);
       });
     });
+    console.log(sourcesList)
   }
 
   getAllSources();
@@ -49,9 +78,20 @@ export default function CreateSource(props) {
   return (
     <div align="center">
       <br />
-      <p name="h3">{projectName}</p>
+      <div className="h3">{projectName}</div>
       <div id="notif_project" />
-      {sourcesList.map((value, index) => <li key={index}>{value}</li>)}
+      
+      {Object.entries(sourcesMapList).map(([sourceID, sourceName]) => (
+        <div key={sourceID} align="center">
+          <Button className="btn-outline-secondary" key={sourceID}>{sourceName}</Button>
+          {' '}
+          <Button className="btn-outline-danger" onClick={() => deleteSource(sourceID, projectName)}><Glyphicon glyph="remove">X</Glyphicon></Button>
+          <br/>
+          <br/>
+        </div>
+          
+        ))}
+      <br/>
       <form onSubmit={handleSubmit}>
         <input id="name_input" placeholder="Enter source name" />
         <Button type="submit" className="btn-primary">Add Source</Button>

@@ -2,6 +2,7 @@
 /* eslint-disable no-restricted-globals */
 import * as React from 'react';
 import { Button } from 'react-bootstrap';
+import { Glyphicon } from 'react-bootstrap';
 import Socket from './Socket';
 import CreateButton from './CreateProject';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -12,6 +13,24 @@ export default function Dashboard() {
   const [projects, setProjects] = React.useState(0);
   const [user, setUser] = React.useState(0);
   const [image, setImage] = React.useState(0);
+
+  function deleteProject(key){
+    console.log("DELETE");
+    console.log(key);
+    Socket.emit(
+      'delete_project',
+      {
+        project_name: key,
+      }
+    );
+    
+    Socket.emit(
+      'select_project',
+      {
+        project_name: '',
+      },
+    );
+  }
 
   function getStatus(key) {
     console.log(key);
@@ -65,6 +84,8 @@ export default function Dashboard() {
         {Object.keys(projects).map((key, val) => (
           <div key={key} align="center">
             <Button onClick={() => getStatus(projects[key].project_name)} className="btn-outline-secondary" key={key}>{projects[key].project_name}</Button>
+            {' '}
+            <Button className="btn-outline-danger" onClick={() => deleteProject(projects[key].project_name)}><Glyphicon glyph="remove">X</Glyphicon></Button>
             <br />
             <br />
           </div>
