@@ -237,7 +237,7 @@ class TestSourceFlow:
 
         socketio_client.emit("add_source_to_project", mocked_add_source)
         recieved = socketio_client.get_received()
-        assert recieved[0]["name"] == "all_sources"
+        assert recieved[0]["name"] == "all_sources_server"
 
         [all_sources] = recieved[0]["args"]
         assert all_sources == mocked_project_model.json()
