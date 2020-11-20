@@ -227,7 +227,7 @@ class TestSourceFlow:
         assert mocked_source_model.json() is not None
 
     def test_add_source(
-        self, db, socketio_client, mocked_project_model, mocked_add_source
+        self, db, socketio_client, mocked_project_model, mocked_add_source, mocked_source_response
     ):
         with pytest.raises(TypeError):
             socketio_client.emit("add_source_to_project")
@@ -237,13 +237,13 @@ class TestSourceFlow:
 
         socketio_client.emit("add_source_to_project", mocked_add_source)
         recieved = socketio_client.get_received()
-        assert recieved[0]["name"] == "all_sources"
+        assert recieved[0]["name"] == "all_sources_server"
 
         [all_sources] = recieved[0]["args"]
-        assert all_sources == mocked_project_model.json()
+        assert all_sources == mocked_source_response
 
     def test_get_all_sources(
-        self, db, socketio_client, mocked_project_model, mocked_new_project
+        self, db, socketio_client, mocked_project_model, mocked_new_project, mocked_source_empty_response
     ):
         with pytest.raises(TypeError):
             socketio_client.emit("get_all_sources")
@@ -256,7 +256,7 @@ class TestSourceFlow:
         assert recieved[0]["name"] == "all_sources"
 
         [all_sources] = recieved[0]["args"]
-        assert all_sources == mocked_project_model.json()
+        assert all_sources == mocked_source_empty_response
 
 
 class TestUserInfo:
