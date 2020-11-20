@@ -67,6 +67,13 @@ def mocked_project_model(mocked_uuid):
         [],
     )
 
+@pytest.fixture
+def mocked_source_response(mocked_uuid):
+    mocked_uuid = mocked_uuid()
+    return {
+        "source_list": ["link"],
+        "source_map": {str(mocked_uuid): "link"}
+    }
 
 @pytest.fixture
 def mocked_source_model(mocked_uuid):
