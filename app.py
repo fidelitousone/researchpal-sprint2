@@ -170,16 +170,20 @@ def add_source(data):
         
         sources = project_info.sources
         
-        
+        source_map = {}
         
         print(sources)
         for source in sources:
             source_info = ( 
                 db.session.query(Sources).filter(Sources.source_id == source).one().json()
             )
-            print(source, source_info["url"])
+            source_map[source] = source_info["url"]
         
-        print("New source: ", source_link, "with id: ", source_ids)
+        source_map[str(source_ids)] = source_link
+        
+        print("MAP:", source_map)
+        
+        #print("New source: ", source_link, "with id: ", source_ids)
         project_info.sources = list(project_info.sources)
         project_info.sources.append(source_ids)
         db.session.merge(project_info)
@@ -194,7 +198,10 @@ def add_source(data):
         
         
         print(project_info)
-    socketio.emit("all_sources_server", project_info, room=request.sid)
+    socketio.emit("all_sources_server", {
+        "source_list": project_info["sources"],
+        "source_map": source_map
+    }, room=request.sid)
 
 
 @socketio.on("get_all_sources")
@@ -205,9 +212,25 @@ def get_all_sources(data):
             db.session.query(Projects)
             .filter(Projects.project_name == name)
             .first()
-            .json()
         )
-    socketio.emit("all_sources", project_info, room=request.sid)
+    
+    sources = project_info.sources
+    print(sources)
+    
+    source_map = {}
+    
+    for source in sources:
+        print(source)
+        with app.app_context():
+            source_info = ( 
+                db.session.query(Sources).filter(Sources.source_id == source).one().json()
+            )
+        source_map[source] = source_info["url"]
+        
+    socketio.emit("all_sources", {
+        "source_list": sources,
+        "source_map": source_map
+    }, room=request.sid)
 
 
 @socketio.on("select_project")
@@ -217,7 +240,7 @@ def on_select_project(data):
 
 @socketio.on("delete_source")
 def on_delete_source(data):
-    url = data["url"]
+    source_id = data["source_id"]
     email = session.get("user")
     project_name = data["project_name"]
     
@@ -232,38 +255,26 @@ def on_delete_source(data):
         )
         owner_id = user_info["user_id"]
         
+        ## DELETE FROM PROJECT ARRAY
         project_info = (
-            db.session.query(Projects)
-            .filter(Projects.project_name == project_name, Projects.owner_id == owner_id)
-            .one()
-            .json()
+            db.session.query(Projects).filter(Projects.owner_id == owner_id, Projects.project_name == project_name).one()
         )
-        #project_id = project_info["project_id"]
-        source_list = project_info["sources"]
-        print(source_list)
-        print("URL")
-        print(url)
-        
-        source_info = (
-            db.session.query(Sources)
-            .filter(Sources.url == url, Sources.source_id in source_list)
-            .one()
-            .json()
-        )
-        source_id = source_info["source_id"]
+        project_info.sources = list(project_info.sources)
+        project_info.sources.remove(source_id)
+        db.session.merge(project_info)
+        db.session.commit()
         
         #db.session.delete(Citations).where(Citations.project_id == project_id)
         Citations.query.filter(Citations.source_id == source_id).delete()
-        print("DELETE citations for ", url)
+        print("DELETE citations for ", source_id)
         db.session.commit()
         
       
         #db.session.delete(Sources).where(Sources.source.id in sources)
         ## CHECK SOURCE_ID IN SOURCES
-        Sources.query.filter(Sources.url == url).delete()
-        print("DELETE sources for ", url)
+        Sources.query.filter(Sources.source_id == source_id).delete()
+        print("DELETE sources for ", source_id)
         db.session.commit()
-        
         
         with app.app_context():
             project_info = (
@@ -272,7 +283,7 @@ def on_delete_source(data):
                 .first()
                 .json()
             )
-        socketio.emit("all_sources", project_info, room=request.sid)
+        # socketio.emit("all_sources_server", project_info, room=request.sid)
     
 
 @socketio.on("delete_project")

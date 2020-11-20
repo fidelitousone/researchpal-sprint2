@@ -8,7 +8,7 @@ import Socket from './Socket';
 
 export default function CreateSource(props) {
   const [sourcesList, setSourcesList] = React.useState([]);
-  const [sourcesIDList, setSourcesIDList] = React.useState([]);
+  const [sourcesMapList, setSourcesMapList] = React.useState([]);
   const { usingProject } = props;
   const projectName = usingProject;
   function handleSubmit(event) {
@@ -37,7 +37,7 @@ export default function CreateSource(props) {
     Socket.emit(
       'delete_source',
       {
-        url: index,
+        source_id: index,
         project_name: projectName
       }
     );
@@ -47,10 +47,12 @@ export default function CreateSource(props) {
     React.useEffect(() => {
       Socket.on('all_sources_server', (data) => {
         console.log(`Received projects from server: ${data}`);
-        setSourcesList(data.sources);
+        setSourcesList(data.source_list);
+        setSourcesMapList(data.source_map);
       });
     });
     console.log(sourcesList)
+    console.log(sourcesMapList)
   }
   
   getSourcesFromServer();
@@ -64,7 +66,8 @@ export default function CreateSource(props) {
     React.useEffect(() => {
       Socket.on('all_sources', (data) => {
         console.log(`Received projects from server: ${data}`);
-        setSourcesList(data.sources);
+        setSourcesList(data.source_list);
+        setSourcesMapList(data.source_map);
       });
     });
     console.log(sourcesList)
@@ -78,11 +81,11 @@ export default function CreateSource(props) {
       <div className="h3">{projectName}</div>
       <div id="notif_project" />
       
-      {sourcesList.map((value, index) => (
-        <div key={index} align="center">
-          <Button className="btn-outline-secondary" key={index}>{value}</Button>
+      {Object.entries(sourcesMapList).map(([sourceID, sourceName]) => (
+        <div key={sourceID} align="center">
+          <Button className="btn-outline-secondary" key={sourceID}>{sourceName}</Button>
           {' '}
-          <Button className="btn-outline-danger" onClick={() => deleteSource(sourcesList[index], projectName)}><Glyphicon glyph="remove">X</Glyphicon></Button>
+          <Button className="btn-outline-danger" onClick={() => deleteSource(sourceID, projectName)}><Glyphicon glyph="remove">X</Glyphicon></Button>
           <br/>
           <br/>
         </div>
