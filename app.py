@@ -342,9 +342,10 @@ def on_delete_project(data):
         print(sources)
         #db.session.delete(Sources).where(Sources.source.id in sources)
         ## FIX SOURCE_ID IN SOURCES
-        Sources.query.filter(Sources.source_id in sources).delete()
-        print("DELETE sources for ", project_info["project_name"])
-        db.session.commit()
+        for source in sources:
+            Sources.query.filter(Sources.source_id == source).delete()
+            print("DELETE source ", source, " for ", project_info["project_name"])
+            db.session.commit()
     
     
         
