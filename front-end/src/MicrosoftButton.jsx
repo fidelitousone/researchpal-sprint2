@@ -2,7 +2,6 @@ import * as React from 'react';
 import MicrosoftLogin from 'react-microsoft-login';
 import { useHistory } from 'react-router-dom';
 import Socket from './Socket';
-import 'bootstrap/dist/css/bootstrap.css';
 
 export default function MicrosoftAuth() {
   const history = useHistory();

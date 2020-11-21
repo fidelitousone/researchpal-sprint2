@@ -1,5 +1,4 @@
 import * as React from 'react';
-import 'bootstrap/dist/css/bootstrap.css';
 import CreateSource from './CreateSource';
 import Socket from './Socket';
 import NavigationBar from './NavigationBar';
@@ -8,7 +7,7 @@ import UserInfoBar from './UserInfoBar';
 export default function Project() {
   const [projectName, setProjectName] = React.useState('');
   const [image, setImage] = React.useState(0);
-  function getUserInfo() {
+  function GetUserInfo() {
     React.useEffect(() => {
       Socket.emit('request_user_info');
       Socket.on('user_info', (data) => {
@@ -23,9 +22,9 @@ export default function Project() {
       });
     }, []);
   }
-  getUserInfo();
+  GetUserInfo();
 
-  function getProject() {
+  function GetProject() {
     React.useEffect(() => {
       Socket.emit('request_selected_project');
       Socket.on('give_project_name', (data) => {
@@ -56,7 +55,7 @@ export default function Project() {
     );
   }
 
-  getProject();
+  GetProject();
 
   return (
     <div className="Project">

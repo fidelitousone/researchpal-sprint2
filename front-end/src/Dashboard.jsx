@@ -2,10 +2,8 @@
 /* eslint-disable no-restricted-globals */
 import * as React from 'react';
 import { Button } from 'react-bootstrap';
-import { Glyphicon } from 'react-bootstrap';
 import Socket from './Socket';
 import CreateButton from './CreateProject';
-import 'bootstrap/dist/css/bootstrap.css';
 import NavigationBar from './NavigationBar';
 import UserInfoBar from './UserInfoBar';
 
@@ -43,7 +41,7 @@ export default function Dashboard() {
     );
   }
 
-  function getUserInfo() {
+  function GetUserInfo() {
     React.useEffect(() => {
       Socket.emit('request_user_info');
       Socket.on('user_info', (data) => {
@@ -59,9 +57,9 @@ export default function Dashboard() {
       });
     }, []);
   }
-  getUserInfo();
+  GetUserInfo();
 
-  function getAllProjects() {
+  function GetAllProjects() {
     React.useEffect(() => {
       Socket.on('all_projects', (data) => {
         console.log(`Received projects from server: ${data}`);
@@ -70,7 +68,7 @@ export default function Dashboard() {
     });
   }
 
-  getAllProjects();
+  GetAllProjects();
 
   return (
     <div className="Dashboard">
@@ -83,12 +81,10 @@ export default function Dashboard() {
         <br />
         {Object.keys(projects).map((key, val) => (
           <div key={key} align="center">
-            <Button onClick={() => getStatus(projects[key].project_name)} className="btn-outline-secondary" key={key}>{projects[key].project_name}</Button>
-            {' '}
-            <Button className="btn-outline-danger" onClick={() => deleteProject(projects[key].project_name)}><Glyphicon glyph="remove">X</Glyphicon></Button>
-            <br />
-            <br />
-          </div>
+          <Button onClick={() => getStatus(projects[key].project_name)} className="btn-outline-secondary" key={key}>{projects[key].project_name}</Button>
+          <br />
+          <br />
+        </div>
         ))}
       </ul>
     </div>

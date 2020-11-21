@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import Socket from './Socket';
-import 'bootstrap/dist/css/bootstrap.css';
 
 export default function Logout() {
   const history = useHistory();

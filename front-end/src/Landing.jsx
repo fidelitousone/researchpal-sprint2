@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import GoogleAuth from './GoogleButton';
 import FacebookAuth from './FacebookButton';
 import MicrosoftAuth from './MicrosoftButton';
-import 'bootstrap/dist/css/bootstrap.css';
 import NavigationBar from './NavigationBar';
 
 export default function Landing() {

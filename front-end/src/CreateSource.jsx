@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import * as React from 'react';
-import { Button, Alert, Glyphicon } from 'react-bootstrap';
+import { Button, Alert } from 'react-bootstrap';
 import * as ReactDOM from 'react-dom';
 import validator from 'validator';
 import PropTypes from 'prop-types';
@@ -43,7 +43,7 @@ export default function CreateSource(props) {
     );
   }
   
-  function getSourcesFromServer(){
+  function GetSourcesFromServer(){
     React.useEffect(() => {
       Socket.on('all_sources_server', (data) => {
         console.log(`Received projects from server: ${data}`);
@@ -55,9 +55,9 @@ export default function CreateSource(props) {
     console.log(sourcesMapList)
   }
   
-  getSourcesFromServer();
+  GetSourcesFromServer();
 
-  function getAllSources() {
+  function GetAllSources() {
     React.useEffect(() => {
       Socket.emit('get_all_sources', {
         project_name: projectName,
@@ -73,7 +73,7 @@ export default function CreateSource(props) {
     console.log(sourcesList)
   }
 
-  getAllSources();
+  GetAllSources();
 
   return (
     <div align="center">
@@ -85,7 +85,7 @@ export default function CreateSource(props) {
         <div key={sourceID} align="center">
           <Button className="btn-outline-secondary" key={sourceID}>{sourceName}</Button>
           {' '}
-          <Button className="btn-outline-danger" onClick={() => deleteSource(sourceID, projectName)}><Glyphicon glyph="remove">X</Glyphicon></Button>
+          <Button className="btn-outline-danger" onClick={() => deleteSource(sourceID, projectName)}>X</Button>
           <br/>
           <br/>
         </div>
