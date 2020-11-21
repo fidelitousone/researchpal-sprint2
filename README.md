@@ -112,11 +112,18 @@ pip install -r requirements.txt
 - Open scripts/GoogleButton.jsx
 - inside the GoogleAuth() function, replace `clientId=<client id>` with `clientId=<your client id">`
 
-## Local Deployment
-1. Build the React app for production: `npm run watch`
-2. Create a `.env` file in the root directory with the following content:
+## Local Development - Front End
+1. cd into `front-end`
+2. Run `npm install`
+3. Run `npm run start` NOTE: Run flask server in a separate terminal otherwise Sockets will not function
+4. When ready to deploy, run `npm run build`
+5. Move all files except for `index.html` to the outside `/static/` folder
+6. Move `index.html` to `templates` folder
+
+## Local Development - Back End
+1. Create a `.env` file in the root directory with the following content:
 ```sh
 DATABASE_URL=postgresql://<your-username>:<your-password>@localhost/
 ```
 - Remember to replace `<your-username>` and `<your-password>`.
-3. In a separate terminal, run: `python app.py`
+2. In a separate terminal, run: `python app.py`
