@@ -11,7 +11,7 @@ def mocked_source_request(mocked_project_request):
     return mocked_request
 
 
-def mocked_source_response_empty(mocked_uuid):
+def mocked_source_response_empty():
     return {"source_list": [], "source_map": {}}
 
 
@@ -157,4 +157,4 @@ class TestSourceFlow:
         assert recieved[0]["name"] == "all_sources"
 
         [all_sources] = recieved[0]["args"]
-        assert all_sources == mocked_source_response_empty(str(mocked_uuid))
+        assert all_sources == mocked_source_response_empty()
