@@ -26,3 +26,4 @@ venv.bak/
 # Node
 node_modules
 package-lock.json
+front-end/build/
