@@ -21,7 +21,7 @@ def client(app):
     return app.test_client()
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def socketio_client(app, client):
     from app import socketio  # pylint: disable = import-outside-toplevel
 
@@ -35,6 +35,7 @@ def db(app):  # pylint: disable = invalid-name
     with app.app_context():
         db.create_all()
         yield db
+        db.session.remove()
         db.drop_all()
 
 
@@ -67,23 +68,14 @@ def mocked_project_model(mocked_uuid):
         [],
     )
 
-@pytest.fixture
-def mocked_source_response(mocked_uuid):
-    mocked_uuid = mocked_uuid()
-    return {
-        "source_list": [str(mocked_uuid)],
-        "source_map": {str(mocked_uuid): "link"}
-    }
-
-@pytest.fixture
-def mocked_source_empty_response(mocked_uuid):
-    mocked_uuid = mocked_uuid()
-    return {
-        "source_list": [],
-        "source_map": {}
-    }
 
 @pytest.fixture
 def mocked_source_model(mocked_uuid):
     mocked_uuid = mocked_uuid()
     return Sources(str(mocked_uuid), "link")
+
+
+@pytest.fixture
+def mocked_project_request():
+    mocked_request = {"project_name": "Test"}
+    return mocked_request

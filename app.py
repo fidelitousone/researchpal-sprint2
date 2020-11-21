@@ -1,6 +1,5 @@
 import uuid
-import re
-import json
+
 import requests as python_requests
 from flask import render_template, request, session
 
@@ -36,14 +35,16 @@ def add_new_user(email, user_id, user_name, auth_type, profile_picture):
             db.session.commit()
 
 
-def get_source_info(url):
-    if re.match(regex, url) is not None:
-        request="https://api.microlink.io?url="+url
-        response=python_requests.get(request)
-        status = response.json()["status"]
-        if status != "fail":
-            data = response.json()["data"]
-            source_id = uuid.uuid4()
+def get_source_info(source_id: str, url: str):
+    microlink_api = "https://api.microlink.io"
+    request_url = "{}?url={}".format(microlink_api, url)
+
+    response = python_requests.get(request_url)
+    if response.status_code == 200:
+        response = response.json()
+        status = response["status"]
+        if status == "success":
+            data = response["data"]
             author = data["author"]
             date = data["date"]
             description = data["description"]
@@ -54,15 +55,18 @@ def get_source_info(url):
             publisher = data["publisher"]
             title = data["title"]
             with app.app_context():
-                new_Source = Sources(
+                new_source = Sources(
                     source_id, url, author, date, description, image, publisher, title
                 )
-                db.session.add(new_Source)
+                db.session.add(new_source)
                 db.session.commit()
-        else:
-            print(response)
-    else:
-        print("invalid url")
+            return True
+        print("Microlink API responded with error code: {}".format(response["code"]))
+        return False
+    print(
+        "Microlink API request failed with HTTP {} Error".format(response.status_code)
+    )
+    return False
 
 
 # Setup Flask app and create tables
@@ -72,16 +76,6 @@ app = create_app(STATIC_FOLDER, TEMPLATE_FOLDER)
 with app.app_context():
     db.create_all()
     db.session.commit()
-
-regex = re.compile(
-    r"^(?:http|ftp)s?://"  # http:// or https://
-    r"(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|"  # domain...
-    r"localhost|"  # localhost...
-    r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"  # ...or ip
-    r"(?::\d+)?"  # optional port
-    r"(?:/?|[/?]\S+)$",
-    re.IGNORECASE,
-)
 
 
 @socketio.on("new_google_user")
@@ -196,13 +190,8 @@ def on_create_project(data):
 def add_source(data):
     name = data["project_name"]
     source_link = data["source_link"]
-    source_ids = uuid.uuid4()
-    with app.app_context():
-        new_source = Sources(source_ids, source_link, None, None, None, None, None, None)
-        db.session.add(new_source)
-        db.session.commit()
-
-    get_source_info(source_link)
+    source_id = str(uuid.uuid4())
+    source_found = get_source_info(source_id, source_link)
 
     with app.app_context():
         project_info = (
@@ -218,19 +207,21 @@ def add_source(data):
         print(sources)
         for source in sources:
             source_info = (
-                db.session.query(Sources).filter(Sources.source_id == source).one().json()
+                db.session.query(Sources)
+                .filter(Sources.source_id == source)
+                .one()
+                .json()
             )
             source_map[source] = source_info["url"]
 
-        source_map[str(source_ids)] = source_link
+        if source_found:
+            source_map[source_id] = source_link
+            project_info.sources = list(project_info.sources)
+            project_info.sources.append(source_id)
+            db.session.merge(project_info)
+            db.session.commit()
 
         print("MAP:", source_map)
-
-        #print("New source: ", source_link, "with id: ", source_ids)
-        project_info.sources = list(project_info.sources)
-        project_info.sources.append(source_ids)
-        db.session.merge(project_info)
-        db.session.commit()
         project_info = (
             db.session.query(Projects)
             .filter(Projects.project_name == name)
@@ -239,10 +230,11 @@ def add_source(data):
         )
 
         print(project_info)
-    socketio.emit("all_sources_server", {
-        "source_list": project_info["sources"],
-        "source_map": source_map
-    }, room=request.sid)
+    socketio.emit(
+        "all_sources_server",
+        {"source_list": project_info["sources"], "source_map": source_map},
+        room=request.sid,
+    )
 
 
 @socketio.on("get_all_sources")
@@ -250,9 +242,7 @@ def get_all_sources(data):
     name = data["project_name"]
     with app.app_context():
         project_info = (
-            db.session.query(Projects)
-            .filter(Projects.project_name == name)
-            .first()
+            db.session.query(Projects).filter(Projects.project_name == name).first()
         )
 
     sources = project_info.sources
@@ -264,20 +254,25 @@ def get_all_sources(data):
         print(source)
         with app.app_context():
             source_info = (
-                db.session.query(Sources).filter(Sources.source_id == source).one().json()
+                db.session.query(Sources)
+                .filter(Sources.source_id == source)
+                .one()
+                .json()
             )
         source_map[source] = source_info["url"]
 
-    socketio.emit("all_sources", {
-        "source_list": sources,
-        "source_map": source_map
-    }, room=request.sid)
+    socketio.emit(
+        "all_sources",
+        {"source_list": sources, "source_map": source_map},
+        room=request.sid,
+    )
 
 
 @socketio.on("select_project")
 def on_select_project(data):
     project_name = data["project_name"]
     session["selected_project"] = project_name
+
 
 @socketio.on("delete_source")
 def on_delete_source(data):
@@ -287,19 +282,15 @@ def on_delete_source(data):
 
     with app.app_context():
 
-        user_info = (
-            db.session.query(Users)
-            .filter(Users.email == email)
-            .one()
-            .json()
-        )
+        user_info = db.session.query(Users).filter(Users.email == email).one().json()
         owner_id = user_info["user_id"]
 
         project_info = (
-            db.session.query(Projects).filter(
-                Projects.owner_id == owner_id,
-                Projects.project_name == project_name
-            ).one()
+            db.session.query(Projects)
+            .filter(
+                Projects.owner_id == owner_id, Projects.project_name == project_name
+            )
+            .one()
         )
 
         project_info.sources = list(project_info.sources)
@@ -339,14 +330,18 @@ def on_delete_source(data):
             print(source)
             with app.app_context():
                 source_info = (
-                    db.session.query(Sources).filter(Sources.source_id == source).one().json()
+                    db.session.query(Sources)
+                    .filter(Sources.source_id == source)
+                    .one()
+                    .json()
                 )
             source_map[source] = source_info["url"]
 
-        socketio.emit("all_sources_server", {
-            "source_list": sources,
-            "source_map": source_map
-        }, room=request.sid)
+        socketio.emit(
+            "all_sources_server",
+            {"source_list": sources, "source_map": source_map},
+            room=request.sid,
+        )
 
 
 @socketio.on("delete_project")
@@ -398,9 +393,10 @@ def on_delete_project(data):
         print("DELETE project: ", project_info["project_name"])
         db.session.commit()
 
-        user_info = ( db.session.query(Users).filter(Users.email == email).first().json() )
+        user_info = db.session.query(Users).filter(Users.email == email).first().json()
         print(user_info["user_id"])
         emit_projects(user_info["user_id"])
+
 
 @socketio.on("request_selected_project")
 def on_request_project():

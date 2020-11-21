@@ -17,7 +17,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", None)
 # Flask app extensions
 session = Session()
 socketio = SocketIO()
-db = SQLAlchemy()
+db = SQLAlchemy(session_options={"expire_on_commit": False})
 
 
 def create_app(
@@ -27,13 +27,13 @@ def create_app(
     app.config["SECRET_KEY"] = SECRET_KEY
     app.config["SESSION_PERMANENT"] = True
     app.config["SESSION_TYPE"] = "sqlalchemy"
-    app.config["SESSION_SQLALCHEMY"] = db
     app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    session.init_app(app)
     socketio.init_app(app, cors_allowed_origins="*", manage_session=False)
     db.init_app(app)
+    app.config["SESSION_SQLALCHEMY"] = db
+    session.init_app(app)
     return app
 
 
