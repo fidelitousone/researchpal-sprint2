@@ -1,27 +1,30 @@
 import React from 'react';
 import {
-  Badge, Image, DropdownButton,
+  Badge, Image, DropdownButton, Container, Col, Row
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import Logout from './LogoutButton';
 
 export default function UserInfoBar(props) {
   const { headerInfo, badgeInfo, profilePicture } = props;
   return (
-    <div display="flex" flex="0 0 auto" align="center">
-
-      <span className="h1" position="absolute" left="0">
-        {headerInfo}
-        <Badge className="badge-primary">{badgeInfo}</Badge>
-      </span>
-      <DropdownButton
-        id="dropdown-basic-button"
-        title={
-          <Image src={profilePicture} className="rounded-circle border" width="50px" height="50px" />
-        }
-      />
-      <Logout />
-    </div>
+    <>
+      <Container>
+        <Row noGutters="true" style={{justifyContent:"center", alignItems:"center", textAlign:"center"}}>
+          <Col xs={2.5}>
+            <h1>{headerInfo}</h1><Badge variant="primary">{badgeInfo}</Badge>
+          </Col>
+          <Col xs={2.5}>
+            <DropdownButton
+              id="dropdown-basic-button"
+              title={
+                <Image src={profilePicture} width="50px" height="50px" roundedCircle />
+              }
+            >
+            </DropdownButton>
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 }
 

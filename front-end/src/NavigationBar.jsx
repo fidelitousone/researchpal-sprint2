@@ -1,22 +1,23 @@
 import React from 'react';
-import { Button, ButtonGroup } from 'react-bootstrap';
+import { Button, ButtonGroup, Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 export default function NavigationBar() {
   return (
-    <div className="d-flex justify-content-center">
-      <ButtonGroup aria-label="Basic example">
+    <div>
+      <Container style={{textAlign:"center"}}>
+      <ButtonGroup style={{justifyContent:"center", alignItems:"center"}} aria-label="Navigation bar">
         <Link to="/">
-          <Button className="btn-outline-primary">Landing</Button>
+          <Button variant="primary">Landing</Button>
         </Link>
         <Link to="/home">
-          <Button className="btn-outline-primary">Dashboard</Button>
+          <Button variant="primary">Dashboard</Button>
         </Link>
         <Link to="/project">
-          <Button className="btn-outline-primary">Project</Button>
+          <Button variant="primary">Project</Button>
         </Link>
       </ButtonGroup>
+      </Container>
     </div>
-
   );
 }
