@@ -134,9 +134,13 @@ class TestSourceFlow:
         assert recieved[0]["name"] == "all_sources_server"
 
         [all_sources] = recieved[0]["args"]
-        assert all_sources == mocked_source_response(
-            str(mocked_uuid()), mocked_source_request["source_link"]
-        )
+        if mocked_microlink_response["status"] == "success":
+            assert all_sources == mocked_source_response(
+                str(mocked_uuid()), mocked_source_request["source_link"]
+            )
+        else:
+            assert all_sources == mocked_source_response_empty()
+
 
     def test_get_all_sources_empty(
         self,

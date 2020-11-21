@@ -191,7 +191,7 @@ def add_source(data):
     name = data["project_name"]
     source_link = data["source_link"]
     source_id = str(uuid.uuid4())
-    get_source_info(source_id, source_link)
+    source_found = get_source_info(source_id, source_link)
 
     with app.app_context():
         project_info = (
@@ -214,15 +214,14 @@ def add_source(data):
             )
             source_map[source] = source_info["url"]
 
-        source_map[source_id] = source_link
+        if source_found:
+            source_map[source_id] = source_link
+            project_info.sources = list(project_info.sources)
+            project_info.sources.append(source_id)
+            db.session.merge(project_info)
+            db.session.commit()
 
         print("MAP:", source_map)
-
-        # print("New source: ", source_link, "with id: ", source_ids)
-        project_info.sources = list(project_info.sources)
-        project_info.sources.append(source_id)
-        db.session.merge(project_info)
-        db.session.commit()
         project_info = (
             db.session.query(Projects)
             .filter(Projects.project_name == name)
