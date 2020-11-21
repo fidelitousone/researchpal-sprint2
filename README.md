@@ -120,7 +120,7 @@ pip install -r requirements.txt
 5. Move all files except for `index.html` to the outside `/static/` folder
 6. Move `index.html` to `templates` folder
 
-## Local Development - Front End
+## Local Development - Back End
 1. Create a `.env` file in the root directory with the following content:
 ```sh
 DATABASE_URL=postgresql://<your-username>:<your-password>@localhost/
