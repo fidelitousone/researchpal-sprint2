@@ -1,10 +1,11 @@
 /* eslint-disable react/no-array-index-key */
 import * as React from 'react';
-import { Button, Alert } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import * as ReactDOM from 'react-dom';
 import validator from 'validator';
 import PropTypes from 'prop-types';
 import Socket from './Socket';
+import AlertMessage from './AlertMessage';
 
 export default function CreateSource(props) {
   const [sourcesList, setSourcesList] = React.useState([]);
@@ -16,10 +17,10 @@ export default function CreateSource(props) {
     event.preventDefault();
     console.log("SOURCES", sourcesList);
     if (validator.isEmpty(validator.trim(sourceLink.value))) {
-      ReactDOM.render(<Alert className="alert-warning">Warning: Source name was empty or only whitespace.  Please try again with a valid project name.</Alert>, document.getElementById('notif_project'));
+      ReactDOM.render(<AlertMessage messageText="Source name was empty or only whitespace.  Please try again with a valid source name." />, document.getElementById('notif_project'));
       event.preventDefault();
     } else if (sourcesList.some(name => sourceLink.value === name)) {
-      ReactDOM.render(<Alert className="alert-warning">Warning: Source name is taken.  Please try again with a unique project name.</Alert>, document.getElementById('notif_project'));
+      ReactDOM.render(<AlertMessage messageText="Source name is taken.  Please try again with a unique project name." />, document.getElementById('notif_project'));
     } else {
       console.log(`Got source link: ${sourceLink.value}`);
       Socket.emit('add_source_to_project', {

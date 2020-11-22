@@ -38,4 +38,4 @@ def create_app(
 
 
 def run_app(app: Flask) -> None:
-    socketio.run(app, host=HOST, port=8081)
+    socketio.run(app, host=HOST, port=PORT)

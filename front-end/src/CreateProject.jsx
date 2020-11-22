@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Button, Alert } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import validator from 'validator';
-
+import AlertMessage from './AlertMessage';
 import Socket from './Socket';
 
 export default function CreateButton({projects}) {
+
   function handleSubmit(event) {
     const projectName = document.getElementById('name_input');
     console.log('PROJECT: ');
@@ -16,9 +17,9 @@ export default function CreateButton({projects}) {
     console.log(projectList);
   
     if (validator.isEmpty(validator.trim(projectName.value))) {
-      ReactDOM.render(<Alert className="alert-warning">Warning: Project name was empty or only whitespace.  Please try again with a valid project name.</Alert>, document.getElementById('notif_project'));
+      ReactDOM.render(<AlertMessage messageText="Project name was empty or only whitespace.  Please try again with a valid project name." />, document.getElementById('notif_project'));
     } else if (projectList.some(name => projectName.value === name)){
-      ReactDOM.render(<Alert className="alert-warning">Warning: Project name is taken.  Please try again with a unique project name.</Alert>, document.getElementById('notif_project'));
+      ReactDOM.render(<AlertMessage messageText="Project name is taken.  Please try again with a unique project name." />, document.getElementById('notif_project'));
     } else {
       ReactDOM.render(<span />, document.getElementById('notif_project'));
       Socket.emit('create_project', {
