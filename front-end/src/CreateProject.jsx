@@ -3,7 +3,7 @@ import { Button, Container, Row, Col, Form, Alert } from 'react-bootstrap';
 import validator from 'validator';
 import Socket from './Socket';
 
-export default function CreateButton({projects}) {
+export default function CreateProject({projects}) {
   const myRef = useRef(null)
   const [show, setShow] = useState(false);
   const [errorMessage, setErrorMessage] = useState('')

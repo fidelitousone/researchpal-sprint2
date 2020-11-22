@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import Socket from './Socket';
-import CreateButton from './CreateProject';
+import CreateProject from './CreateProject';
 import NavigationBar from './NavigationBar';
 import UserInfoBar from './UserInfoBar';
 
@@ -80,7 +80,7 @@ export default function Dashboard() {
           <NavigationBar />
         </Col>
         <Col>
-          <CreateButton projects={projects} />
+          <CreateProject projects={projects} />
         </Col>
         <Col>
           {/* TODO: display list of projects here with clickable states */}
