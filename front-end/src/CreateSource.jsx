@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useRef, useState } from "react";
-import { Button, Col, Container, Form, Row, Alert } from 'react-bootstrap';
+import { Button, Col, Container, Form, Row, Alert, ListGroup } from 'react-bootstrap';
 import validator from 'validator';
 import PropTypes from 'prop-types';
 import Socket from './Socket';
@@ -95,9 +95,11 @@ export default function CreateSource(props) {
         <Col>
             <h3>{usingProject}</h3>
         </Col>
-        <Col>
-          {/* TODO: Add code to list all sources here */}
-        </Col>
+        <ListGroup style={{paddingTop: "2%", paddingBottom: "2%" ,alignItems: "center"}}>
+          {Object.entries(sourcesMapList).map(([sourceID, sourceName]) => (
+            <ListGroup.Item key={sourceID}>{sourceName}</ListGroup.Item>
+          ))}
+        </ListGroup>
         <Col>
           <Form inline onSubmit={handleSubmit} style={{justifyContent:"center"}}>
             <Form.Group id="name_input">
