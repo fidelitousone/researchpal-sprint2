@@ -1,29 +1,31 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useRef, useState } from "react";
 import { Button, Col, Container, Form, Row, Alert } from 'react-bootstrap';
-import * as ReactDOM from 'react-dom';
 import validator from 'validator';
 import PropTypes from 'prop-types';
 import Socket from './Socket';
-import AlertMessage from './AlertMessage';
 
 export default function CreateSource(props) {
   const [sourcesList, setSourcesList] = useState([]);
   const [sourcesMapList, setSourcesMapList] = useState([]);
   const [show, setShow] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('')
   const myRef = useRef(null)
   const { usingProject } = props;
+
+  function displayError(message) {
+    setShow(true)
+    setErrorMessage(message)
+  }
 
   function handleSubmit(event) {
     const sourceLink = myRef.current.value;
     console.log(sourceLink);
-    event.preventDefault();
     console.log("SOURCES", sourcesList);
     if (validator.isEmpty(validator.trim(sourceLink))) {
-      setShow(true)
-      event.preventDefault();
+      displayError("Source name was empty or only whitespace. Please try again with a valid project name.")
     } else if (sourcesList.some(name => sourceLink === name)) {
-      setShow(true)
+      displayError("Source name is taken. Please try again with a unique project name.")
     } else {
       console.log(`Got source link: ${sourceLink}`);
       Socket.emit('add_source_to_project', {
@@ -81,16 +83,15 @@ export default function CreateSource(props) {
 
   return (
     <Container style={{textAlign:"center"}}>
-      <div style={{display:"flex", justifyContent:"center"}} id="notif_project" />
-      <Row xs={1}>
-        <Col>
-          <Alert show={show} style={{width: "40%"}} variant="danger" onClose={() => setShow(false)} dismissible>
+      <div style={{display:"flex", justifyContent:"center", marginTop:"1.5%"}}>
+            <Alert show={show} style={{width: "40%"}} variant="danger" onClose={() => setShow(false)} dismissible>
               <Alert.Heading>Error!</Alert.Heading>
                 <p>
-                  Error Test
+                  {errorMessage}
                 </p>
            </Alert>
-        </Col>
+      </div>
+      <Row xs={1}>
         <Col>
             <h3>{usingProject}</h3>
         </Col>
