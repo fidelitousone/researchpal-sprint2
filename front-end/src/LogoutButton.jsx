@@ -12,6 +12,6 @@ export default function Logout() {
   }
 
   return (
-    <Button onClick={handleSubmit} type="submit" className="btn-secondary">Logout</Button>
+    <Button variant="secondary" onClick={handleSubmit} type="submit">Logout</Button>
   );
 }
