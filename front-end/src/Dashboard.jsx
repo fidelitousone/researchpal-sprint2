@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-restricted-globals */
 import * as React from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Col, Container, Row } from 'react-bootstrap';
 import Socket from './Socket';
 import CreateButton from './CreateProject';
 import NavigationBar from './NavigationBar';
@@ -71,22 +71,21 @@ export default function Dashboard() {
   GetAllProjects();
 
   return (
-    <div className="Dashboard">
-      <UserInfoBar headerInfo="Dashboard" badgeInfo={user.email} profilePicture={image} />
-      <br />
-      <NavigationBar />
-      <br />
-      <CreateButton projects={projects}/>
-      <ul>
-        <br />
-        {Object.keys(projects).map((key, val) => (
-          <div key={key} align="center">
-          <Button onClick={() => getStatus(projects[key].project_name)} className="btn-outline-secondary" key={key}>{projects[key].project_name}</Button>
-          <br />
-          <br />
-        </div>
-        ))}
-      </ul>
-    </div>
+    <Container>
+      <Row xs={1}>
+        <Col>
+          <UserInfoBar headerInfo="Dashboard" badgeInfo={user.email} profilePicture={image} />
+        </Col>
+        <Col>
+          <NavigationBar />
+        </Col>
+        <Col>
+          <CreateButton projects={projects} />
+        </Col>
+        <Col>
+          {/* TODO: display list of projects here with clickable states */}
+        </Col>
+      </Row>
+    </Container>
   );
 } 
