@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-restricted-globals */
 import * as React from 'react';
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import { Button, Col, Container, ListGroup, Row } from 'react-bootstrap';
 import Socket from './Socket';
 import CreateProject from './CreateProject';
 import NavigationBar from './NavigationBar';
@@ -82,9 +82,13 @@ export default function Dashboard() {
         <Col>
           <CreateProject projects={projects} />
         </Col>
-        <Col>
-          {/* TODO: display list of projects here with clickable states */}
-        </Col>
+        <ListGroup style={{paddingTop: "2%", alignItems: "center"}}>
+          {Object.keys(projects).map((key, val) => 
+            <ListGroup.Item action onClick={() => getStatus(projects[key].project_name)} style={{width: "25%"}}>
+              {projects[key].project_name}
+            </ListGroup.Item>
+          )}
+        </ListGroup>
       </Row>
     </Container>
   );
