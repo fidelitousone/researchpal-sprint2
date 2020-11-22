@@ -6,6 +6,7 @@ import Socket from './Socket';
 import CreateProject from './CreateProject';
 import NavigationBar from './NavigationBar';
 import UserInfoBar from './UserInfoBar';
+import { BsFillDashCircleFill } from 'react-icons/bs'
 
 export default function Dashboard() {
   const [projects, setProjects] = React.useState(0);
@@ -85,7 +86,7 @@ export default function Dashboard() {
         <ListGroup style={{paddingTop: "2%", alignItems: "center"}}>
           {Object.keys(projects).map((key, val) => 
             <ListGroup.Item action onClick={() => getStatus(projects[key].project_name)} style={{width: "25%"}}>
-              {projects[key].project_name}
+              {projects[key].project_name}<Button style={{float: "right"}} variant="danger" onClick={() => deleteProject(projects[key].project_name)}><BsFillDashCircleFill /></Button>
             </ListGroup.Item>
           )}
         </ListGroup>
