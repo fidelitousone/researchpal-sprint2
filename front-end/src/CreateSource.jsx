@@ -1,32 +1,38 @@
 /* eslint-disable react/no-array-index-key */
-import * as React from 'react';
-import { Button, Alert } from 'react-bootstrap';
-import * as ReactDOM from 'react-dom';
+import React, { useRef, useState } from "react";
+import { Button, Col, Container, Form, Row, Alert, ListGroup } from 'react-bootstrap';
 import validator from 'validator';
 import PropTypes from 'prop-types';
 import Socket from './Socket';
 
 export default function CreateSource(props) {
-  const [sourcesList, setSourcesList] = React.useState([]);
-  const [sourcesMapList, setSourcesMapList] = React.useState([]);
+  const [sourcesList, setSourcesList] = useState([]);
+  const [sourcesMapList, setSourcesMapList] = useState([]);
+  const [show, setShow] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('')
+  const myRef = useRef(null)
   const { usingProject } = props;
-  const projectName = usingProject;
+
+  function displayError(message) {
+    setShow(true)
+    setErrorMessage(message)
+  }
+
   function handleSubmit(event) {
-    const sourceLink = document.getElementById('name_input');
-    event.preventDefault();
+    const sourceLink = myRef.current.value;
+    console.log(sourceLink);
     console.log("SOURCES", sourcesList);
-    if (validator.isEmpty(validator.trim(sourceLink.value))) {
-      ReactDOM.render(<Alert className="alert-warning">Warning: Source name was empty or only whitespace.  Please try again with a valid project name.</Alert>, document.getElementById('notif_project'));
-      event.preventDefault();
-    } else if (sourcesList.some(name => sourceLink.value === name)) {
-      ReactDOM.render(<Alert className="alert-warning">Warning: Source name is taken.  Please try again with a unique project name.</Alert>, document.getElementById('notif_project'));
+    if (validator.isEmpty(validator.trim(sourceLink))) {
+      displayError("Source name was empty or only whitespace. Please try again with a valid project name.")
+    } else if (sourcesList.some(name => sourceLink === name)) {
+      displayError("Source name is taken. Please try again with a unique project name.")
     } else {
-      console.log(`Got source link: ${sourceLink.value}`);
+      console.log(`Got source link: ${sourceLink}`);
       Socket.emit('add_source_to_project', {
-        project_name: projectName,
-        source_link: sourceLink.value,
+        project_name: usingProject,
+        source_link: sourceLink,
       });
-      sourceLink.value = '';
+      myRef.current.value='';
     }
     event.preventDefault();
   }
@@ -60,7 +66,7 @@ export default function CreateSource(props) {
   function GetAllSources() {
     React.useEffect(() => {
       Socket.emit('get_all_sources', {
-        project_name: projectName,
+        project_name: usingProject,
       });
     }, []);
     React.useEffect(() => {
@@ -76,27 +82,37 @@ export default function CreateSource(props) {
   GetAllSources();
 
   return (
-    <div align="center">
-      <br />
-      <div className="h3">{projectName}</div>
-      <div id="notif_project" />
-      
-      {Object.entries(sourcesMapList).map(([sourceID, sourceName]) => (
-        <div key={sourceID} align="center">
-          <Button className="btn-outline-secondary" key={sourceID}>{sourceName}</Button>
-          {' '}
-          <Button className="btn-outline-danger" onClick={() => deleteSource(sourceID, projectName)}>X</Button>
-          <br/>
-          <br/>
-        </div>
-          
-        ))}
-      <br/>
-      <form onSubmit={handleSubmit}>
-        <input id="name_input" placeholder="Enter source name" />
-        <Button type="submit" className="btn-primary">Add Source</Button>
-      </form>
-    </div>
+    <Container style={{textAlign:"center"}}>
+      <div style={{display:"flex", justifyContent:"center", marginTop:"1.5%"}}>
+            <Alert show={show} style={{width: "40%"}} variant="danger" onClose={() => setShow(false)} dismissible>
+              <Alert.Heading>Error!</Alert.Heading>
+                <p>
+                  {errorMessage}
+                </p>
+           </Alert>
+      </div>
+      <Row xs={1}>
+        <Col>
+            <h3>{usingProject}</h3>
+        </Col>
+        <ListGroup style={{paddingTop: "2%", paddingBottom: "2%" ,alignItems: "center"}}>
+          {Object.entries(sourcesMapList).map(([sourceID, sourceName]) => (
+            <ListGroup.Item key={sourceID}>{sourceName}</ListGroup.Item>
+          ))}
+        </ListGroup>
+        <Col>
+          <Form inline onSubmit={handleSubmit} style={{justifyContent:"center"}}>
+            <Form.Group id="name_input">
+              <Form.Label>Source</Form.Label>
+              <Form.Control ref={myRef} type="text" placeholder="Enter Source name" />
+            </Form.Group>
+            <Button variant="primary" type="submit">
+              Submit
+            </Button>
+          </Form>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

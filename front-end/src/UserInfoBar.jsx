@@ -3,6 +3,7 @@ import {
   Badge, Image, DropdownButton, Container, Col, Row
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
+import Logout from './LogoutButton';
 
 export default function UserInfoBar(props) {
   const { headerInfo, badgeInfo, profilePicture } = props;
@@ -21,6 +22,9 @@ export default function UserInfoBar(props) {
               }
             >
             </DropdownButton>
+          </Col>
+          <Col xs={2.5}>
+            <Logout />
           </Col>
         </Row>
       </Container>

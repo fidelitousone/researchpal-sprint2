@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-restricted-globals */
 import * as React from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Col, Container, ListGroup, Row } from 'react-bootstrap';
 import Socket from './Socket';
-import CreateButton from './CreateProject';
+import CreateProject from './CreateProject';
 import NavigationBar from './NavigationBar';
 import UserInfoBar from './UserInfoBar';
+import { BsFillDashCircleFill } from 'react-icons/bs'
 
 export default function Dashboard() {
   const [projects, setProjects] = React.useState(0);
@@ -71,22 +72,25 @@ export default function Dashboard() {
   GetAllProjects();
 
   return (
-    <div className="Dashboard">
-      <UserInfoBar headerInfo="Dashboard" badgeInfo={user.email} profilePicture={image} />
-      <br />
-      <NavigationBar />
-      <br />
-      <CreateButton projects={projects}/>
-      <ul>
-        <br />
-        {Object.keys(projects).map((key, val) => (
-          <div key={key} align="center">
-          <Button onClick={() => getStatus(projects[key].project_name)} className="btn-outline-secondary" key={key}>{projects[key].project_name}</Button>
-          <br />
-          <br />
-        </div>
-        ))}
-      </ul>
-    </div>
+    <Container>
+      <Row xs={1}>
+        <Col>
+          <UserInfoBar headerInfo="Dashboard" badgeInfo={user.email} profilePicture={image} />
+        </Col>
+        <Col>
+          <NavigationBar />
+        </Col>
+        <Col>
+          <CreateProject projects={projects} />
+        </Col>
+        <ListGroup style={{paddingTop: "2%", alignItems: "center"}}>
+          {Object.keys(projects).map((key, val) => 
+            <ListGroup.Item action onClick={() => getStatus(projects[key].project_name)} style={{width: "25%"}}>
+              {projects[key].project_name}<Button style={{float: "right"}} variant="danger" onClick={() => deleteProject(projects[key].project_name)}><BsFillDashCircleFill /></Button>
+            </ListGroup.Item>
+          )}
+        </ListGroup>
+      </Row>
+    </Container>
   );
 } 

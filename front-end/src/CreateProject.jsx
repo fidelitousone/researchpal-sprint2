@@ -1,47 +1,67 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { Button, Alert } from 'react-bootstrap';
+import React, { useRef, useState } from 'react';
+import { Button, Container, Row, Col, Form, Alert } from 'react-bootstrap';
 import validator from 'validator';
-
 import Socket from './Socket';
 
-export default function CreateButton({projects}) {
+export default function CreateProject({projects}) {
+  const myRef = useRef(null)
+  const [show, setShow] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('')
+  
+  
+  function displayError(message) {
+    setShow(true)
+    setErrorMessage(message)
+  }
+
   function handleSubmit(event) {
-    const projectName = document.getElementById('name_input');
+    const projectName = myRef.current.value;
     console.log('PROJECT: ');
-    console.log(projectName.value);
+    console.log(projectName);
     console.log('PROJECTS: ');
     console.log(projects);
     let projectList = Object.values(projects).map(obj => obj.project_name);
     console.log(projectList);
   
-    if (validator.isEmpty(validator.trim(projectName.value))) {
-      ReactDOM.render(<Alert className="alert-warning">Warning: Project name was empty or only whitespace.  Please try again with a valid project name.</Alert>, document.getElementById('notif_project'));
-    } else if (projectList.some(name => projectName.value === name)){
-      ReactDOM.render(<Alert className="alert-warning">Warning: Project name is taken.  Please try again with a unique project name.</Alert>, document.getElementById('notif_project'));
+    if (validator.isEmpty(validator.trim(projectName))) {
+      displayError("Project name was empty or only whitespace.  Please try again with a valid project name.");
+    } else if (projectList.some(name => projectName === name)){
+      displayError("Project name is taken.  Please try again with a unique project name.");
     } else {
-      ReactDOM.render(<span />, document.getElementById('notif_project'));
       Socket.emit('create_project', {
-        project_name: projectName.value,
+        project_name: projectName,
         socketid: Socket.id,
       });
-      console.log(`Sent the project ${projectName.value} to server!`);
+      console.log(`Sent the project ${projectName} to server!`);
     }
-  
-    projectName.value = '';
-  
+    myRef.current.value = '';
     event.preventDefault();
   }
   
   console.log(projects);
   
   return (
-    <div align="center">
-      <form onSubmit={handleSubmit}>
-        <div id="notif_project" />
-        <input id="name_input" placeholder="Enter new project name" />
-        <Button type="submit" className="btn-primary">Create!</Button>
-      </form>
-    </div>
+    <Container>
+      <div style={{display:"flex", justifyContent:"center", marginTop:"1.5%"}}>
+        <Alert show={show} style={{width: "40%"}} variant="danger" onClose={() => setShow(false)} dismissible>
+          <Alert.Heading>Error!</Alert.Heading>
+          <p>
+            {errorMessage}
+          </p>
+        </Alert>
+      </div>
+      <Row>
+        <Col>
+          <Form inline onSubmit={handleSubmit} style={{justifyContent:"center"}}>
+              <Form.Group controlId="formProjectInput">
+                <Form.Control ref={myRef} type="text" placeholder="Enter new project name" />
+              </Form.Group>
+              <Button variant="primary" type="submit">
+                  Submit
+              </Button>
+          </Form>
+        </Col>
+      </Row>
+    </Container>
   );
 }
