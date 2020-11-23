@@ -4,6 +4,7 @@ import { Button, Col, Container, Form, Row, Alert, ListGroup } from 'react-boots
 import validator from 'validator';
 import PropTypes from 'prop-types';
 import Socket from './Socket';
+import { BsFillDashCircleFill } from 'react-icons/bs'
 
 export default function CreateSource(props) {
   const [sourcesList, setSourcesList] = useState([]);
@@ -97,7 +98,7 @@ export default function CreateSource(props) {
         </Col>
         <ListGroup style={{paddingTop: "2%", paddingBottom: "2%" ,alignItems: "center"}}>
           {Object.entries(sourcesMapList).map(([sourceID, sourceName]) => (
-            <ListGroup.Item key={sourceID}>{sourceName}</ListGroup.Item>
+            <ListGroup.Item key={sourceID}>{sourceName}<Button onClick={() => deleteSource(sourceID, usingProject)} variant="danger" style={{float: "right", marginLeft: "20px"}}><BsFillDashCircleFill /></Button></ListGroup.Item>
           ))}
         </ListGroup>
         <Col>
