@@ -244,28 +244,29 @@ def get_all_sources(data):
         project_info = (
             db.session.query(Projects).filter(Projects.project_name == name).first()
         )
+    if(project_info):
+        sources = project_info.sources
 
-    sources = project_info.sources
-    print(sources)
+        source_map = {}
 
-    source_map = {}
+        for source in sources:
+            print(source)
+            with app.app_context():
+                source_info = (
+                    db.session.query(Sources)
+                    .filter(Sources.source_id == source)
+                    .one()
+                    .json()
+                )
+            source_map[source] = source_info["url"]
 
-    for source in sources:
-        print(source)
-        with app.app_context():
-            source_info = (
-                db.session.query(Sources)
-                .filter(Sources.source_id == source)
-                .one()
-                .json()
-            )
-        source_map[source] = source_info["url"]
-
-    socketio.emit(
-        "all_sources",
-        {"source_list": sources, "source_map": source_map},
-        room=request.sid,
-    )
+        socketio.emit(
+            "all_sources",
+            {"source_list": sources, "source_map": source_map},
+            room=request.sid,
+        )
+    else:
+        print("no sources in project")
 
 
 @socketio.on("select_project")

@@ -1,5 +1,5 @@
 # ResearchPal
-Heroku link: https://secure-peak-36471.herokuapp.com/
+https://rocky-sea-29898.herokuapp.com/home
 
 ## Description
 An all-in-one research gathering app, complete with citation generators and other tools to make the research process a breeze. 
