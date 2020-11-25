@@ -244,7 +244,7 @@ def get_all_sources(data):
         project_info = (
             db.session.query(Projects).filter(Projects.project_name == name).first()
         )
-    if(project_info):
+    if project_info:
         sources = project_info.sources
 
         source_map = {}
