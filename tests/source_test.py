@@ -141,7 +141,6 @@ class TestSourceFlow:
         else:
             assert all_sources == mocked_source_response_empty()
 
-
     def test_get_all_sources_empty(
         self,
         db,
