@@ -62,7 +62,7 @@ class Projects(db.Model):
     sources = db.Column(db.ARRAY(db.String))
     citation_type = db.Column(db.Text)
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         project_id: str,
         owner_id: str,
@@ -78,7 +78,7 @@ class Projects(db.Model):
         self.citation_type = citation_type.value
 
     def __repr__(self):
-        return "Project(project_id={}, owner_id={}, project_name={}, sources={}, citation_type={})".format(
+        return "Project(project_id={}, owner_id={}, project_name={}, sources={}, citation_type={})".format(  # pylint: disable = line-too-long
             self.project_id,
             self.owner_id,
             self.project_name,
@@ -163,6 +163,11 @@ class Citations(db.Model):
         self.source_id = source_id
         self.mla_citation = mla_citation
         self.apa_citation = apa_citation
+
+    def __repr__(self):
+        return "Citation(project_id={}, source_id={}, mla_citation={}, apa_citation={})".format(  # pylint: disable = line-too-long
+            self.project_id, self.source_id, self.mla_citation, self.apa_citation
+        )
 
     def json(self) -> dict:
         data = {

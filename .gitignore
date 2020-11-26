@@ -27,3 +27,6 @@ venv.bak/
 node_modules
 package-lock.json
 front-end/build/
+
+# Temp files
+*.log

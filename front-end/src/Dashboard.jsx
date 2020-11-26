@@ -22,7 +22,7 @@ export default function Dashboard() {
         project_name: key,
       }
     );
-    
+    console.log("DELETE THE PROJECT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     Socket.emit(
       'select_project',
       {
@@ -34,6 +34,7 @@ export default function Dashboard() {
   function getStatus(key) {
     console.log(key);
     console.log('Button Clicked');
+    console.log("GET THE PROJECT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     Socket.emit(
       'select_project',
       {
