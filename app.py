@@ -300,14 +300,16 @@ def get_all_sources(data):
             room=request.sid,
         )
     else:
-        log.info("No project named <%s> is owned by <%s>", project_name, email)
+        log.warning("No project named <%s> is owned by <%s>", project_name, email)
 
 
 @socketio.on("select_project")
 def on_select_project(data):
+    email = session.get("user")
     project_name = data["project_name"]
+
     session["selected_project"] = project_name
-    log.info("Selecting project with name <%s>", project_name)
+    log.info("Selecting project with name <%s> for <%s>", project_name, email)
 
 
 @socketio.on("delete_source")
@@ -397,7 +399,7 @@ def on_request_project():
         socketio.emit(
             "give_project_name", {"project_name": selected_project}, room=request.sid
         )
-        log.info("Selecting project with name <%s> for <%s>", selected_project, email)
+        log.info("Returning project name <%s> for <%s>", selected_project, email)
     else:
         log.warning("No login found")
 
