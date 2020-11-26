@@ -44,7 +44,7 @@ def create_source_map(source_ids: list) -> dict:
 
 
 def emit_projects(owner_id: str) -> None:
-    log.info("Sending all projects created by user with ID <%s>", owner_id)
+    log.debug("Sending all projects created by user with ID <%s>", owner_id)
     with app.app_context():
         user_projects = (
             db.session.query(Projects).filter(Projects.owner_id == owner_id).all()
