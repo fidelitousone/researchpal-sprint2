@@ -96,6 +96,13 @@ def mocked_microlink_response_fail():
 
 
 # pylint: disable = invalid-name,no-self-use,unused-argument
+# This fixes a bug with the session not initializing properly
+class TestFix:
+    def test_session(self, client, db):
+        with client.session_transaction() as sess:
+            assert sess is not None
+
+
 class TestSourceFlow:
     @pytest.mark.parametrize(
         "mocked_microlink_response",
@@ -107,11 +114,13 @@ class TestSourceFlow:
     )
     def test_add_source(
         self,
+        client,
         db,
         socketio_client,
         mocked_uuid,
         mocked_project_model,
         mocked_source_request,
+        mocked_user_model,
         requests_mock,
         microlink_api,
         mocked_microlink_response,
@@ -126,6 +135,9 @@ class TestSourceFlow:
             text=json.dumps(mocked_microlink_response),
         )
 
+        with client.session_transaction() as sess:
+            sess["user"] = mocked_user_model.email
+        db.session.add(mocked_user_model)
         db.session.add(mocked_project_model)
         db.session.commit()
 
@@ -143,15 +155,20 @@ class TestSourceFlow:
 
     def test_get_all_sources_empty(
         self,
+        client,
         db,
         socketio_client,
         mocked_uuid,
         mocked_project_model,
+        mocked_user_model,
         mocked_project_request,
     ):
         with pytest.raises(TypeError):
             socketio_client.emit("get_all_sources")
 
+        with client.session_transaction() as sess:
+            sess["user"] = mocked_user_model.email
+        db.session.add(mocked_user_model)
         db.session.add(mocked_project_model)
         db.session.commit()
 

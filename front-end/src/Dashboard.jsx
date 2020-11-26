@@ -14,26 +14,17 @@ export default function Dashboard() {
   const [image, setImage] = React.useState(0);
 
   function deleteProject(key){
-    console.log("DELETE");
-    console.log(key);
+    console.log(`Deleting ${key}`);
     Socket.emit(
       'delete_project',
       {
         project_name: key,
       }
     );
-    
-    Socket.emit(
-      'select_project',
-      {
-        project_name: '',
-      },
-    );
   }
 
   function getStatus(key) {
-    console.log(key);
-    console.log('Button Clicked');
+    console.log(`Getting information about ${key}`);
     Socket.emit(
       'select_project',
       {
@@ -85,10 +76,13 @@ export default function Dashboard() {
         </Col>
         <ListGroup style={{paddingTop: "2%", alignItems: "center"}}>
           {Object.keys(projects).map((key, val) => 
-            <ListGroup.Item action onClick={() => getStatus(projects[key].project_name)} style={{width: "25%"}}>
-              {projects[key].project_name}<Button style={{float: "right"}} variant="danger" onClick={() => deleteProject(projects[key].project_name)}><BsFillDashCircleFill /></Button>
+            <ListGroup.Item style={{width: "50%"}}>
+              {projects[key].project_name}
+              <Button variant="danger" onClick={() => deleteProject(projects[key].project_name)} style={{float: "right"}} >DELETE</Button>  
+              <Button variant="success" onClick={() => getStatus(projects[key].project_name)} style={{float: "right"}} >SELECT</Button>
             </ListGroup.Item>
           )}
+          
         </ListGroup>
       </Row>
     </Container>
