@@ -19,7 +19,7 @@ jobs:
     executor: python/default
     steps:
       - checkout
-      - node/install
+      # - node/install
       - python/load-cache
       - python/install-deps
       - python/save-cache
