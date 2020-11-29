@@ -1,6 +1,7 @@
 version: 2.1
 
 orbs:
+  node: circleci/node@4.0.0
   python: circleci/python@0.2.1
   heroku: circleci/heroku@1.2.3
 
@@ -33,6 +34,7 @@ jobs:
 workflows:
   main:
     jobs:
+      - node/test
       - build-and-test
       - heroku/deploy-via-git:
           requires:
@@ -40,5 +42,3 @@ workflows:
           filters:
               branches:
                 only: main
-
-
