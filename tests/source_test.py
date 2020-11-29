@@ -141,11 +141,17 @@ class TestSourceFlow:
         db.session.add(mocked_project_model)
         db.session.commit()
 
+        emit_int = 0
+
         socketio_client.emit("add_source_to_project", mocked_source_request)
         recieved = socketio_client.get_received()
-        assert recieved[0]["name"] == "all_sources_server"
+        if mocked_microlink_response["status"] == "fail":
+            assert recieved[emit_int]["name"] == "invalid_url"
+            emit_int += 1
 
-        [all_sources] = recieved[0]["args"]
+        assert recieved[emit_int]["name"] == "all_sources_server"
+
+        [all_sources] = recieved[emit_int]["args"]
         if mocked_microlink_response["status"] == "success":
             assert all_sources == mocked_source_response(
                 str(mocked_uuid()), mocked_source_request["source_link"]

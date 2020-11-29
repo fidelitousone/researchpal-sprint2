@@ -49,6 +49,17 @@ export default function CreateSource(props) {
       }
     );
   }
+
+  function InvalidURLError(){
+    React.useEffect(() => {
+      Socket.on('invalid_url', (data) => {
+        console.log(`Received projects from server: ${data}`);
+        displayError(`Invalid URL: [ ${data.source_link} ]  Please ensure that you have copied the entire URL (including the protocol)`);
+      });
+    });
+  }
+
+  InvalidURLError();
   
   function GetSourcesFromServer(){
     React.useEffect(() => {

@@ -265,6 +265,11 @@ def add_source(data):
             db.session.commit()
         else:
             log.warning("Failed to add source to project <%s>", project_name)
+            socketio.emit(
+                "invalid_url",
+                {"source_link": source_link},
+                room=request.sid,
+            )
 
         log.debug("After adding new source: %s", project_info.sources)
 
