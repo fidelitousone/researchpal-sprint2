@@ -11,9 +11,6 @@ export default function Project() {
     React.useEffect(() => {
       Socket.emit('request_user_info');
       Socket.on('user_info', (data) => {
-        console.log(`Received user info from server: ${data}`);
-        console.log(data.profile_picture);
-
         let imagelink = 'static/profile-blank.jpg';
         if (data.profile_picture !== null) {
           imagelink = data.profile_picture;
@@ -28,9 +25,7 @@ export default function Project() {
     React.useEffect(() => {
       Socket.emit('request_selected_project');
       Socket.on('give_project_name', (data) => {
-        console.log(data.project_name);
         setProjectName(data.project_name);
-        console.log(`project name is ${projectName}`);
       });
     }, []);
   }

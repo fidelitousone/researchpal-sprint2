@@ -9,7 +9,6 @@ export default function GoogleAuth() {
     Socket.emit('new_google_user', {
       response,
     });
-    console.log('Sent new google user to server!');
 
     Socket.emit('login_request', {
       email: response.profileObj.email,

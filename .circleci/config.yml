@@ -1,13 +1,14 @@
 version: 2.1
 
 orbs:
+  node: circleci/node@4.0.0
   python: circleci/python@0.2.1
   heroku: circleci/heroku@1.2.3
 
 jobs:
   build-and-test:
     docker:
-      - image: circleci/python:3.6.2-stretch-browsers
+      - image: cimg/python:3.8.6-node
         environment:
           DATABASE_URL: postgresql://postgres@localhost/circle_test?sslmode=disable
       - image: circleci/postgres:9.6.5-alpine-ram
@@ -18,12 +19,14 @@ jobs:
     executor: python/default
     steps:
       - checkout
+      - node/install-packages
       - python/load-cache
       - python/install-deps
       - python/save-cache
       - run:
           name: Run unit tests
           command: |
+            CI=false npm run build
             python -m coverage run -m pytest tests/
             python -m coverage report
             python -m coverage html
@@ -40,5 +43,3 @@ workflows:
           filters:
               branches:
                 only: main
-
-

@@ -1,30 +1,30 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-restricted-globals */
 import * as React from 'react';
-import { Button, Col, Container, ListGroup, Row } from 'react-bootstrap';
+import {
+  Button, Col, Container, ListGroup, Row,
+} from 'react-bootstrap';
+import { BsFillDashCircleFill } from 'react-icons/bs';
 import Socket from './Socket';
 import CreateProject from './CreateProject';
 import NavigationBar from './NavigationBar';
 import UserInfoBar from './UserInfoBar';
-import { BsFillDashCircleFill } from 'react-icons/bs'
 
 export default function Dashboard() {
   const [projects, setProjects] = React.useState(0);
   const [user, setUser] = React.useState(0);
   const [image, setImage] = React.useState(0);
 
-  function deleteProject(key){
-    console.log(`Deleting ${key}`);
+  function deleteProject(key) {
     Socket.emit(
       'delete_project',
       {
         project_name: key,
-      }
+      },
     );
   }
 
   function getStatus(key) {
-    console.log(`Getting information about ${key}`);
     Socket.emit(
       'select_project',
       {
@@ -37,9 +37,7 @@ export default function Dashboard() {
     React.useEffect(() => {
       Socket.emit('request_user_info');
       Socket.on('user_info', (data) => {
-        console.log(`Received user info from server: ${data}`);
         setUser(data);
-        console.log(data.profile_picture);
 
         let imagelink = 'static/profile-blank.jpg';
         if (data.profile_picture !== null) {
@@ -54,7 +52,6 @@ export default function Dashboard() {
   function GetAllProjects() {
     React.useEffect(() => {
       Socket.on('all_projects', (data) => {
-        console.log(`Received projects from server: ${data}`);
         setProjects(data);
       });
     });
@@ -74,17 +71,17 @@ export default function Dashboard() {
         <Col>
           <CreateProject projects={projects} />
         </Col>
-        <ListGroup style={{paddingTop: "2%", alignItems: "center"}}>
-          {Object.keys(projects).map((key, val) => 
-            <ListGroup.Item style={{width: "50%"}}>
+        <ListGroup style={{ paddingTop: '2%', alignItems: 'center' }}>
+          {Object.keys(projects).map((key, val) => (
+            <ListGroup.Item style={{ width: '50%' }}>
               {projects[key].project_name}
-              <Button variant="danger" onClick={() => deleteProject(projects[key].project_name)} style={{float: "right"}} >DELETE</Button>  
-              <Button variant="success" onClick={() => getStatus(projects[key].project_name)} style={{float: "right"}} >SELECT</Button>
+              <Button variant="danger" onClick={() => deleteProject(projects[key].project_name)} style={{ float: 'right' }}>DELETE</Button>
+              <Button variant="success" onClick={() => getStatus(projects[key].project_name)} style={{ float: 'right' }}>SELECT</Button>
             </ListGroup.Item>
-          )}
-          
+          ))}
+
         </ListGroup>
       </Row>
     </Container>
   );
-} 
+}
