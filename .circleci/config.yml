@@ -24,12 +24,9 @@ jobs:
       - python/install-deps
       - python/save-cache
       - run:
-          name: Run front-end unit tests
-          commmand: |
-            npm run test
-      - run:
-          name: Run back-end unit tests
+          name: Run unit tests
           command: |
+            npm run test
             python -m coverage run -m pytest tests/
             python -m coverage report
             python -m coverage html
