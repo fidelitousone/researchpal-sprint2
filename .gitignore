@@ -25,7 +25,6 @@ venv.bak/
 
 # Node
 node_modules
-package-lock.json
 build/
 
 # Temp files
