@@ -17,7 +17,7 @@ export default function NavigationBar() {
             <Button variant="primary">Project</Button>
           </Link>
           <Link to="/bibliography">
-            <Button variant="primary">Bibliography</Button>
+            <Button variant="primary">View Bibliography</Button>
           </Link>
         </ButtonGroup>
       </Container>

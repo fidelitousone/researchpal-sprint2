@@ -27,7 +27,6 @@ export default function Dashboard() {
   }
 
   function getStatus(key) {
-    console.log('Selected');
     history.push('/project');
     Socket.emit(
       'select_project',

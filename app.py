@@ -345,6 +345,37 @@ def get_all_sources(data):
     else:
         log.warning("No project named <%s> is owned by <%s>", project_name, email)
 
+@socketio.on("get_all_citations")
+def get_all_citations(data):
+    email = session.get("user")
+    project_name = data["project_name"]
+    print(project_name)
+    with app.app_context():
+        user_info = db.session.query(Users).filter(Users.email == email).one()
+        project_info = (
+            db.session.query(Projects)
+            .filter(
+                Projects.owner_id == user_info.user_id,
+                Projects.project_name == project_name,
+            )
+            .first()
+        )
+    if project_info:
+        log.info(
+            "Getting citations for <%s> owned by <%s>", project_name, email
+        )
+        project_id = project_info.project_id
+        with app.app_context():
+            citations = db.session.query(Citations).filter(Citations.project_id == project_id)
+            print(citations)
+            """socketio.emit(
+                "all_sources",
+                {"source_list": list(project_info.sources), "source_map": source_map},
+                room=request.sid,
+            )"""
+    else:
+        log.warning("No project named <%s> is owned by <%s>", project_name, email)
+    
 
 @socketio.on("select_project")
 def on_select_project(data):
@@ -450,6 +481,7 @@ def on_request_project():
 @app.route("/")
 @app.route("/home")
 @app.route("/project")
+@app.route("/bibliography")
 def index():
     return render_template("index.html")
 
