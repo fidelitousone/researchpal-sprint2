@@ -114,7 +114,7 @@ def get_source_info(source_id: str, url: str) -> bool:
     log.error("Microlink API request failed with HTTP %s", response.status_code)
     return False
 
-def create_citation(source_id: str, project_id: str):
+def create_citation(source_id: str, project_id: str, project_name: str):
     with app.app_context():
         source_info = db.session.query(Sources).filter(Sources.source_id == source_id).one()
     name = source_info.author.split(' ')
@@ -124,11 +124,9 @@ def create_citation(source_id: str, project_id: str):
         middle = name[1]
     else:
         middle=None
-    #date = datetime.datetime.strptime(source_info.date, "%Y-%m-%d %H:%M:%S")
     mla_date=source_info.date.strftime("%d %b. %Y")
     apa_date=source_info.date.strftime("%Y, %B %d")
-    citation_id = uuid.uuid4()
-    #MLA:last, first.<italics>titile</italics> publisher, day month. year, url.
+    #citation_id = uuid.uuid4()
     mla_citation = (
         last + ", " + first + 
         ".\'\'" + source_info.title + "\'\' " + 
@@ -136,7 +134,6 @@ def create_citation(source_id: str, project_id: str):
         mla_date + ", " + 
         source_info.url + "."
     )
-    #APA:last, first inital. middle inital.(year, month_full day). Title Retrieved from url
     if(middle):
         name = last + ", " + first[0] + ". " + middle[0] + ". "
     else:
@@ -147,13 +144,12 @@ def create_citation(source_id: str, project_id: str):
         source_info.title + " " +
         "Retrieved drom " + source_info.url
         )
-    
-    print("NEW CITATION")
-    print(citation_id)
-    print(project_id)
-    print(source_id)
-    print(mla_citation)
-    print(apa_citation)
+        
+    with app.app_context():
+        log.info("Added new citation to project <%s>", project_name)
+        new_citation = Citations(project_id, source_id, mla_citation, apa_citation)
+        db.session.add(new_citation)
+        db.session.commit()
 
 
 # Setup Flask app and create tables
@@ -299,6 +295,7 @@ def add_source(data):
         source_map = create_source_map(project_info.sources)
         if source_found:
             log.info("Added new source to project <%s>", project_name)
+            create_citation(source_id, project_info.project_id, project_name)
             source_map[source_id] = source_link
             project_info.sources = list(project_info.sources)
             project_info.sources.append(source_id)
@@ -312,7 +309,6 @@ def add_source(data):
                 room=request.sid,
             )
         project_id = project_info.project_id
-        create_citation(source_id, project_id)
         log.debug("After adding new source: %s", project_info.sources)
 
     socketio.emit(
