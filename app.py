@@ -1,7 +1,7 @@
 import logging
 import sys
 import uuid
-
+import datetime
 import requests as python_requests
 from flask import render_template, request, session
 
@@ -113,6 +113,47 @@ def get_source_info(source_id: str, url: str) -> bool:
         return False
     log.error("Microlink API request failed with HTTP %s", response.status_code)
     return False
+
+def create_citation(source_id: str, project_id: str):
+    with app.app_context():
+        source_info = db.session.query(Sources).filter(Sources.source_id == source_id).one()
+    name = source_info.author.split(' ')
+    last = name[-1]
+    first = name[0]
+    if(len(name) > 2):
+        middle = name[1]
+    else:
+        middle=None
+    #date = datetime.datetime.strptime(source_info.date, "%Y-%m-%d %H:%M:%S")
+    mla_date=source_info.date.strftime("%d %b. %Y")
+    apa_date=source_info.date.strftime("%Y, %B %d")
+    citation_id = uuid.uuid4()
+    #MLA:last, first.<italics>titile</italics> publisher, day month. year, url.
+    mla_citation = (
+        last + ", " + first + 
+        ".\'\'" + source_info.title + "\'\' " + 
+        source_info.publisher + ", " + 
+        mla_date + ", " + 
+        source_info.url + "."
+    )
+    #APA:last, first inital. middle inital.(year, month_full day). Title Retrieved from url
+    if(middle):
+        name = last + ", " + first[0] + ". " + middle[0] + ". "
+    else:
+        name = last + ", " + first[0] + ". "
+    apa_citation = (
+        name + 
+        "(" + apa_date + "). " +
+        source_info.title + " " +
+        "Retrieved drom " + source_info.url
+        )
+    
+    print("NEW CITATION")
+    print(citation_id)
+    print(project_id)
+    print(source_id)
+    print(mla_citation)
+    print(apa_citation)
 
 
 # Setup Flask app and create tables
@@ -270,7 +311,8 @@ def add_source(data):
                 {"source_link": source_link},
                 room=request.sid,
             )
-
+        project_id = project_info.project_id
+        create_citation(source_id, project_id)
         log.debug("After adding new source: %s", project_info.sources)
 
     socketio.emit(

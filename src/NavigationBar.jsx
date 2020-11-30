@@ -16,6 +16,9 @@ export default function NavigationBar() {
           <Link to="/project">
             <Button variant="primary">Project</Button>
           </Link>
+          <Link to="/bibliography">
+            <Button variant="primary">Bibliography</Button>
+          </Link>
         </ButtonGroup>
       </Container>
     </div>

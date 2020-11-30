@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import Landing from './Landing';
 import Dashboard from './Dashboard';
 import Project from './Project';
+import Bibliography from './Bibliography';
 import 'bootstrap/dist/css/bootstrap.css';
 
 ReactDOM.render(
@@ -16,6 +17,7 @@ ReactDOM.render(
           <Route path="/" component={Landing} exact />
           <Route path="/home" component={Dashboard} />
           <Route path="/project" component={Project} />
+          <Route path="/bibliography" component={Bibliography} />
         </Switch>
       </div>
     </BrowserRouter>
