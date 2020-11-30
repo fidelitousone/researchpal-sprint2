@@ -114,7 +114,7 @@ def get_source_info(source_id: str, url: str) -> bool:
     log.error("Microlink API request failed with HTTP %s", response.status_code)
     return False
 
-def create_citation(source_id: str, project_id: str, project_name: str):
+def create_citation(source_id: str, project_id: str, project_name):
     with app.app_context():
         source_info = db.session.query(Sources).filter(Sources.source_id == source_id).one()
     name = source_info.author.split(' ')
