@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import Jumbotron from 'react-bootstrap/Jumbotron';
-import { Col, Container, Row } from 'react-bootstrap';
+import {
+  Col, Container, Row, Image,
+} from 'react-bootstrap';
 import GoogleAuth from './GoogleButton';
 import FacebookAuth from './FacebookButton';
 import MicrosoftAuth from './MicrosoftButton';
@@ -13,8 +15,15 @@ export default function Landing() {
     <div className="Landing">
       <Jumbotron fluid>
         <Container>
-          <h1>ResearchPal</h1>
-          <p>The simple research organization tool, designed by researchers for researchers</p>
+          <Row>
+            <Col xs>
+              <Image src="/ResearchPal.svg" />
+            </Col>
+            <Col md>
+              <h1>ResearchPal</h1>
+              <p>The simple research organization tool, designed by researchers for researchers</p>
+            </Col>
+          </Row>
         </Container>
       </Jumbotron>
 
