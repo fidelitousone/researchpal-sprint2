@@ -349,7 +349,7 @@ def get_all_sources(data):
 def get_all_citations(data):
     email = session.get("user")
     project_name = data["project_name"]
-    print(project_name)
+    citation_list = []
     with app.app_context():
         user_info = db.session.query(Users).filter(Users.email == email).one()
         project_info = (
@@ -366,13 +366,17 @@ def get_all_citations(data):
         )
         project_id = project_info.project_id
         with app.app_context():
-            citations = db.session.query(Citations).filter(Citations.project_id == project_id)
-            print(citations)
-            """socketio.emit(
-                "all_sources",
-                {"source_list": list(project_info.sources), "source_map": source_map},
+            citations = db.session.query(Citations).filter(Citations.project_id == project_id).all()
+            for c  in citations:
+                if(data["style"] == 'mla'):
+                    citation_list.append(c.mla_citation)
+                if(data["style"] == 'apa'):
+                    citation_list.append(c.apa_citation)
+            socketio.emit(
+                "all_citations",
+                {"citation_list": citation_list},
                 room=request.sid,
-            )"""
+            )
     else:
         log.warning("No project named <%s> is owned by <%s>", project_name, email)
     

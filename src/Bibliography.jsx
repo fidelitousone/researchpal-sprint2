@@ -1,9 +1,14 @@
 import * as React from 'react';
+import {
+  Button, Container, Row, ListGroup,
+} from 'react-bootstrap';
+import { BsFillDashCircleFill } from 'react-icons/bs';
 import Socket from './Socket';
 import NavigationBar from './NavigationBar';
 import UserInfoBar from './UserInfoBar';
 
 export default function Bibliography() {
+  const [citationList, setCitationList] = React.useState([]);
   const [projectName, setProjectName] = React.useState('');
   const [image, setImage] = React.useState(0);
   function GetUserInfo() {
@@ -24,18 +29,25 @@ export default function Bibliography() {
     React.useEffect(() => {
       Socket.emit('request_selected_project');
       Socket.on('give_project_name', (data) => {
-        console.log(data.project_name);
         setProjectName(data.project_name);
       });
     }, []);
   }
 
+  GetProject();
+
   function GetCitations() {
-    GetProject();
-    console.log(projectName);
-    Socket.emit('get_all_citations', {
-      project_name: projectName,
-    });
+    React.useEffect(() => {
+      if (projectName !== null && projectName !== '') {
+        Socket.emit('get_all_citations', {
+          project_name: projectName,
+          style: 'mla',
+        });
+        Socket.on('all_citations', (data) => {
+          setCitationList(data.citation_list);
+        });
+      }
+    }, [projectName]);
   }
   GetCitations();
 
@@ -44,6 +56,18 @@ export default function Bibliography() {
       <UserInfoBar headerInfo="Bibliography" badgeInfo={projectName} profilePicture={image} />
       <br />
       <NavigationBar />
+      <Container style={{ textAlign: 'center' }}>
+        <Row xs={1}>
+          <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
+            {Object.entries(citationList).map(([sourceID, sourceName]) => (
+              <ListGroup.Item key={sourceID}>
+                {sourceName}
+                <Button variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        </Row>
+      </Container>
     </div>
   );
 }
