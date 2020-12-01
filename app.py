@@ -181,9 +181,9 @@ def create_citation(source_id: str, project_id: str, project_name):
 
 
 # Setup Flask app and create tables
-STATIC_FOLDER = "../build/static"
-TEMPLATE_FOLDER = "../build"
-app = create_app(STATIC_FOLDER, TEMPLATE_FOLDER)
+STATIC_URL_PATH = ""
+PUBLIC_FOLDER = "../build"
+app = create_app(STATIC_URL_PATH, PUBLIC_FOLDER, PUBLIC_FOLDER)
 with app.app_context():
     db.create_all()
     db.session.commit()
