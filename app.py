@@ -117,31 +117,52 @@ def get_source_info(source_id: str, url: str) -> bool:
 def create_citation(source_id: str, project_id: str, project_name):
     with app.app_context():
         source_info = db.session.query(Sources).filter(Sources.source_id == source_id).one()
-    name = source_info.author.split(' ')
-    last = name[-1]
-    first = name[0]
-    if(len(name) > 2):
-        middle = name[1]
+        
+    if(source_info.author):
+        name = source_info.author.split(' ')
+        if(len(name) > 2):
+            middle = name[1]
+        else:
+            middle=None
+        last = name[-1]
+        first = name[0]
+        mla_name = last + ", " + first
+        if(middle):
+            apa_name = last + ", " + first[0] + ". " + middle[0] + ". "
+        else:
+            apa_name = last + ", " + first[0] + ". "
     else:
-        middle=None
-    mla_date=source_info.date.strftime("%d %b. %Y")
-    apa_date=source_info.date.strftime("%Y, %B %d")
-    #citation_id = uuid.uuid4()
+        mla_name = ''
+        apa_name = ''
+        
+    if(source_info.title):
+        mla_title = source_info.title + " "
+        apa_title = source_info.title + " "
+    else:
+        mla_title = ''
+        apa_title = ''
+        
+    if(source_info.publisher):
+        mla_publisher = source_info.publisher + ", "
+    else:
+        mla_publisher = ''
+    
+    if(source_info.date):
+        mla_date=source_info.date.strftime("%d %b. %Y") + ", "
+        apa_date="(" + source_info.date.strftime("%Y, %B %d") + "). "
+    
     mla_citation = (
-        last + ", " + first + 
-        ".\'\'" + source_info.title + "\'\' " + 
-        source_info.publisher + ", " + 
-        mla_date + ", " + 
+        mla_name + 
+        mla_title + 
+        mla_publisher + 
+        mla_date +
         source_info.url + "."
     )
-    if(middle):
-        name = last + ", " + first[0] + ". " + middle[0] + ". "
-    else:
-        name = last + ", " + first[0] + ". "
+    
     apa_citation = (
-        name + 
-        "(" + apa_date + "). " +
-        source_info.title + " " +
+        apa_name + 
+        apa_date +
+        apa_title +
         "Retrieved drom " + source_info.url
         )
         
