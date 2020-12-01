@@ -167,7 +167,7 @@ def create_citation(source_id: str, project_id: str, project_name):
             )
     else:
         apa_citation = (
-            mla_name + 
+            apa_name + 
             apa_date +
             title +
             source_info.url + "."
