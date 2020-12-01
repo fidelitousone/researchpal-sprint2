@@ -17,7 +17,7 @@ export default function Landing() {
         <Container>
           <Row>
             <Col xs>
-              <Image src="/ResearchPal.svg" />
+              <Image src="ResearchPal.svg" />
             </Col>
             <Col md>
               <h1>ResearchPal</h1>
