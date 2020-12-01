@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useRef, useState } from 'react';
 import {
-  Button, Col, Container, Form, Row, Alert, ListGroup,
+  Button, Col, Container, Form, Row, Alert, ListGroup, Modal,
 } from 'react-bootstrap';
 import validator from 'validator';
 import PropTypes from 'prop-types';
@@ -15,6 +15,12 @@ export default function CreateSource(props) {
   const [errorMessage, setErrorMessage] = useState('');
   const myRef = useRef(null);
   const { usingProject } = props;
+
+  const [confirm, setConfirm] = useState(false);
+  const [delSource, setDelSource] = useState('');
+
+  const handleShow = () => setConfirm(true);
+  const handleClose = () => setConfirm(false);
 
   function displayError(message) {
     setShow(true);
@@ -38,6 +44,7 @@ export default function CreateSource(props) {
   }
 
   function deleteSource(index, projectName) {
+    handleClose();
     Socket.emit(
       'delete_source',
       {
@@ -84,6 +91,38 @@ export default function CreateSource(props) {
 
   GetAllSources();
 
+  function ConfirmDelete() {
+    // eslint-disable-next-line
+    console.log('IN CONFIRM DELETE');
+
+    return (
+      <Modal show={confirm} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Warning</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete source
+          {' '}
+          <b>
+            {sourcesMapList[delSource]}
+          </b>
+          ?
+          <br />
+          <br />
+          This will also delete its associated citation information.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="danger" onClick={deleteSource(delSource, usingProject)}>
+            Delete Source
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+
   return (
     <Container style={{ textAlign: 'center' }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5%' }}>
@@ -94,6 +133,9 @@ export default function CreateSource(props) {
           </p>
         </Alert>
       </div>
+
+      <ConfirmDelete />
+
       <Row xs={1}>
         <Col>
           <h3>{usingProject}</h3>
@@ -102,7 +144,22 @@ export default function CreateSource(props) {
           {Object.entries(sourcesMapList).map(([sourceID, sourceName]) => (
             <ListGroup.Item key={sourceID}>
               {sourceName}
-              <Button onClick={() => deleteSource(sourceID, usingProject)} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
+              <Button
+                onClick={
+                  () => {
+                    setDelSource(sourceID);
+                    // eslint-disable-next-line
+                    console.log('CLICK');
+                    handleShow();
+                  }
+                }
+                variant="danger"
+                style={
+                  { float: 'right', marginLeft: '20px' }
+                }
+              >
+                <BsFillDashCircleFill />
+              </Button>
             </ListGroup.Item>
           ))}
         </ListGroup>
