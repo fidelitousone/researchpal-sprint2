@@ -45,6 +45,8 @@ export default function Dashboard() {
       Socket.emit('request_user_info');
       Socket.on('user_info', (data) => {
         setUser(data);
+        // eslint-disable-next-line
+        console.log(data);
 
         let imagelink = 'static/profile-blank.jpg';
         if (data.profile_picture !== null) {
@@ -72,7 +74,17 @@ export default function Dashboard() {
         <Modal.Header closeButton>
           <Modal.Title>Warning</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Woohoo, you&apos;re reading this text in a modal!</Modal.Body>
+        <Modal.Body>
+          Are you sure you want to delete project
+          {' '}
+          <b>
+            {delProject}
+          </b>
+          ?
+          <br />
+          <br />
+          This will delete all of its associated source and citation information.
+        </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
