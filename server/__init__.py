@@ -21,9 +21,16 @@ db = SQLAlchemy(session_options={"expire_on_commit": False})
 
 
 def create_app(
-    static_folder: str = "static", template_folder: str = "templates"
+    static_url_path: str = None,
+    static_folder: str = "static",
+    template_folder: str = "templates",
 ) -> Flask:
-    app = Flask(__name__, static_folder=static_folder, template_folder=template_folder)
+    app = Flask(
+        __name__,
+        static_url_path=static_url_path,
+        static_folder=static_folder,
+        template_folder=template_folder,
+    )
     app.config["SECRET_KEY"] = SECRET_KEY
     app.config["SESSION_PERMANENT"] = True
     app.config["SESSION_TYPE"] = "sqlalchemy"
