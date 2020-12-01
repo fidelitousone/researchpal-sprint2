@@ -126,7 +126,7 @@ def create_citation(source_id: str, project_id: str, project_name):
             middle=None
         last = name[-1]
         first = name[0]
-        mla_name = last + ", " + first
+        mla_name = last + ", " + first + ". "
         if(middle):
             apa_name = last + ", " + first[0] + ". " + middle[0] + ". "
         else:
@@ -159,7 +159,7 @@ def create_citation(source_id: str, project_id: str, project_name):
         mla_date +
         source_info.url + "."
     )
-    if(name == ''):
+    if(apa_name == ''):
         apa_citation = (
             title +
             apa_date +
@@ -377,7 +377,8 @@ def get_all_sources(data):
 def get_all_citations(data):
     email = session.get("user")
     project_name = data["project_name"]
-    citation_list = []
+    mla_citation_list = []
+    apa_citation_list = []
     with app.app_context():
         user_info = db.session.query(Users).filter(Users.email == email).one()
         project_info = (
@@ -396,13 +397,14 @@ def get_all_citations(data):
         with app.app_context():
             citations = db.session.query(Citations).filter(Citations.project_id == project_id).all()
             for c  in citations:
-                if(data["style"] == 'mla'):
-                    citation_list.append(c.mla_citation)
-                if(data["style"] == 'apa'):
-                    citation_list.append(c.apa_citation)
+                    mla_citation_list.append(c.mla_citation)
+                    apa_citation_list.append(c.apa_citation)
             socketio.emit(
                 "all_citations",
-                {"citation_list": citation_list},
+                {
+                    "mla_citation_list": mla_citation_list,
+                    "apa_citation_list": apa_citation_list
+                },
                 room=request.sid,
             )
     else:

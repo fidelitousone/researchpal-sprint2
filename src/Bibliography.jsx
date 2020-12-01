@@ -9,6 +9,8 @@ import UserInfoBar from './UserInfoBar';
 
 export default function Bibliography() {
   const [citationList, setCitationList] = React.useState([]);
+  const [mlaCitationList, setmlaCitationList] = React.useState([]);
+  const [apaCitationList, setapaCitationList] = React.useState([]);
   const [projectName, setProjectName] = React.useState('');
   const [image, setImage] = React.useState(0);
   function GetUserInfo() {
@@ -35,25 +37,34 @@ export default function Bibliography() {
   }
 
   GetProject();
-
   function GetCitations() {
     React.useEffect(() => {
       if (projectName !== null && projectName !== '') {
         Socket.emit('get_all_citations', {
           project_name: projectName,
-          style: 'mla',
         });
         Socket.on('all_citations', (data) => {
-          setCitationList(data.citation_list);
+          setCitationList(data.apa_citation_list);
+          setmlaCitationList(data.mla_citation_list);
+          setapaCitationList(data.apa_citation_list);
         });
       }
     }, [projectName]);
   }
   GetCitations();
 
+  function getAPA() {
+    setCitationList(apaCitationList);
+  }
+  function getMLA() {
+    setCitationList(mlaCitationList);
+  }
+
   return (
     <div className="Bibliography">
       <UserInfoBar headerInfo="Bibliography" badgeInfo={projectName} profilePicture={image} />
+      <Button variant="success" onClick={getAPA}>APA7</Button>
+      <Button variant="success" onClick={getMLA}>MLA8</Button>
       <br />
       <NavigationBar />
       <Container style={{ textAlign: 'center' }}>
