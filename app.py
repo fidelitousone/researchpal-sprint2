@@ -136,11 +136,9 @@ def create_citation(source_id: str, project_id: str, project_name):
         apa_name = ''
         
     if(source_info.title):
-        mla_title = source_info.title + " "
-        apa_title = source_info.title + " "
+        title = source_info.title + " "
     else:
-        mla_title = ''
-        apa_title = ''
+        title = ''
         
     if(source_info.publisher):
         mla_publisher = source_info.publisher + ", "
@@ -148,23 +146,32 @@ def create_citation(source_id: str, project_id: str, project_name):
         mla_publisher = ''
     
     if(source_info.date):
-        mla_date=source_info.date.strftime("%d %b. %Y") + ", "
-        apa_date="(" + source_info.date.strftime("%Y, %B %d") + "). "
+        mla_date =  source_info.date.strftime("%d %b. %Y") + ", "
+        apa_date = "(" + source_info.date.strftime("%Y, %B %d") + "). "
+    else:
+        mla_date = ''
+        apa_date = ''
     
     mla_citation = (
         mla_name + 
-        mla_title + 
+        title + 
         mla_publisher + 
         mla_date +
         source_info.url + "."
     )
-    
-    apa_citation = (
-        apa_name + 
-        apa_date +
-        apa_title +
-        "Retrieved drom " + source_info.url
-        )
+    if(name == ''):
+        apa_citation = (
+            title +
+            apa_date +
+            source_info.url + "."
+            )
+    else:
+        apa_citation = (
+            mla_name + 
+            apa_date +
+            title +
+            source_info.url + "."
+            )
         
     with app.app_context():
         log.info("Added new citation to project <%s>", project_name)
