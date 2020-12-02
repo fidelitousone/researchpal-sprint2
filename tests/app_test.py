@@ -80,7 +80,7 @@ class TestNewUser:
     )
     def test_on_new_user(
         self,
-        db,
+        db_session,
         socketio_client,
         mocked_user_model,
         emit_name,
@@ -92,7 +92,7 @@ class TestNewUser:
 
         socketio_client.emit(emit_name, mocked_response())
         user_info = (
-            db.session.query(Users)
+            db_session.query(Users)
             .filter(Users.email == mocked_user_model.email)
             .first()
         )
@@ -110,7 +110,7 @@ class TestNewUser:
     )
     def test_on_new_user_invalid(
         self,
-        db,
+        db_session,
         socketio_client,
         mocked_user_model,
         emit_name,
@@ -122,7 +122,7 @@ class TestNewUser:
 
         socketio_client.emit(emit_name, mocked_response())
         user_info = (
-            db.session.query(Users)
+            db_session.query(Users)
             .filter(Users.email == mocked_user_model.email)
             .first()
         )
@@ -132,14 +132,14 @@ class TestNewUser:
 
 class TestLoginFlow:
     def test_on_login_request(
-        self, db, socketio_client, mocked_user_model, mocked_login_request
+        self, db_session, socketio_client, mocked_user_model, mocked_login_request
     ):
         with pytest.raises(TypeError):
             socketio_client.emit("login_request")
+        db_session.add(mocked_user_model)
+        db_session.commit()
 
-        db.session.add(mocked_user_model)
         socketio_client.emit("login_request", mocked_login_request)
-
         recieved = socketio_client.get_received()
         assert recieved[0]["name"] == "login_response"
 
@@ -148,19 +148,22 @@ class TestLoginFlow:
 
 
 class TestLogoutFlow:
-    def test_on_logout_no_login(self, db, socketio_client):
+    def test_on_logout_no_login(self, db_session, socketio_client):
         socketio_client.emit("logout")
         recieved = socketio_client.get_received()
         assert recieved == []
 
     def test_on_logout(
-        self, client, db, socketio_client, mocked_user_model, mocked_login_request
+        self,
+        client,
+        db_session,
+        socketio_client,
+        mocked_user_model,
+        mocked_login_request,
     ):
         # Simulate login
         with client.session_transaction() as sess:
             sess["user"] = mocked_user_model.email
-        db.session.add(mocked_user_model)
-        db.session.commit()
 
         # Test original flow
         socketio_client.emit("logout")
@@ -169,19 +172,24 @@ class TestLogoutFlow:
 
 
 class TestUserInfo:
-    def test_on_request_user_info_no_login(self, db, socketio_client):
+    def test_on_request_user_info_no_login(self, db_session, socketio_client):
         socketio_client.emit("request_user_info")
         recieved = socketio_client.get_received()
         assert recieved == []
 
     def test_on_request_user_info(
-        self, client, db, socketio_client, mocked_user_model, mocked_login_request
+        self,
+        client,
+        db_session,
+        socketio_client,
+        mocked_user_model,
+        mocked_login_request,
     ):
         # Simulate login
         with client.session_transaction() as sess:
             sess["user"] = mocked_user_model.email
-        db.session.add(mocked_user_model)
-        db.session.commit()
+        db_session.add(mocked_user_model)
+        db_session.commit()
 
         # Test original flow
         socketio_client.emit("request_user_info")
