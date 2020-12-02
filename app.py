@@ -191,7 +191,6 @@ def on_login_request(data):
 def on_logout():
     email = session.get("user")
     if email:
-        socketio.close_room(email)
         session.pop("user")
         log.info("Logging out <%s>", email)
     else:

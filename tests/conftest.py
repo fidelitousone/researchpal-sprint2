@@ -6,14 +6,14 @@ from app import AuthType, Projects, Sources, Users
 
 
 # pylint: disable = redefined-outer-name
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def app():
     from app import app  # pylint: disable = import-outside-toplevel
 
     return app
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def client(app):
     app.config["TESTING"] = True
     app.config["PRESERVE_CONTEXT_ON_EXCEPTION"] = False
@@ -21,22 +21,20 @@ def client(app):
     return app.test_client()
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def socketio_client(app, client):
     from app import socketio  # pylint: disable = import-outside-toplevel
 
     return socketio.test_client(app, flask_test_client=client)
 
 
-@pytest.fixture
-def db(app):  # pylint: disable = invalid-name
+@pytest.fixture(scope="session")
+def _db(app):  # pylint: disable = invalid-name
     from app import db  # pylint: disable = import-outside-toplevel
 
     with app.app_context():
-        db.create_all()
         yield db
-        db.session.remove()
-        db.drop_all()
+        db.drop_all()  # This fixes a weird DetachedInstanceError with pytest-flask-sqlalchemy
 
 
 @pytest.fixture
