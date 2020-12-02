@@ -5,10 +5,13 @@ import {
 } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import NavigationBar from './NavigationBar';
+import MainNavBar from './MainNavBar';
 
 export default function Landing() {
   return (
     <div className="Landing">
+      <MainNavBar />
+
       <Jumbotron fluid>
         <Container>
           <Row>

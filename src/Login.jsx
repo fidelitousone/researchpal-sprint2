@@ -4,11 +4,14 @@ import { Link } from 'react-router-dom';
 import GoogleAuth from './GoogleButton';
 import FacebookAuth from './FacebookButton';
 import MicrosoftAuth from './MicrosoftButton';
+import MainNavBar from './MainNavBar';
 import 'bootstrap/dist/css/bootstrap.css';
 
 export default function Login() {
   return (
     <>
+      <MainNavBar />
+      <br />
       <h2 style={{ textAlign: 'center' }}>
         Log in below:
       </h2>
