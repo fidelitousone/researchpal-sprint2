@@ -1,18 +1,17 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import {
-  Col, Container, Row, Image,
+  Col, Container, Row, Image, Button,
 } from 'react-bootstrap';
-import GoogleAuth from './GoogleButton';
-import FacebookAuth from './FacebookButton';
-import MicrosoftAuth from './MicrosoftButton';
+import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
-import NavigationBar from './NavigationBar';
+import MainNavBar from './MainNavBar';
 
 export default function Landing() {
   return (
     <div className="Landing">
+      <MainNavBar />
+
       <Jumbotron fluid>
         <Container>
           <Row>
@@ -22,30 +21,13 @@ export default function Landing() {
             <Col md>
               <h1>ResearchPal</h1>
               <p>The simple research organization tool, designed by researchers for researchers</p>
+              <Link to="/login">
+                <Button variant="primary">Sign up / Log in</Button>
+              </Link>
             </Col>
           </Row>
         </Container>
       </Jumbotron>
-
-      <h2 style={{ textAlign: 'center' }}>
-        Log in below:
-      </h2>
-      <Container>
-        <Row noGutters="true" style={{ justifyContent: 'center', alignItems: 'center' }}>
-          <Col lg="2">
-            <GoogleAuth />
-          </Col>
-          <Col lg="2">
-            <MicrosoftAuth />
-          </Col>
-          <Col lg="2">
-            <Link to="/home">
-              <FacebookAuth />
-            </Link>
-          </Col>
-        </Row>
-      </Container>
-      <NavigationBar />
     </div>
   );
 }

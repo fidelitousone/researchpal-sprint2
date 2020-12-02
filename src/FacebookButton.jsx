@@ -37,6 +37,7 @@ export default function FacebookAuth() {
       autoLoad={false}
       fields="name,email,picture"
       callback={responseFacebookSuccess}
+      size="small"
     />
   );
 }
