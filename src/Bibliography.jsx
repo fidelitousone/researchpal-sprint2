@@ -12,6 +12,7 @@ export default function Bibliography() {
   const [mlaCitationList, setmlaCitationList] = React.useState([]);
   const [apaCitationList, setapaCitationList] = React.useState([]);
   const [projectName, setProjectName] = React.useState('');
+  const [styleSelection, setStyleSelection] = React.useState('');
   const [image, setImage] = React.useState(0);
   function GetUserInfo() {
     React.useEffect(() => {
@@ -55,14 +56,23 @@ export default function Bibliography() {
 
   function getAPA() {
     setCitationList(apaCitationList);
+    setStyleSelection('apa');
   }
   function getMLA() {
     setCitationList(mlaCitationList);
+    setStyleSelection('mla');
   }
 
   function download() {
     const element = document.createElement('a');
-    const data = `data:text/plain;charset=utf-8, ${encodeURIComponent('test')}`;
+    let stringData = '';
+    if (styleSelection === 'mla') {
+      stringData = mlaCitationList.map((item) => `${item}\n`);
+    } else {
+      stringData = apaCitationList.map((item) => `${item}\n`);
+    }
+    console.log(stringData);
+    const data = `data:text/plain;charset=utf-8,${encodeURIComponent(stringData)}`;
     element.setAttribute('href', data);
     element.setAttribute('download', 'file.txt');
     element.style.display = 'none';

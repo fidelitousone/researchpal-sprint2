@@ -134,6 +134,7 @@ def create_citation(source_id: str, project_id: str, project_name):
     else:
         mla_name = ''
         apa_name = ''
+        last=''
         
     if(source_info.title):
         title = source_info.title + " "
@@ -175,7 +176,7 @@ def create_citation(source_id: str, project_id: str, project_name):
         
     with app.app_context():
         log.info("Added new citation to project <%s>", project_name)
-        new_citation = Citations(project_id, source_id, mla_citation, apa_citation)
+        new_citation = Citations(project_id, source_id, last, mla_citation, apa_citation)
         db.session.add(new_citation)
         db.session.commit()
 
@@ -395,7 +396,15 @@ def get_all_citations(data):
         )
         project_id = project_info.project_id
         with app.app_context():
-            citations = db.session.query(Citations).filter(Citations.project_id == project_id).all()
+            citations = (
+                db.session.query(Citations)
+                .filter(
+                    Citations.project_id == project_id
+                )
+                .order_by(Citations.author.asc())
+                .all()
+            )
+            print(citations)
             for c  in citations:
                     mla_citation_list.append(c.mla_citation)
                     apa_citation_list.append(c.apa_citation)
