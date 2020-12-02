@@ -115,7 +115,14 @@ export default function CreateSource(props) {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="danger" onClick={deleteSource(delSource, usingProject)}>
+          <Button
+            variant="danger"
+            onClick={
+              () => {
+                deleteSource(delSource, usingProject);
+              }
+            }
+          >
             Delete Source
           </Button>
         </Modal.Footer>
