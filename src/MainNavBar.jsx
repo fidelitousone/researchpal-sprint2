@@ -22,11 +22,17 @@ export default function MainNavBar() {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-          <Nav.Link href="#home">About Us</Nav.Link>
-          <Nav.Link href="#link">Pricing</Nav.Link>
-          <Nav.Link href="#link">Our Future</Nav.Link>
+          <Link to="/about">
+            <Nav.Link href="/about">About Us</Nav.Link>
+          </Link>
+          <Link to="/pricing">
+            <Nav.Link href="/pricing">Pricing</Nav.Link>
+          </Link>
+          <Link to="/future">
+            <Nav.Link href="/future">Our Future</Nav.Link>
+          </Link>
         </Nav>
-        <Link to="/">
+        <Link to="/contact">
           <Button variant="primary">Contact Us</Button>
         </Link>
       </Navbar.Collapse>
