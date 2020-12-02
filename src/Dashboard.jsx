@@ -5,12 +5,14 @@ import {
   Button, Col, Container, ListGroup, Row,
 } from 'react-bootstrap';
 import { BsFillDashCircleFill } from 'react-icons/bs';
+import { useHistory } from 'react-router-dom';
 import Socket from './Socket';
 import CreateProject from './CreateProject';
 import NavigationBar from './NavigationBar';
 import UserInfoBar from './UserInfoBar';
 
 export default function Dashboard() {
+  const history = useHistory();
   const [projects, setProjects] = React.useState(0);
   const [user, setUser] = React.useState(0);
   const [image, setImage] = React.useState(0);
@@ -25,6 +27,7 @@ export default function Dashboard() {
   }
 
   function getStatus(key) {
+    history.push('/project');
     Socket.emit(
       'select_project',
       {

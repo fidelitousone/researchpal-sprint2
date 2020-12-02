@@ -1,7 +1,7 @@
 import logging
 import sys
 import uuid
-
+import datetime
 import requests as python_requests
 from flask import render_template, request, session
 
@@ -113,6 +113,71 @@ def get_source_info(source_id: str, url: str) -> bool:
         return False
     log.error("Microlink API request failed with HTTP %s", response.status_code)
     return False
+
+def create_citation(source_id: str, project_id: str, project_name):
+    with app.app_context():
+        source_info = db.session.query(Sources).filter(Sources.source_id == source_id).one()
+        
+    if(source_info.author):
+        name = source_info.author.split(' ')
+        if(len(name) > 2):
+            middle = name[1]
+        else:
+            middle=None
+        last = name[-1]
+        first = name[0]
+        mla_name = last + ", " + first + ". "
+        if(middle):
+            apa_name = last + ", " + first[0] + ". " + middle[0] + ". "
+        else:
+            apa_name = last + ", " + first[0] + ". "
+    else:
+        mla_name = ''
+        apa_name = ''
+        
+    if(source_info.title):
+        title = source_info.title + " "
+    else:
+        title = ''
+        
+    if(source_info.publisher):
+        mla_publisher = source_info.publisher + ", "
+    else:
+        mla_publisher = ''
+    
+    if(source_info.date):
+        mla_date =  source_info.date.strftime("%d %b. %Y") + ", "
+        apa_date = "(" + source_info.date.strftime("%Y, %B %d") + "). "
+    else:
+        mla_date = ''
+        apa_date = ''
+    
+    mla_citation = (
+        mla_name + 
+        title + 
+        mla_publisher + 
+        mla_date +
+        source_info.url + "."
+    )
+    if(apa_name == ''):
+        apa_citation = (
+            title +
+            apa_date +
+            source_info.url + "."
+            )
+    else:
+        apa_citation = (
+            apa_name + 
+            apa_date +
+            title +
+            source_info.url + "."
+            )
+        
+    with app.app_context():
+        log.info("Added new citation to project <%s>", project_name)
+        new_citation = Citations(project_id, source_id, mla_citation, apa_citation)
+        db.session.add(new_citation)
+        db.session.commit()
 
 
 # Setup Flask app and create tables
@@ -258,6 +323,7 @@ def add_source(data):
         source_map = create_source_map(project_info.sources)
         if source_found:
             log.info("Added new source to project <%s>", project_name)
+            create_citation(source_id, project_info.project_id, project_name)
             source_map[source_id] = source_link
             project_info.sources = list(project_info.sources)
             project_info.sources.append(source_id)
@@ -270,7 +336,7 @@ def add_source(data):
                 {"source_link": source_link},
                 room=request.sid,
             )
-
+        project_id = project_info.project_id
         log.debug("After adding new source: %s", project_info.sources)
 
     socketio.emit(
@@ -307,6 +373,43 @@ def get_all_sources(data):
     else:
         log.warning("No project named <%s> is owned by <%s>", project_name, email)
 
+@socketio.on("get_all_citations")
+def get_all_citations(data):
+    email = session.get("user")
+    project_name = data["project_name"]
+    mla_citation_list = []
+    apa_citation_list = []
+    with app.app_context():
+        user_info = db.session.query(Users).filter(Users.email == email).one()
+        project_info = (
+            db.session.query(Projects)
+            .filter(
+                Projects.owner_id == user_info.user_id,
+                Projects.project_name == project_name,
+            )
+            .first()
+        )
+    if project_info:
+        log.info(
+            "Getting citations for <%s> owned by <%s>", project_name, email
+        )
+        project_id = project_info.project_id
+        with app.app_context():
+            citations = db.session.query(Citations).filter(Citations.project_id == project_id).all()
+            for c  in citations:
+                    mla_citation_list.append(c.mla_citation)
+                    apa_citation_list.append(c.apa_citation)
+            socketio.emit(
+                "all_citations",
+                {
+                    "mla_citation_list": mla_citation_list,
+                    "apa_citation_list": apa_citation_list
+                },
+                room=request.sid,
+            )
+    else:
+        log.warning("No project named <%s> is owned by <%s>", project_name, email)
+    
 
 @socketio.on("select_project")
 def on_select_project(data):
@@ -412,6 +515,7 @@ def on_request_project():
 @app.route("/")
 @app.route("/home")
 @app.route("/project")
+@app.route("/bibliography")
 def index():
     return render_template("index.html")
 
