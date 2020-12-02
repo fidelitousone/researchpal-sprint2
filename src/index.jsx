@@ -4,6 +4,7 @@ import './index.css';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import Landing from './Landing';
+import Login from './Login';
 import Dashboard from './Dashboard';
 import Project from './Project';
 import Bibliography from './Bibliography';
@@ -15,6 +16,7 @@ ReactDOM.render(
       <div>
         <Switch>
           <Route path="/" component={Landing} exact />
+          <Route path="/login" component={Login} />
           <Route path="/home" component={Dashboard} />
           <Route path="/project" component={Project} />
           <Route path="/bibliography" component={Bibliography} />
