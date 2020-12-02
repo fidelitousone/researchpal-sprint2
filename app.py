@@ -462,6 +462,7 @@ def on_delete_source(data):
 def on_delete_project(data):
     email = session.get("user")
     project_name = data["project_name"]
+    session["selected_project"] = project_name
 
     with app.app_context():
         user_info = db.session.query(Users).filter(Users.email == email).one()
