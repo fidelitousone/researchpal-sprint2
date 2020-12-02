@@ -1,10 +1,10 @@
 import * as React from 'react';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import {
-  Col, Container, Row, Image,
+  Col, Container, Row, Image, Button,
 } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
-import NavigationBar from './NavigationBar';
 import MainNavBar from './MainNavBar';
 
 export default function Landing() {
@@ -21,12 +21,13 @@ export default function Landing() {
             <Col md>
               <h1>ResearchPal</h1>
               <p>The simple research organization tool, designed by researchers for researchers</p>
+              <Link to="/login">
+                <Button variant="primary">Sign up / Log in</Button>
+              </Link>
             </Col>
           </Row>
         </Container>
       </Jumbotron>
-
-      <NavigationBar />
     </div>
   );
 }
