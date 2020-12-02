@@ -60,11 +60,23 @@ export default function Bibliography() {
     setCitationList(mlaCitationList);
   }
 
+  function download() {
+    const element = document.createElement('a');
+    const data = `data:text/plain;charset=utf-8, ${encodeURIComponent('test')}`;
+    element.setAttribute('href', data);
+    element.setAttribute('download', 'file.txt');
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+
   return (
     <div className="Bibliography">
       <UserInfoBar headerInfo="Bibliography" badgeInfo={projectName} profilePicture={image} />
       <Button variant="success" onClick={getAPA}>APA7</Button>
       <Button variant="success" onClick={getMLA}>MLA8</Button>
+      <Button variant="success" onClick={download}>Download Bibliography</Button>
       <br />
       <NavigationBar />
       <Container style={{ textAlign: 'center' }}>
