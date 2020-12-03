@@ -101,42 +101,42 @@ export default function Dashboard() {
   }
 
   return (
-    <Container>
-      <Row xs={1}>
-        <Col>
-          <UserInfoBar headerInfo="Dashboard" badgeInfo={user.email} profilePicture={image} />
-        </Col>
-        <Col>
-          <NavigationBar />
-        </Col>
-        <Col>
-          <CreateProject projects={projects} />
-        </Col>
+    <>
+      <UserInfoBar headerInfo="Dashboard" badgeInfo={user.email} profilePicture={image} />
+      <Container>
+        <Row xs={1}>
+          <Col>
+            <NavigationBar />
+          </Col>
+          <Col>
+            <CreateProject projects={projects} />
+          </Col>
 
-        <ConfirmDelete />
+          <ConfirmDelete />
 
-        <ListGroup style={{ paddingTop: '2%', alignItems: 'center' }}>
-          {Object.keys(projects).map((id) => (
-            <ListGroup.Item key={id} style={{ width: '50%' }}>
-              {projects[id].project_name}
-              <Button
-                variant="danger"
-                onClick={
-                  () => {
-                    setDelProject(projects[id].project_name);
-                    handleShow();
+          <ListGroup style={{ paddingTop: '2%', alignItems: 'center' }}>
+            {Object.keys(projects).map((id) => (
+              <ListGroup.Item key={id} style={{ width: '50%' }}>
+                {projects[id].project_name}
+                <Button
+                  variant="danger"
+                  onClick={
+                    () => {
+                      setDelProject(projects[id].project_name);
+                      handleShow();
+                    }
                   }
-                }
-                style={{ float: 'right' }}
-              >
-                DELETE
-              </Button>
-              <Button variant="success" onClick={() => getStatus(projects[id].project_name)} style={{ float: 'right' }}>SELECT</Button>
-            </ListGroup.Item>
-          ))}
+                  style={{ float: 'right' }}
+                >
+                  DELETE
+                </Button>
+                <Button variant="success" onClick={() => getStatus(projects[id].project_name)} style={{ float: 'right' }}>SELECT</Button>
+              </ListGroup.Item>
+            ))}
 
-        </ListGroup>
-      </Row>
-    </Container>
+          </ListGroup>
+        </Row>
+      </Container>
+    </>
   );
 }
