@@ -5,11 +5,13 @@ import UserInfoBar from './UserInfoBar';
 
 export default function Project() {
   const [projectName, setProjectName] = React.useState('');
+  const [user, setUser] = React.useState(0);
   const [image, setImage] = React.useState(0);
   function GetUserInfo() {
     React.useEffect(() => {
       Socket.emit('request_user_info');
       Socket.on('user_info', (data) => {
+        setUser(data);
         let imagelink = 'static/profile-blank.jpg';
         if (data.profile_picture !== null) {
           imagelink = data.profile_picture;
@@ -53,7 +55,7 @@ export default function Project() {
 
   return (
     <div className="Project">
-      <UserInfoBar headerInfo="Project" badgeInfo={projectName} profilePicture={image} />
+      <UserInfoBar headerInfo="Project" badgeInfo={user.email} profilePicture={image} />
       <br />
       {renderProject()}
     </div>
