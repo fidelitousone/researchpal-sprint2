@@ -2,7 +2,7 @@
 /* eslint-disable no-restricted-globals */
 import React, { useState } from 'react';
 import {
-  Button, Col, Container, ListGroup, Row, Modal,
+  Button, Col, Container, ListGroup, Row, Modal, Card,
 } from 'react-bootstrap';
 import { BsFillDashCircleFill } from 'react-icons/bs';
 import { useHistory } from 'react-router-dom';
@@ -114,28 +114,43 @@ export default function Dashboard() {
         </Col>
 
         <ConfirmDelete />
-
-        <ListGroup style={{ paddingTop: '2%', alignItems: 'center' }}>
-          {Object.keys(projects).map((id) => (
-            <ListGroup.Item key={id} style={{ width: '50%' }}>
-              {projects[id].project_name}
-              <Button
-                variant="danger"
-                onClick={
+        <Card style={{ height: '600px' }}>
+          <Card.Header style={{ textAlign: 'center' }}>My Projects</Card.Header>
+          <ListGroup style={{
+            marginLeft: '5%', paddingBottom: '5%', float: 'left', paddingRight: '5%', overflow: 'auto',
+          }}
+          >
+            {Object.keys(projects).map((id) => (
+              <ListGroup.Item key={id} style={{ width: '100%' }}>
+                {projects[id].project_name}
+                <Button
+                  variant="danger"
+                  onClick={
                   () => {
                     setDelProject(projects[id].project_name);
                     handleShow();
                   }
                 }
-                style={{ float: 'right' }}
-              >
-                DELETE
-              </Button>
-              <Button variant="success" onClick={() => getStatus(projects[id].project_name)} style={{ float: 'right' }}>SELECT</Button>
-            </ListGroup.Item>
-          ))}
-
-        </ListGroup>
+                  style={{ float: 'right' }}
+                >
+                  DELETE
+                </Button>
+                <Button variant="success" onClick={() => getStatus(projects[id].project_name)} style={{ float: 'right' }}>SELECT</Button>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        </Card>
+      </Row>
+      <Row style={{ paddingTop: '1%', textAlign: 'center' }}>
+        <Col>
+          <Button variant="primary">Add Project</Button>
+        </Col>
+        <Col>
+          <Button variant="primary">Open Project</Button>
+        </Col>
+        <Col>
+          <Button variant="danger">Delete Project</Button>
+        </Col>
       </Row>
     </Container>
   );
