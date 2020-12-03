@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Badge, Image, DropdownButton, Navbar, Nav,
+  Image, DropdownButton, Navbar, Nav, Dropdown,
 } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -27,12 +27,14 @@ export default function UserInfoBar(props) {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
-            <h1>
-              {headerInfo}
-              <Badge variant="primary">{badgeInfo}</Badge>
-            </h1>
-            <Link to="/future">
-              <Nav.Link href="/future">Our Future</Nav.Link>
+            <Link to="/home">
+              <Nav.Link href="/home">Dashboard</Nav.Link>
+            </Link>
+            <Link to="/project">
+              <Nav.Link href="/project">Project</Nav.Link>
+            </Link>
+            <Link to="/bibliography">
+              <Nav.Link href="/bibliography">Bibliography</Nav.Link>
             </Link>
           </Nav>
           <DropdownButton
@@ -43,12 +45,25 @@ export default function UserInfoBar(props) {
             }
             menuAlign={{ lg: 'right' }}
           >
+            <Dropdown.Item disabled>
+              Signed in as:
+              <br />
+              <b>
+                {badgeInfo}
+              </b>
+            </Dropdown.Item>
+            <Dropdown.Divider />
             <div align="center">
               <Logout />
             </div>
           </DropdownButton>
         </Navbar.Collapse>
       </Navbar>
+      <div align="center">
+        <h1>
+          {headerInfo}
+        </h1>
+      </div>
     </>
   );
 }

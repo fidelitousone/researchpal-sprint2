@@ -4,7 +4,6 @@ import {
 } from 'react-bootstrap';
 import { BsFillDashCircleFill } from 'react-icons/bs';
 import Socket from './Socket';
-import NavigationBar from './NavigationBar';
 import UserInfoBar from './UserInfoBar';
 
 export default function Bibliography() {
@@ -66,7 +65,6 @@ export default function Bibliography() {
       <Button variant="success" onClick={getAPA}>APA7</Button>
       <Button variant="success" onClick={getMLA}>MLA8</Button>
       <br />
-      <NavigationBar />
       <Container style={{ textAlign: 'center' }}>
         <Row xs={1}>
           <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>

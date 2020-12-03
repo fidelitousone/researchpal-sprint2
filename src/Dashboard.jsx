@@ -8,7 +8,6 @@ import { BsFillDashCircleFill } from 'react-icons/bs';
 import { useHistory } from 'react-router-dom';
 import Socket from './Socket';
 import CreateProject from './CreateProject';
-import NavigationBar from './NavigationBar';
 import UserInfoBar from './UserInfoBar';
 
 export default function Dashboard() {
@@ -105,9 +104,6 @@ export default function Dashboard() {
       <UserInfoBar headerInfo="Dashboard" badgeInfo={user.email} profilePicture={image} />
       <Container>
         <Row xs={1}>
-          <Col>
-            <NavigationBar />
-          </Col>
           <Col>
             <CreateProject projects={projects} />
           </Col>
