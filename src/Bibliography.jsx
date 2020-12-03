@@ -1,6 +1,6 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import {
-  Button, Container, Row, ListGroup,
+  Button, Container, Row, ListGroup, ButtonGroup, ToggleButton,
 } from 'react-bootstrap';
 import { BsFillDashCircleFill } from 'react-icons/bs';
 import Socket from './Socket';
@@ -52,18 +52,45 @@ export default function Bibliography() {
   }
   GetCitations();
 
-  function getAPA() {
-    setCitationList(apaCitationList);
+  function getCitation(style) {
+    if (style === 'APA') {
+      setCitationList(apaCitationList);
+    } else {
+      setCitationList(mlaCitationList);
+    }
   }
-  function getMLA() {
-    setCitationList(mlaCitationList);
-  }
+
+  const radios = [
+    { name: 'APA7', value: 'APA' },
+    { name: 'MLA8', value: 'MLA' },
+  ];
+  const [radioValue, setRadioValue] = useState('APA');
 
   return (
     <div className="Bibliography">
       <UserInfoBar headerInfo="Bibliography" badgeInfo={projectName} profilePicture={image} />
-      <Button variant="success" onClick={getAPA}>APA7</Button>
-      <Button variant="success" onClick={getMLA}>MLA8</Button>
+      <div align="center">
+        <ButtonGroup toggle>
+          {radios.map((radio) => (
+            <ToggleButton
+              key={radio.name}
+              type="radio"
+              variant="primary"
+              name="radio"
+              value={radio.value}
+              checked={radioValue === radio.value}
+              onChange={
+                (e) => {
+                  setRadioValue(e.currentTarget.value);
+                  getCitation(e.currentTarget.value);
+                }
+              }
+            >
+              {radio.name}
+            </ToggleButton>
+          ))}
+        </ButtonGroup>
+      </div>
       <br />
       <Container style={{ textAlign: 'center' }}>
         <Row xs={1}>
