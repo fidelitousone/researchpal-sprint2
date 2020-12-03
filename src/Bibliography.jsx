@@ -11,11 +11,13 @@ export default function Bibliography() {
   const [mlaCitationList, setmlaCitationList] = React.useState([]);
   const [apaCitationList, setapaCitationList] = React.useState([]);
   const [projectName, setProjectName] = React.useState('');
+  const [user, setUser] = React.useState(0);
   const [image, setImage] = React.useState(0);
   function GetUserInfo() {
     React.useEffect(() => {
       Socket.emit('request_user_info');
       Socket.on('user_info', (data) => {
+        setUser(data);
         let imagelink = 'static/profile-blank.jpg';
         if (data.profile_picture !== null) {
           imagelink = data.profile_picture;
@@ -68,7 +70,7 @@ export default function Bibliography() {
 
   return (
     <div className="Bibliography">
-      <UserInfoBar headerInfo="Bibliography" badgeInfo={projectName} profilePicture={image} />
+      <UserInfoBar headerInfo="Bibliography" badgeInfo={user.email} profilePicture={image} />
       <div align="center">
         <ButtonGroup toggle>
           {radios.map((radio) => (
