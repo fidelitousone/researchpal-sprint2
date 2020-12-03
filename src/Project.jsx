@@ -1,7 +1,6 @@
 import * as React from 'react';
 import CreateSource from './CreateSource';
 import Socket from './Socket';
-import NavigationBar from './NavigationBar';
 import UserInfoBar from './UserInfoBar';
 
 export default function Project() {
@@ -56,7 +55,6 @@ export default function Project() {
     <div className="Project">
       <UserInfoBar headerInfo="Project" badgeInfo={projectName} profilePicture={image} />
       <br />
-      <NavigationBar />
       {renderProject()}
     </div>
   );
