@@ -38,10 +38,13 @@ export default function CreateSource(props) {
 
   function handleSubmit(event) {
     const sourceLink = myRef.current.value;
+    console.log(sourceLink);
+    console.log(sourcesList);
+    console.log(sourcesMapList);
     if (validator.isEmpty(validator.trim(sourceLink))) {
-      displayError('Source name was empty or only whitespace. Please try again with a valid project name.');
-    } else if (sourcesList.some((name) => sourceLink === name)) {
-      displayError('Source name is taken. Please try again with a unique project name.');
+      displayError('Source URL was empty or only whitespace. Please try again with a valid source URL.');
+    } else if (Object.values(sourcesMapList).some((name) => sourceLink === name)) {
+      displayError('Source URL is already exists. Please try again with a unique source URL.');
     } else {
       setSpinning(true);
       Socket.emit('add_source_to_project', {
@@ -193,7 +196,7 @@ export default function CreateSource(props) {
             </Button>
           </Form>
           <br />
-          <SpinnerObject />
+          <SpinnerObject spinning={spinning} />
         </Col>
       </Row>
     </Container>
