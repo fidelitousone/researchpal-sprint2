@@ -387,9 +387,9 @@ def get_all_citations(data):
                 .order_by(Citations.author.asc())
                 .all()
             )
-            for c in citations:
-                mla_citation_list.append(c.mla_citation)
-                apa_citation_list.append(c.apa_citation)
+            for citation in citations:
+                mla_citation_list.append(citation.mla_citation)
+                apa_citation_list.append(citation.apa_citation)
             socketio.emit(
                 "all_citations",
                 {

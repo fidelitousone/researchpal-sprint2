@@ -238,7 +238,6 @@ class TestSourceFlow:
         recieved = socketio_client.get_received()
         assert recieved == []
 
-
     def test_delete_source(
         self,
         client,
