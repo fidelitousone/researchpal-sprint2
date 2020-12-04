@@ -9,6 +9,7 @@ export default function Project() {
   const [user, setUser] = React.useState(0);
   const [image, setImage] = React.useState(0);
   const [spinning, setSpinning] = React.useState(true);
+
   function GetUserInfo() {
     React.useEffect(() => {
       setSpinning(true);
@@ -27,6 +28,7 @@ export default function Project() {
 
   function GetProject() {
     React.useEffect(() => {
+      setSpinning(true);
       Socket.emit('request_selected_project');
       Socket.on('give_project_name', (data) => {
         setProjectName(data.project_name);
@@ -37,14 +39,12 @@ export default function Project() {
 
   function SpinnerObject() {
     if (spinning) {
-      console.log('SPINNING');
       return (
         <div align="center">
           <Spinner animation="border" variant="primary" />
         </div>
       );
     }
-    console.log('NOT SPINNING');
     return null;
   }
 
@@ -58,6 +58,9 @@ export default function Project() {
   function renderProject() {
     if (projectSelected()) {
       return (<CreateSource usingProject={projectName} />);
+    }
+    if (spinning) {
+      return null;
     }
     return (
       <div>
