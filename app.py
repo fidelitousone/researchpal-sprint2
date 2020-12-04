@@ -115,7 +115,7 @@ def get_source_info(source_id: str, url: str) -> bool:
     return False
 
 
-def create_citation(source_id: str, project_id: str, project_name):
+def create_citation(source_id: str, project_id: str, project_name: str) -> None:
     # pylint: disable = too-many-locals,too-many-branches
     with app.app_context():
         source_info = (
