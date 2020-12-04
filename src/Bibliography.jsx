@@ -11,11 +11,7 @@ export default function Bibliography() {
   const [mlaCitationList, setmlaCitationList] = React.useState([]);
   const [apaCitationList, setapaCitationList] = React.useState([]);
   const [projectName, setProjectName] = React.useState('');
-<<<<<<< HEAD
-  const [styleSelection, setStyleSelection] = React.useState('');
-=======
   const [user, setUser] = React.useState(0);
->>>>>>> 1dc5ab07144560d3262776c355d3751d8b718be1
   const [image, setImage] = React.useState(0);
   function GetUserInfo() {
     React.useEffect(() => {
@@ -57,17 +53,6 @@ export default function Bibliography() {
     }, [projectName]);
   }
   GetCitations();
-
-<<<<<<< HEAD
-  function getAPA() {
-    setCitationList(apaCitationList);
-    setStyleSelection('apa');
-  }
-  function getMLA() {
-    setCitationList(mlaCitationList);
-    setStyleSelection('mla');
-  }
-
   function download() {
     const element = document.createElement('a');
     let stringData = '';
@@ -84,14 +69,13 @@ export default function Bibliography() {
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
-=======
+    
   function getCitation(style) {
     if (style === 'APA') {
       setCitationList(apaCitationList);
     } else {
       setCitationList(mlaCitationList);
     }
->>>>>>> 1dc5ab07144560d3262776c355d3751d8b718be1
   }
 
   const radios = [
