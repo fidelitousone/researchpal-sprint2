@@ -116,6 +116,7 @@ def get_source_info(source_id: str, url: str) -> bool:
 
 
 def create_citation(source_id: str, project_id: str, project_name):
+    # pylint: disable = too-many-locals,too-many-branches
     with app.app_context():
         source_info = (
             db.session.query(Sources).filter(Sources.source_id == source_id).one()

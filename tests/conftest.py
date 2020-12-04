@@ -2,7 +2,7 @@ import uuid
 
 import pytest
 
-from app import AuthType, Projects, Sources, Users
+from app import AuthType, Citations, Projects, Sources, Users
 
 
 # pylint: disable = redefined-outer-name
@@ -71,6 +71,14 @@ def mocked_project_model(mocked_uuid):
 def mocked_source_model(mocked_uuid):
     mocked_uuid = mocked_uuid()
     return Sources(str(mocked_uuid), "link")
+
+
+@pytest.fixture
+def mocked_citation_model(mocked_uuid):
+    mocked_uuid = mocked_uuid()
+    return Citations(
+        str(mocked_uuid), str(mocked_uuid), "", "mla citation", "apa citation"
+    )
 
 
 @pytest.fixture
