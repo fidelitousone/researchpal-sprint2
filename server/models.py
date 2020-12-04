@@ -158,7 +158,12 @@ class Citations(db.Model):
     apa_citation = db.Column(db.Text)
 
     def __init__(
-        self, project_id: str, source_id: str, author: str, mla_citation: str, apa_citation: str
+        self,
+        project_id: str,
+        source_id: str,
+        author: str,
+        mla_citation: str,
+        apa_citation: str,
     ):
         self.project_id = project_id
         self.source_id = source_id
@@ -168,7 +173,11 @@ class Citations(db.Model):
 
     def __repr__(self):
         return "Citation(project_id={}, source_id={}, author={}, mla_citation={}, apa_citation={})".format(  # pylint: disable = line-too-long
-            self.project_id, self.source_id, self.author, self.mla_citation, self.apa_citation
+            self.project_id,
+            self.source_id,
+            self.author,
+            self.mla_citation,
+            self.apa_citation,
         )
 
     def json(self) -> dict:

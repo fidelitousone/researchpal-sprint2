@@ -81,7 +81,6 @@ export default function Bibliography() {
       setStyleSelection('mla');
     }
   }
-  download();
   const radios = [
     { name: 'APA7', value: 'APA' },
     { name: 'MLA8', value: 'MLA' },
