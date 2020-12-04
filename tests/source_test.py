@@ -32,7 +32,32 @@ def microlink_api():
     return "https://api.microlink.io?url="
 
 
-def mocked_microlink_response_success_null():
+def mocked_microlink_response_success_mostly_null():
+    mocked_response = {
+        "status": "success",
+        "data": {
+            "title": None,
+            "description": None,
+            "lang": None,
+            "author": "First M. Last",
+            "publisher": None,
+            "image": None,
+            "date": None,
+            "url": "https://www.blank.org",
+            "logo": {
+                "url": "https://www.blank.org/favicon.ico",
+                "type": "ico",
+                "size": 326,
+                "height": 32,
+                "width": 32,
+                "size_pretty": "326 B",
+            },
+        },
+    }
+    return mocked_response
+
+
+def mocked_microlink_response_success_some_null():
     mocked_response = {
         "status": "success",
         "data": {
@@ -108,7 +133,8 @@ class TestSourceFlow:
     @pytest.mark.parametrize(
         "mocked_microlink_response",
         [
-            mocked_microlink_response_success_null,
+            mocked_microlink_response_success_mostly_null,
+            mocked_microlink_response_success_some_null,
             mocked_microlink_response_success,
             mocked_microlink_response_fail,
         ],
@@ -162,7 +188,7 @@ class TestSourceFlow:
         else:
             assert all_sources_server == mocked_source_map()
 
-    def test_get_all_sources_empty(
+    def test_get_all_sources(
         self,
         client,
         db_session,
@@ -188,6 +214,30 @@ class TestSourceFlow:
 
         [all_sources] = recieved[0]["args"]
         assert all_sources == mocked_source_map()
+
+    def test_get_all_sources_no_project(
+        self,
+        client,
+        db_session,
+        socketio_client,
+        mocked_uuid,
+        mocked_user_model,
+        mocked_project_request,
+    ):
+        with pytest.raises(TypeError):
+            socketio_client.emit("get_all_sources")
+
+        # Simulate login
+        with client.session_transaction() as sess:
+            sess["user"] = mocked_user_model.email
+        db_session.add(mocked_user_model)
+        db_session.commit()
+
+        # Test original flow
+        socketio_client.emit("get_all_sources", mocked_project_request)
+        recieved = socketio_client.get_received()
+        assert recieved == []
+
 
     def test_delete_source(
         self,

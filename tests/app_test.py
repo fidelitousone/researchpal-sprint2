@@ -132,6 +132,36 @@ class TestNewUser:
         )
         assert user_info is None
 
+    @pytest.mark.parametrize(
+        "emit_name,mocked_response,auth_type",
+        [
+            ("new_microsoft_user", mocked_microsoft_response, AuthType.MICROSOFT),
+            ("new_google_user", mocked_google_response, AuthType.GOOGLE),
+            ("new_facebook_user", mocked_facebook_response, AuthType.FACEBOOK),
+        ],
+    )
+    def test_on_new_user_already_registered(
+        self,
+        db_session,
+        socketio_client,
+        mocked_user_model,
+        emit_name,
+        mocked_response,
+        auth_type,
+    ):
+        with pytest.raises(TypeError):
+            socketio_client.emit(emit_name)
+
+        mocked_user_model.auth_type = auth_type.value
+        db_session.add(mocked_user_model)
+        db_session.commit()
+
+        socketio_client.emit(emit_name, mocked_response())
+        user_info = (
+            db_session.query(Users).filter(Users.email == mocked_user_model.email).one()
+        )
+        assert user_info.json() == mocked_user_model.json()
+
 
 class TestLoginFlow:
     def test_on_login_request(

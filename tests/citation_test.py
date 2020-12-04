@@ -47,3 +47,25 @@ class TestCitationFlow:
 
         [all_citations] = recieved[0]["args"]
         assert all_citations == mocked_citation_list
+
+    def test_get_all_citatons_no_project(
+        self,
+        client,
+        db_session,
+        socketio_client,
+        mocked_user_model,
+        mocked_project_request,
+    ):
+        with pytest.raises(TypeError):
+            socketio_client.emit("get_all_citations")
+
+        # Simulate login
+        with client.session_transaction() as sess:
+            sess["user"] = mocked_user_model.email
+        db_session.add(mocked_user_model)
+        db_session.commit()
+
+        # Test original flow
+        socketio_client.emit("get_all_citations", mocked_project_request)
+        recieved = socketio_client.get_received()
+        assert recieved == []
