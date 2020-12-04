@@ -6,8 +6,13 @@ import Socket from './Socket';
 export default function MicrosoftAuth() {
   const history = useHistory();
   function handleSubmit(response) {
+    console.log(response.id);
+    const profilePicture = (`https://storage.live.com/Users/0x${response.id}
+    /MyProfile/ExpressionProfile/ProfilePhoto:Win8Static,UserTileMedium,UserTileStatic`
+    );
     Socket.emit('new_microsoft_user', {
       response,
+      profilePicture,
     });
     console.log('Sent new Microsoft user to server!');
 

@@ -221,14 +221,7 @@ def on_new_microsoft_user(data):
         profile = data["response"]
         email = profile["userPrincipalName"]
         user_name = profile["displayName"]
-        try:
-            profile_picture = (
-                "https://storage.live.com/Users/0x"
-                + profile["id"]
-                + "/MyProfile/ExpressionProfile/ProfilePhoto:Win8Static,UserTileMedium,UserTileStatic"
-            )
-        except KeyError:
-            profile_picture = None
+        profile_picture = data["profilePicture"]
         user_id = uuid.uuid4()
         auth_type = AuthType.MICROSOFT
 
