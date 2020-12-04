@@ -218,11 +218,15 @@ def on_new_facebook_user(data):
 def on_new_microsoft_user(data):
     try:
         log.info("Attempting to add new user")
-        profile = data["response"]["account"]
-        email = profile["userName"]
-        user_name = profile["name"]
+        profile = data["response"]
+        email = profile["userPrincipalName"]
+        user_name = profile["displayName"]
         try:
-            profile_picture = profile["imageUrl"]
+            profile_picture = (
+                "https://storage.live.com/Users/0x" + 
+                profile['id'] + 
+                "/MyProfile/ExpressionProfile/ProfilePhoto:Win8Static,UserTileMedium,UserTileStatic"
+                )
         except KeyError:
             profile_picture = None
         user_id = uuid.uuid4()
@@ -507,6 +511,10 @@ def on_request_project():
 
 
 @app.route("/")
+@app.route("/login")
+@app.route("/about")
+@app.route("/pricing")
+@app.route("/future")
 @app.route("/home")
 @app.route("/project")
 @app.route("/bibliography")

@@ -22,11 +22,11 @@ export default function MicrosoftAuth() {
   }
 
   function Microsoftresponse(err, response) {
-    if (err === undefined) {
+    if ((err === undefined) || (err === null)) {
       console.log('Response:', response);
       handleSubmit(response);
     } else {
-      console.log(err);
+      console.log('Error:', err);
     }
   }
 
