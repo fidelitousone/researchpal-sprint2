@@ -506,13 +506,13 @@ def on_request_project():
 
 
 @app.route("/")
-@app.route("/login")
 @app.route("/about")
-@app.route("/pricing")
+@app.route("/bibliography")
 @app.route("/future")
 @app.route("/home")
+@app.route("/login")
+@app.route("/pricing")
 @app.route("/project")
-@app.route("/bibliography")
 def index():
     return render_template("index.html")
 

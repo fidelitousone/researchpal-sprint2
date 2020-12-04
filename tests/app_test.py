@@ -56,7 +56,19 @@ def mocked_login_request():
 
 # pylint: disable = invalid-name,no-self-use,unused-argument
 class TestRenderTemplate:
-    @pytest.mark.parametrize("route", ["/", "/home", "/project"])
+    @pytest.mark.parametrize(
+        "route",
+        [
+            "/",
+            "/about",
+            "/bibliography",
+            "future",
+            "/home",
+            "/login",
+            "/pricing",
+            "/project",
+        ],
+    )
     def test_routes(self, client, route):
         page = client.get(route)
         assert b"ResearchPal" in page.data
