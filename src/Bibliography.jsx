@@ -11,6 +11,7 @@ export default function Bibliography() {
   const [mlaCitationList, setmlaCitationList] = React.useState([]);
   const [apaCitationList, setapaCitationList] = React.useState([]);
   const [projectName, setProjectName] = React.useState('');
+  const [styleSelection, setStyleSelection] = React.useState('mla');
   const [user, setUser] = React.useState(0);
   const [image, setImage] = React.useState(0);
   function GetUserInfo() {
@@ -54,6 +55,7 @@ export default function Bibliography() {
   }
   GetCitations();
   function download() {
+    console.log('downloading');
     const element = document.createElement('a');
     let stringData = '';
     if (styleSelection === 'mla') {
@@ -61,33 +63,35 @@ export default function Bibliography() {
     } else {
       stringData = apaCitationList.map((item) => `${item}\n`);
     }
-    console.log(stringData);
     const data = `data:text/plain;charset=utf-8,${encodeURIComponent(stringData)}`;
     element.setAttribute('href', data);
-    element.setAttribute('download', 'file.txt');
+    element.setAttribute('download', 'Bibliography.txt');
     element.style.display = 'none';
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
-    
+  }
+
   function getCitation(style) {
     if (style === 'APA') {
       setCitationList(apaCitationList);
+      setStyleSelection('apa');
     } else {
       setCitationList(mlaCitationList);
+      setStyleSelection('mla');
     }
   }
-
+  download();
   const radios = [
     { name: 'APA7', value: 'APA' },
     { name: 'MLA8', value: 'MLA' },
   ];
   const [radioValue, setRadioValue] = useState('APA');
-
   return (
     <div className="Bibliography">
       <UserInfoBar headerInfo="Bibliography" badgeInfo={user.email} profilePicture={image} />
       <div align="center">
+        <Button onClick={download} style={{ float: 'center' }}>Download</Button>
         <ButtonGroup toggle>
           {radios.map((radio) => (
             <ToggleButton
