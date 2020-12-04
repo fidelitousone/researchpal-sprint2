@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useRef, useState } from 'react';
 import {
-  Button, Col, Container, Form, Row, Alert, ListGroup, Modal,
+  Button, Col, Container, Form, Row, Alert, ListGroup, Modal, Spinner,
 } from 'react-bootstrap';
 import validator from 'validator';
 import PropTypes from 'prop-types';
@@ -22,9 +22,18 @@ export default function CreateSource(props) {
   const handleShow = () => setConfirm(true);
   const handleClose = () => setConfirm(false);
 
+  const [spinning, setSpinning] = useState(false);
+
   function displayError(message) {
     setShow(true);
     setErrorMessage(message);
+  }
+
+  function SpinnerObject() {
+    if (spinning) {
+      return <Spinner animation="border" variant="primary" />;
+    }
+    return null;
   }
 
   function handleSubmit(event) {
@@ -34,6 +43,7 @@ export default function CreateSource(props) {
     } else if (sourcesList.some((name) => sourceLink === name)) {
       displayError('Source name is taken. Please try again with a unique project name.');
     } else {
+      setSpinning(true);
       Socket.emit('add_source_to_project', {
         project_name: usingProject,
         source_link: sourceLink,
@@ -57,6 +67,7 @@ export default function CreateSource(props) {
   function InvalidURLError() {
     React.useEffect(() => {
       Socket.on('invalid_url', (data) => {
+        setSpinning(false);
         displayError(`Invalid URL: [ ${data.source_link} ]  Please ensure that you have copied the entire URL (including the protocol)`);
       });
     });
@@ -67,6 +78,7 @@ export default function CreateSource(props) {
   function GetSourcesFromServer() {
     React.useEffect(() => {
       Socket.on('all_sources_server', (data) => {
+        setSpinning(false);
         setSourcesList(data.source_list);
         setSourcesMapList(data.source_map);
       });
@@ -180,6 +192,8 @@ export default function CreateSource(props) {
               Submit
             </Button>
           </Form>
+          <br />
+          <SpinnerObject />
         </Col>
       </Row>
     </Container>

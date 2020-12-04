@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Button, Container, Row, ListGroup, ButtonGroup, ToggleButton,
+  Button, Container, Row, ListGroup, ButtonGroup, ToggleButton, Spinner,
 } from 'react-bootstrap';
 import { BsFillDashCircleFill } from 'react-icons/bs';
 import Socket from './Socket';
@@ -14,6 +14,8 @@ export default function Bibliography() {
   const [styleSelection, setStyleSelection] = React.useState('mla');
   const [user, setUser] = React.useState(0);
   const [image, setImage] = React.useState(0);
+  const [spinning, setSpinning] = useState(false);
+
   function GetUserInfo() {
     React.useEffect(() => {
       Socket.emit('request_user_info');
@@ -39,8 +41,17 @@ export default function Bibliography() {
   }
 
   GetProject();
+
+  function SpinnerObject() {
+    if (spinning) {
+      return <Spinner animation="border" variant="primary" />;
+    }
+    return null;
+  }
+
   function GetCitations() {
     React.useEffect(() => {
+      setSpinning(true);
       if (projectName !== null && projectName !== '') {
         Socket.emit('get_all_citations', {
           project_name: projectName,
@@ -112,6 +123,7 @@ export default function Bibliography() {
         </ButtonGroup>
       </div>
       <br />
+      <SpinnerObject />
       <Container style={{ textAlign: 'center' }}>
         <Row xs={1}>
           <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
