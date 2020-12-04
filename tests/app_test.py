@@ -62,7 +62,7 @@ class TestRenderTemplate:
             "/",
             "/about",
             "/bibliography",
-            "future",
+            "/future",
             "/home",
             "/login",
             "/pricing",
