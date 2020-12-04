@@ -1,10 +1,9 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import {
-  Button, Container, Row, ListGroup,
+  Button, Container, Row, ListGroup, ButtonGroup, ToggleButton,
 } from 'react-bootstrap';
 import { BsFillDashCircleFill } from 'react-icons/bs';
 import Socket from './Socket';
-import NavigationBar from './NavigationBar';
 import UserInfoBar from './UserInfoBar';
 
 export default function Bibliography() {
@@ -12,11 +11,13 @@ export default function Bibliography() {
   const [mlaCitationList, setmlaCitationList] = React.useState([]);
   const [apaCitationList, setapaCitationList] = React.useState([]);
   const [projectName, setProjectName] = React.useState('');
+  const [user, setUser] = React.useState(0);
   const [image, setImage] = React.useState(0);
   function GetUserInfo() {
     React.useEffect(() => {
       Socket.emit('request_user_info');
       Socket.on('user_info', (data) => {
+        setUser(data);
         let imagelink = 'static/profile-blank.jpg';
         if (data.profile_picture !== null) {
           imagelink = data.profile_picture;
@@ -53,20 +54,46 @@ export default function Bibliography() {
   }
   GetCitations();
 
-  function getAPA() {
-    setCitationList(apaCitationList);
+  function getCitation(style) {
+    if (style === 'APA') {
+      setCitationList(apaCitationList);
+    } else {
+      setCitationList(mlaCitationList);
+    }
   }
-  function getMLA() {
-    setCitationList(mlaCitationList);
-  }
+
+  const radios = [
+    { name: 'APA7', value: 'APA' },
+    { name: 'MLA8', value: 'MLA' },
+  ];
+  const [radioValue, setRadioValue] = useState('APA');
 
   return (
     <div className="Bibliography">
-      <UserInfoBar headerInfo="Bibliography" badgeInfo={projectName} profilePicture={image} />
-      <Button variant="success" onClick={getAPA}>APA7</Button>
-      <Button variant="success" onClick={getMLA}>MLA8</Button>
+      <UserInfoBar headerInfo="Bibliography" badgeInfo={user.email} profilePicture={image} />
+      <div align="center">
+        <ButtonGroup toggle>
+          {radios.map((radio) => (
+            <ToggleButton
+              key={radio.name}
+              type="radio"
+              variant="primary"
+              name="radio"
+              value={radio.value}
+              checked={radioValue === radio.value}
+              onChange={
+                (e) => {
+                  setRadioValue(e.currentTarget.value);
+                  getCitation(e.currentTarget.value);
+                }
+              }
+            >
+              {radio.name}
+            </ToggleButton>
+          ))}
+        </ButtonGroup>
+      </div>
       <br />
-      <NavigationBar />
       <Container style={{ textAlign: 'center' }}>
         <Row xs={1}>
           <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
