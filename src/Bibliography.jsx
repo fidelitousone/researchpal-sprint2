@@ -55,7 +55,6 @@ export default function Bibliography() {
   }
   GetCitations();
   function download() {
-    console.log('downloading');
     const element = document.createElement('a');
     let stringData = '';
     if (styleSelection === 'mla') {
@@ -81,7 +80,6 @@ export default function Bibliography() {
       setStyleSelection('mla');
     }
   }
-  download();
   const radios = [
     { name: 'APA7', value: 'APA' },
     { name: 'MLA8', value: 'MLA' },
