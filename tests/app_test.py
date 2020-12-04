@@ -35,12 +35,10 @@ def mocked_facebook_response():
 def mocked_microsoft_response():
     mocked_response = {
         "response": {
-            "account": {
-                "userName": "fake@e.mail",
-                "name": "A Name",
-                "imageUrl": "link",
-            }
-        }
+                "userPrincipalName": "fake@e.mail",
+                "displayName": "A Name",
+        },
+        "profilePicture": "link"
     }
     return mocked_response
 
@@ -73,9 +71,9 @@ class TestNewUser:
     @pytest.mark.parametrize(
         "emit_name,mocked_response,auth_type",
         [
+            ("new_microsoft_user", mocked_microsoft_response, AuthType.MICROSOFT),
             ("new_google_user", mocked_google_response, AuthType.GOOGLE),
             ("new_facebook_user", mocked_facebook_response, AuthType.FACEBOOK),
-            ("new_microsoft_user", mocked_microsoft_response, AuthType.MICROSOFT),
         ],
     )
     def test_on_new_user(
@@ -96,7 +94,6 @@ class TestNewUser:
             .filter(Users.email == mocked_user_model.email)
             .first()
         )
-
         mocked_user_model.auth_type = auth_type.value
         assert user_info.json() == mocked_user_model.json()
 
