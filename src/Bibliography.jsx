@@ -55,7 +55,6 @@ export default function Bibliography() {
   }
   GetCitations();
   function download() {
-    console.log('downloading');
     const element = document.createElement('a');
     let stringData = '';
     if (styleSelection === 'mla') {
