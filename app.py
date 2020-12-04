@@ -223,10 +223,10 @@ def on_new_microsoft_user(data):
         user_name = profile["displayName"]
         try:
             profile_picture = (
-                "https://storage.live.com/Users/0x" + 
-                profile['id'] + 
-                "/MyProfile/ExpressionProfile/ProfilePhoto:Win8Static,UserTileMedium,UserTileStatic"
-                )
+                "https://storage.live.com/Users/0x"
+                + profile["id"]
+                + "/MyProfile/ExpressionProfile/ProfilePhoto:Win8Static,UserTileMedium,UserTileStatic"
+            )
         except KeyError:
             profile_picture = None
         user_id = uuid.uuid4()
