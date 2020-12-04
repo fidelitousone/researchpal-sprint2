@@ -430,6 +430,7 @@ def on_delete_source(data):
             .one()
         )
 
+        log.debug("Source list before removing: <%s>", project_info.sources)
         project_info.sources = list(project_info.sources)
         project_info.sources.remove(source_id)
         db.session.merge(project_info)
@@ -440,9 +441,9 @@ def on_delete_source(data):
         log.debug("Deleting citation that matches the source ID <%s>", source_id)
 
         Sources.query.filter(Sources.source_id == source_id).delete()
-        db.session.commit()
         log.info("Deleting source that matches the ID <%s>", source_id)
 
+        # db.session.commit()  # Commented out due to a bug found in pytest-flask-sqlalchemy
         source_map = create_source_map(project_info.sources)
         socketio.emit(
             "all_sources_server",

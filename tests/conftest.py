@@ -77,3 +77,14 @@ def mocked_source_model(mocked_uuid):
 def mocked_project_request():
     mocked_request = {"project_name": "Test"}
     return mocked_request
+
+
+@pytest.fixture
+def mocked_project_with_sources(mocked_uuid):
+    mocked_uuid = mocked_uuid()
+    return Projects(
+        str(mocked_uuid),
+        str(mocked_uuid),
+        "Test",
+        [str(mocked_uuid)],
+    )

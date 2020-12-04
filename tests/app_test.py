@@ -51,11 +51,6 @@ def mocked_invalid_response():
 
 
 @pytest.fixture
-def microlink_api():
-    return "https://api.microlink.io?url="
-
-
-@pytest.fixture
 def mocked_login_request():
     mocked_request = {"email": "fake@e.mail"}
     return mocked_request
@@ -96,7 +91,6 @@ class TestNewUser:
             .filter(Users.email == mocked_user_model.email)
             .first()
         )
-
         mocked_user_model.auth_type = auth_type.value
         assert user_info.json() == mocked_user_model.json()
 
@@ -126,7 +120,6 @@ class TestNewUser:
             .filter(Users.email == mocked_user_model.email)
             .first()
         )
-
         assert user_info is None
 
 

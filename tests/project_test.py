@@ -76,3 +76,52 @@ class TestProjectFlow:
 
         [give_project_name] = recieved[0]["args"]
         assert give_project_name == mocked_project_request
+
+    def test_delete_project_empty(
+        self,
+        client,
+        db_session,
+        socketio_client,
+        mocked_user_model,
+        mocked_project_model,
+        mocked_project_request,
+    ):
+        # Simulate login
+        with client.session_transaction() as sess:
+            sess["user"] = mocked_user_model.email
+        db_session.add_all([mocked_user_model, mocked_project_model])
+        db_session.commit()
+
+        # Test original flow
+        socketio_client.emit("delete_project", mocked_project_request)
+        recieved = socketio_client.get_received()
+        assert recieved[0]["name"] == "all_projects"
+
+        [all_projects] = recieved[0]["args"]
+        assert all_projects == {}
+
+    def test_delete_project(
+        self,
+        client,
+        db_session,
+        socketio_client,
+        mocked_user_model,
+        mocked_source_model,
+        mocked_project_with_sources,
+        mocked_project_request,
+    ):
+        # Simulate login
+        with client.session_transaction() as sess:
+            sess["user"] = mocked_user_model.email
+        db_session.add_all(
+            [mocked_user_model, mocked_source_model, mocked_project_with_sources]
+        )
+        db_session.commit()
+
+        # Test original flow
+        socketio_client.emit("delete_project", mocked_project_request)
+        recieved = socketio_client.get_received()
+        assert recieved[0]["name"] == "all_projects"
+
+        [all_projects] = recieved[0]["args"]
+        assert all_projects == {}
