@@ -35,10 +35,10 @@ def mocked_facebook_response():
 def mocked_microsoft_response():
     mocked_response = {
         "response": {
-                "userPrincipalName": "fake@e.mail",
-                "displayName": "A Name",
+            "userPrincipalName": "fake@e.mail",
+            "displayName": "A Name",
         },
-        "profilePicture": "link"
+        "profilePicture": "link",
     }
     return mocked_response
 
