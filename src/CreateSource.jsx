@@ -48,6 +48,8 @@ export default function CreateSource(props) {
 
     reader.onload = function () {
       console.log(reader.result);
+      const arr = reader.result.trim().split(/\s+/);
+      console.log(arr);
     };
 
     reader.onerror = function () {
