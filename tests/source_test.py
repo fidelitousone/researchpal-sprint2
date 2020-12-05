@@ -129,7 +129,7 @@ def mocked_microlink_response_fail():
 
 
 # pylint: disable = invalid-name,no-self-use,unused-argument
-class TestSourceFlow:
+class TestSourceDataFlow:
     @pytest.mark.parametrize(
         "mocked_microlink_response",
         [
@@ -188,6 +188,35 @@ class TestSourceFlow:
         else:
             assert all_sources_server == mocked_source_map()
 
+    def test_delete_source(
+        self,
+        client,
+        db_session,
+        socketio_client,
+        mocked_user_model,
+        mocked_source_model,
+        mocked_project_with_sources,
+        mocked_delete_source_request,
+    ):
+        with pytest.raises(TypeError):
+            socketio_client.emit("delete_source")
+
+        with client.session_transaction() as sess:
+            sess["user"] = mocked_user_model.email
+        db_session.add_all(
+            [mocked_user_model, mocked_source_model, mocked_project_with_sources]
+        )
+        db_session.commit()
+
+        socketio_client.emit("delete_source", mocked_delete_source_request)
+        recieved = socketio_client.get_received()
+        assert recieved[0]["name"] == "all_sources_server"
+
+        [all_sources_server] = recieved[0]["args"]
+        assert all_sources_server == mocked_source_map()
+
+
+class TestSourceInfoFlow:
     def test_get_all_sources(
         self,
         client,
@@ -237,30 +266,3 @@ class TestSourceFlow:
         socketio_client.emit("get_all_sources", mocked_project_request)
         recieved = socketio_client.get_received()
         assert recieved == []
-
-    def test_delete_source(
-        self,
-        client,
-        db_session,
-        socketio_client,
-        mocked_user_model,
-        mocked_source_model,
-        mocked_project_with_sources,
-        mocked_delete_source_request,
-    ):
-        with pytest.raises(TypeError):
-            socketio_client.emit("delete_source")
-
-        with client.session_transaction() as sess:
-            sess["user"] = mocked_user_model.email
-        db_session.add_all(
-            [mocked_user_model, mocked_source_model, mocked_project_with_sources]
-        )
-        db_session.commit()
-
-        socketio_client.emit("delete_source", mocked_delete_source_request)
-        recieved = socketio_client.get_received()
-        assert recieved[0]["name"] == "all_sources_server"
-
-        [all_sources_server] = recieved[0]["args"]
-        assert all_sources_server == mocked_source_map()
