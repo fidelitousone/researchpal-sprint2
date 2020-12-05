@@ -137,6 +137,7 @@ def create_citation(source_id: str, project_id: str, project_name):
     else:
         mla_name = ""
         apa_name = ""
+        last = ""
 
     if source_info.title:
         title = source_info.title + " "
@@ -163,7 +164,9 @@ def create_citation(source_id: str, project_id: str, project_name):
 
     with app.app_context():
         log.info("Added new citation to project <%s>", project_name)
-        new_citation = Citations(project_id, source_id, mla_citation, apa_citation)
+        new_citation = Citations(
+            project_id, source_id, last, mla_citation, apa_citation
+        )
         db.session.add(new_citation)
         db.session.commit()
 
@@ -215,13 +218,10 @@ def on_new_facebook_user(data):
 def on_new_microsoft_user(data):
     try:
         log.info("Attempting to add new user")
-        profile = data["response"]["account"]
-        email = profile["userName"]
-        user_name = profile["name"]
-        try:
-            profile_picture = profile["imageUrl"]
-        except KeyError:
-            profile_picture = None
+        profile = data["response"]
+        email = profile["userPrincipalName"]
+        user_name = profile["displayName"]
+        profile_picture = data["profilePicture"]
         user_id = uuid.uuid4()
         auth_type = AuthType.MICROSOFT
 
@@ -383,6 +383,7 @@ def get_all_citations(data):
             citations = (
                 db.session.query(Citations)
                 .filter(Citations.project_id == project_id)
+                .order_by(Citations.author.asc())
                 .all()
             )
             for c in citations:
@@ -503,6 +504,10 @@ def on_request_project():
 
 
 @app.route("/")
+@app.route("/login")
+@app.route("/about")
+@app.route("/pricing")
+@app.route("/future")
 @app.route("/home")
 @app.route("/project")
 @app.route("/bibliography")
