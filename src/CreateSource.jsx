@@ -36,6 +36,27 @@ export default function CreateSource(props) {
     return null;
   }
 
+  function handleUpload(event) {
+    const reader = new FileReader();
+    event.preventDefault();
+    // console.log(event.target.files);
+    const file = document.getElementById('bulk-import');
+    console.log(file.value);
+    console.log(file.files[0].slice());
+
+    reader.readAsText(file.files[0]);
+
+    reader.onload = function () {
+      console.log(reader.result);
+    };
+
+    reader.onerror = function () {
+      console.log(reader.error);
+    };
+
+    // console.log(file);
+  }
+
   function handleSubmit(event) {
     const sourceLink = myRef.current.value;
     console.log(sourceLink);
@@ -193,6 +214,15 @@ export default function CreateSource(props) {
             </Form.Group>
             <Button variant="primary" type="submit">
               Submit
+            </Button>
+          </Form>
+          <br />
+          <Form inline onSubmit={handleUpload} style={{ justifyContent: 'center' }}>
+            <Form.File>
+              <Form.File.Input id="bulk-import" />
+            </Form.File>
+            <Button variant="primary" type="submit">
+              Upload
             </Button>
           </Form>
           <br />
