@@ -36,6 +36,22 @@ export default function CreateSource(props) {
     return null;
   }
 
+  function addSourceFromUpload(sourceLink) {
+    console.log(sourceLink);
+    console.log(sourcesList);
+    console.log(sourcesMapList);
+    if (validator.isEmpty(validator.trim(sourceLink))) {
+      displayError('Source URL was empty or only whitespace. Please try again with a valid source URL.');
+    } else if (Object.values(sourcesMapList).some((name) => sourceLink === name)) {
+      displayError('Source URL is already exists. Please try again with a unique source URL.');
+    } else {
+      Socket.emit('add_source_to_project', {
+        project_name: usingProject,
+        source_link: sourceLink,
+      });
+    }
+  }
+
   function handleUpload(event) {
     const reader = new FileReader();
     event.preventDefault();
@@ -49,7 +65,12 @@ export default function CreateSource(props) {
     reader.onload = function () {
       console.log(reader.result);
       const arr = reader.result.trim().split(/\s+/);
-      console.log(arr);
+      setSpinning(true);
+      arr.forEach((URL) => {
+        console.log('Adding ', URL);
+        addSourceFromUpload(URL);
+      });
+      setSpinning(false);
     };
 
     reader.onerror = function () {
