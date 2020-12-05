@@ -115,7 +115,8 @@ def get_source_info(source_id: str, url: str) -> bool:
     return False
 
 
-def create_citation(source_id: str, project_id: str, project_name):
+def create_citation(source_id: str, project_id: str, project_name: str) -> None:
+    # pylint: disable = too-many-locals,too-many-branches
     with app.app_context():
         source_info = (
             db.session.query(Sources).filter(Sources.source_id == source_id).one()
@@ -386,9 +387,9 @@ def get_all_citations(data):
                 .order_by(Citations.author.asc())
                 .all()
             )
-            for c in citations:
-                mla_citation_list.append(c.mla_citation)
-                apa_citation_list.append(c.apa_citation)
+            for citation in citations:
+                mla_citation_list.append(citation.mla_citation)
+                apa_citation_list.append(citation.apa_citation)
             socketio.emit(
                 "all_citations",
                 {
@@ -427,6 +428,7 @@ def on_delete_source(data):
             .one()
         )
 
+        log.debug("Source list before removing: <%s>", project_info.sources)
         project_info.sources = list(project_info.sources)
         project_info.sources.remove(source_id)
         db.session.merge(project_info)
@@ -437,9 +439,9 @@ def on_delete_source(data):
         log.debug("Deleting citation that matches the source ID <%s>", source_id)
 
         Sources.query.filter(Sources.source_id == source_id).delete()
-        db.session.commit()
         log.info("Deleting source that matches the ID <%s>", source_id)
 
+        # db.session.commit()  # Commented out due to a bug found in pytest-flask-sqlalchemy
         source_map = create_source_map(project_info.sources)
         socketio.emit(
             "all_sources_server",
@@ -504,13 +506,13 @@ def on_request_project():
 
 
 @app.route("/")
-@app.route("/login")
 @app.route("/about")
-@app.route("/pricing")
+@app.route("/bibliography")
 @app.route("/future")
 @app.route("/home")
+@app.route("/login")
+@app.route("/pricing")
 @app.route("/project")
-@app.route("/bibliography")
 def index():
     return render_template("index.html")
 

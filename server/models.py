@@ -157,7 +157,7 @@ class Citations(db.Model):
     mla_citation = db.Column(db.Text)
     apa_citation = db.Column(db.Text)
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         project_id: str,
         source_id: str,
