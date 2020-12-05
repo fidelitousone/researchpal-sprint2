@@ -2,7 +2,7 @@
 /* eslint-disable no-restricted-globals */
 import React, { useState } from 'react';
 import {
-  Button, Col, Container, ListGroup, Row, Modal,
+  Button, Col, Container, ListGroup, Row, Modal, Spinner,
 } from 'react-bootstrap';
 import { BsFillDashCircleFill } from 'react-icons/bs';
 import { useHistory } from 'react-router-dom';
@@ -21,6 +21,15 @@ export default function Dashboard() {
 
   const handleShow = () => setConfirm(true);
   const handleClose = () => setConfirm(false);
+
+  const [spinning, setSpinning] = useState(true);
+
+  function SpinnerObject() {
+    if (spinning) {
+      return <Spinner animation="border" variant="primary" />;
+    }
+    return null;
+  }
 
   function deleteProject() {
     handleClose();
@@ -44,6 +53,7 @@ export default function Dashboard() {
 
   function GetUserInfo() {
     React.useEffect(() => {
+      setSpinning(true);
       Socket.emit('request_user_info');
       Socket.on('user_info', (data) => {
         setUser(data);
@@ -55,6 +65,7 @@ export default function Dashboard() {
           imagelink = data.profile_picture;
         }
         setImage(imagelink);
+        setSpinning(false);
       });
     }, []);
   }
@@ -133,6 +144,10 @@ export default function Dashboard() {
           </ListGroup>
         </Row>
       </Container>
+      <br />
+      <div align="center">
+        <SpinnerObject spinning={spinning} />
+      </div>
     </>
   );
 }

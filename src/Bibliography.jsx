@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Button, Container, Row, ListGroup, ButtonGroup, ToggleButton,
+  Button, Container, Row, ListGroup, ButtonGroup, ToggleButton, Spinner,
 } from 'react-bootstrap';
 import { BsFillDashCircleFill } from 'react-icons/bs';
 import Socket from './Socket';
@@ -14,8 +14,11 @@ export default function Bibliography() {
   const [styleSelection, setStyleSelection] = React.useState('mla');
   const [user, setUser] = React.useState(0);
   const [image, setImage] = React.useState(0);
+  const [spinning, setSpinning] = useState(true);
+
   function GetUserInfo() {
     React.useEffect(() => {
+      setSpinning(true);
       Socket.emit('request_user_info');
       Socket.on('user_info', (data) => {
         setUser(data);
@@ -39,8 +42,23 @@ export default function Bibliography() {
   }
 
   GetProject();
+
+  function SpinnerObject() {
+    if (spinning) {
+      console.log('SPINNING');
+      return (
+        <div align="center">
+          <Spinner animation="border" variant="primary" />
+        </div>
+      );
+    }
+    console.log('NOT SPINNING');
+    return null;
+  }
+
   function GetCitations() {
     React.useEffect(() => {
+      setSpinning(true);
       if (projectName !== null && projectName !== '') {
         Socket.emit('get_all_citations', {
           project_name: projectName,
@@ -50,6 +68,7 @@ export default function Bibliography() {
           setmlaCitationList(data.mla_citation_list);
           setapaCitationList(data.apa_citation_list);
         });
+        setSpinning(false);
       }
     }, [projectName]);
   }
@@ -90,6 +109,7 @@ export default function Bibliography() {
       <UserInfoBar headerInfo="Bibliography" badgeInfo={user.email} profilePicture={image} />
       <div align="center">
         <Button onClick={download} style={{ float: 'center' }}>Download</Button>
+        {' '}
         <ButtonGroup toggle>
           {radios.map((radio) => (
             <ToggleButton
@@ -112,6 +132,7 @@ export default function Bibliography() {
         </ButtonGroup>
       </div>
       <br />
+      <SpinnerObject spinning={spinning} />
       <Container style={{ textAlign: 'center' }}>
         <Row xs={1}>
           <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Spinner } from 'react-bootstrap';
 import CreateSource from './CreateSource';
 import Socket from './Socket';
 import UserInfoBar from './UserInfoBar';
@@ -7,8 +8,11 @@ export default function Project() {
   const [projectName, setProjectName] = React.useState('');
   const [user, setUser] = React.useState(0);
   const [image, setImage] = React.useState(0);
+  const [spinning, setSpinning] = React.useState(true);
+
   function GetUserInfo() {
     React.useEffect(() => {
+      setSpinning(true);
       Socket.emit('request_user_info');
       Socket.on('user_info', (data) => {
         setUser(data);
@@ -24,11 +28,24 @@ export default function Project() {
 
   function GetProject() {
     React.useEffect(() => {
+      setSpinning(true);
       Socket.emit('request_selected_project');
       Socket.on('give_project_name', (data) => {
         setProjectName(data.project_name);
+        setSpinning(false);
       });
     }, []);
+  }
+
+  function SpinnerObject() {
+    if (spinning) {
+      return (
+        <div align="center">
+          <Spinner animation="border" variant="primary" />
+        </div>
+      );
+    }
+    return null;
   }
 
   function projectSelected() {
@@ -41,6 +58,9 @@ export default function Project() {
   function renderProject() {
     if (projectSelected()) {
       return (<CreateSource usingProject={projectName} />);
+    }
+    if (spinning) {
+      return null;
     }
     return (
       <div>
@@ -57,6 +77,7 @@ export default function Project() {
     <div className="Project">
       <UserInfoBar headerInfo="Project" badgeInfo={user.email} profilePicture={image} />
       <br />
+      <SpinnerObject spinning={spinning} />
       {renderProject()}
     </div>
   );
