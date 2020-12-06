@@ -5,6 +5,16 @@ import Socket from './Socket';
 
 export default function GoogleAuth() {
   const history = useHistory();
+  React.useEffect(() => {
+    Socket.on('login_response', (data) => {
+      console.log(data);
+      history.push('/home');
+    });
+    return () => {
+      Socket.off('login_response');
+    };
+  });
+
   function handleSubmit(response) {
     Socket.emit('new_google_user', {
       response,
@@ -13,11 +23,6 @@ export default function GoogleAuth() {
     Socket.emit('login_request', {
       email: response.profileObj.email,
     });
-
-    Socket.on('login_response', (data) => {
-      console.log(data);
-    });
-    history.push('/home');
   }
 
   function responseGoogleSuccess(response) {

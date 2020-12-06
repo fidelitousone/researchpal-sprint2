@@ -2,12 +2,24 @@ import React from 'react';
 import {
   Image, DropdownButton, Navbar, Nav, Dropdown,
 } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Logout from './LogoutButton';
+import Socket from './Socket';
 
 export default function UserInfoBar(props) {
   const { headerInfo, badgeInfo, profilePicture } = props;
+  const history = useHistory();
+
+  React.useEffect(() => {
+    Socket.on('redirect_to_login', () => {
+      history.push('/login');
+    });
+    return () => {
+      Socket.off('redirect_to_login');
+    };
+  });
+
   return (
     <>
       <Navbar bg="dark" variant="dark">

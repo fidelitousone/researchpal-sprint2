@@ -5,6 +5,16 @@ import Socket from './Socket';
 
 export default function MicrosoftAuth() {
   const history = useHistory();
+  React.useEffect(() => {
+    Socket.on('login_response', (data) => {
+      console.log(data);
+      history.push('/home');
+    });
+    return () => {
+      Socket.off('login_response');
+    };
+  });
+
   function handleSubmit(response) {
     console.log(response.id);
     const profilePicture = (`https://storage.live.com/Users/0x${response.id}
@@ -19,11 +29,6 @@ export default function MicrosoftAuth() {
     Socket.emit('login_request', {
       email: response.account.userName,
     });
-
-    Socket.on('login_response', (data) => {
-      console.log(data);
-    });
-    history.push('/home');
   }
 
   function Microsoftresponse(err, response) {
