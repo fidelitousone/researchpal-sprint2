@@ -70,6 +70,9 @@ export default function Bibliography() {
         });
         setSpinning(false);
       }
+      return () => {
+        Socket.off('all_citations');
+      };
     }, [projectName]);
   }
   GetCitations();

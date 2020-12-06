@@ -22,6 +22,9 @@ export default function Project() {
         }
         setImage(imagelink);
       });
+      return () => {
+        Socket.off('user_info');
+      };
     }, []);
   }
   GetUserInfo();
@@ -34,6 +37,9 @@ export default function Project() {
         setProjectName(data.project_name);
         setSpinning(false);
       });
+      return () => {
+        Socket.off('give_project_name');
+      };
     }, []);
   }
 

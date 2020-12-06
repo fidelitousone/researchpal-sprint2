@@ -67,6 +67,9 @@ export default function Dashboard() {
         setImage(imagelink);
         setSpinning(false);
       });
+      return () => {
+        Socket.off('user_info');
+      };
     }, []);
   }
   GetUserInfo();
@@ -76,6 +79,9 @@ export default function Dashboard() {
       Socket.on('all_projects', (data) => {
         setProjects(data);
       });
+      return () => {
+        Socket.off('all_projects');
+      };
     });
   }
 
