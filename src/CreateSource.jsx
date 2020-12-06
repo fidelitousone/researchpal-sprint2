@@ -130,6 +130,9 @@ export default function CreateSource(props) {
         setSpinning(false);
         invalidError('Invalid URL for one or more sources added');
       });
+      return () => {
+        Socket.off('invalid_url');
+      };
     });
   }
 
@@ -142,6 +145,9 @@ export default function CreateSource(props) {
         setSourcesList(data.source_list);
         setSourcesMapList(data.source_map);
       });
+      return () => {
+        Socket.off('all_sources_server');
+      };
     });
   }
 
@@ -158,6 +164,9 @@ export default function CreateSource(props) {
         setSourcesList(data.source_list);
         setSourcesMapList(data.source_map);
       });
+      return () => {
+        Socket.off('all_sources');
+      };
     });
   }
 

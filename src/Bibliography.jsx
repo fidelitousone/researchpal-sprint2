@@ -28,6 +28,9 @@ export default function Bibliography() {
         }
         setImage(imagelink);
       });
+      return () => {
+        Socket.off('user_info');
+      };
     }, []);
   }
   GetUserInfo();
@@ -38,6 +41,9 @@ export default function Bibliography() {
       Socket.on('give_project_name', (data) => {
         setProjectName(data.project_name);
       });
+      return () => {
+        Socket.off('give_project_name');
+      };
     }, []);
   }
 
