@@ -11,8 +11,16 @@ import Socket from './Socket';
 export default function CreateSource(props) {
   const [sourcesList, setSourcesList] = useState([]);
   const [sourcesMapList, setSourcesMapList] = useState([]);
+
   const [show, setShow] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const [dupShow, setDupShow] = useState(false);
+  const [dupErrorMessage, setDupErrorMessage] = useState('');
+
+  const [invalidShow, setInvalidShow] = useState(false);
+  const [invalidErrorMessage, setInvalidErrorMessage] = useState('');
+
   const myRef = useRef(null);
   const { usingProject } = props;
 
@@ -24,9 +32,19 @@ export default function CreateSource(props) {
 
   const [spinning, setSpinning] = useState(false);
 
-  function displayError(message) {
+  function emptyError(message) {
     setShow(true);
     setErrorMessage(message);
+  }
+
+  function dupError(message) {
+    setDupShow(true);
+    setDupErrorMessage(message);
+  }
+
+  function invalidError(message) {
+    setInvalidShow(true);
+    setInvalidErrorMessage(message);
   }
 
   function SpinnerObject() {
@@ -40,10 +58,8 @@ export default function CreateSource(props) {
     console.log(sourceLink);
     console.log(sourcesList);
     console.log(sourcesMapList);
-    if (validator.isEmpty(validator.trim(sourceLink))) {
-      displayError('Source URL was empty or only whitespace. Please try again with a valid source URL.');
-    } else if (Object.values(sourcesMapList).some((name) => sourceLink === name)) {
-      displayError('Source URL is already exists. Please try again with a unique source URL.');
+    if (Object.values(sourcesMapList).some((name) => sourceLink === name)) {
+      dupError('Some uploaded source URLs were found to be duplicates of existing URLs in the project.');
     } else {
       Socket.emit('add_source_to_project', {
         project_name: usingProject,
@@ -55,10 +71,7 @@ export default function CreateSource(props) {
   function handleUpload(event) {
     const reader = new FileReader();
     event.preventDefault();
-    // console.log(event.target.files);
     const file = document.getElementById('bulk-import');
-    console.log(file.value);
-    console.log(file.files[0].slice());
 
     reader.readAsText(file.files[0]);
 
@@ -67,7 +80,6 @@ export default function CreateSource(props) {
       const arr = reader.result.trim().split(/\s+/);
       setSpinning(true);
       arr.forEach((URL) => {
-        console.log('Adding ', URL);
         addSourceFromUpload(URL);
       });
       setSpinning(false);
@@ -76,8 +88,6 @@ export default function CreateSource(props) {
     reader.onerror = function () {
       console.log(reader.error);
     };
-
-    // console.log(file);
   }
 
   function handleSubmit(event) {
@@ -86,9 +96,9 @@ export default function CreateSource(props) {
     console.log(sourcesList);
     console.log(sourcesMapList);
     if (validator.isEmpty(validator.trim(sourceLink))) {
-      displayError('Source URL was empty or only whitespace. Please try again with a valid source URL.');
+      emptyError('Source URL was empty or only whitespace. Please try again with a valid source URL.');
     } else if (Object.values(sourcesMapList).some((name) => sourceLink === name)) {
-      displayError('Source URL is already exists. Please try again with a unique source URL.');
+      dupError('Source URL already exists. Please try again with a unique source URL.');
     } else {
       setSpinning(true);
       Socket.emit('add_source_to_project', {
@@ -113,9 +123,9 @@ export default function CreateSource(props) {
 
   function InvalidURLError() {
     React.useEffect(() => {
-      Socket.on('invalid_url', (data) => {
+      Socket.on('invalid_url', () => {
         setSpinning(false);
-        displayError(`Invalid URL: [ ${data.source_link} ]  Please ensure that you have copied the entire URL (including the protocol)`);
+        invalidError('Invalid URL for one or more sources added');
       });
     });
   }
@@ -196,6 +206,18 @@ export default function CreateSource(props) {
           <Alert.Heading>Error!</Alert.Heading>
           <p>
             {errorMessage}
+          </p>
+        </Alert>
+        <Alert show={dupShow} style={{ width: '40%' }} variant="danger" onClose={() => setDupShow(false)} dismissible>
+          <Alert.Heading>Error!</Alert.Heading>
+          <p>
+            {dupErrorMessage}
+          </p>
+        </Alert>
+        <Alert show={invalidShow} style={{ width: '40%' }} variant="danger" onClose={() => setInvalidShow(false)} dismissible>
+          <Alert.Heading>Error!</Alert.Heading>
+          <p>
+            {invalidErrorMessage}
           </p>
         </Alert>
       </div>
