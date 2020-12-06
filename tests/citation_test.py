@@ -5,8 +5,14 @@ import pytest
 @pytest.fixture
 def mocked_citation_list(mocked_citation_model):
     return {
-        "mla_citation_list": [mocked_citation_model.mla_citation],
-        "apa_citation_list": [mocked_citation_model.apa_citation],
+        "citation_list": [
+            {
+                "source_id": mocked_citation_model.source_id,
+                "is_cited": mocked_citation_model.is_cited,
+                "mla": mocked_citation_model.mla_citation,
+                "apa": mocked_citation_model.apa_citation,
+            },
+        ],
     }
 
 

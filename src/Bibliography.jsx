@@ -75,7 +75,7 @@ export default function Bibliography() {
     const list = [];
     const element = document.createElement('a');
     for (i = 0; i < citationList.length; i += 1) {
-      if (citationList[i].active) {
+      if (citationList[i].is_cited) {
         list.push(citationList[i]);
       }
     }
@@ -119,11 +119,11 @@ export default function Bibliography() {
     const list = citationList;
     for (i = 0; i < list.length; i += 1) {
       if (list[i].source_id === sourceID) {
-        if (list[i].active === true) {
-          list[i].active = false;
+        if (list[i].is_cited) {
+          list[i].is_cited = false;
           remove(sourceID);
         } else {
-          list[i].active = true;
+          list[i].is_cited = true;
           add(sourceID);
         }
       }
@@ -172,7 +172,7 @@ export default function Bibliography() {
             <div>
               <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
                 {citationList.map((item) => {
-                  if (item.active) {
+                  if (item.is_cited) {
                     return(
                     <ListGroup.Item key={item.source_id}>
                       {item.mla}
@@ -187,7 +187,7 @@ export default function Bibliography() {
               </ListGroup>
               <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
                 {citationList.map((item) => {
-                  if (item.active === false) {
+                  if (item.is_cited === false) {
                     return(
                     <ListGroup.Item variant='dark' key={item.source_id}>
                       {item.mla}
@@ -208,7 +208,7 @@ export default function Bibliography() {
             <div>
               <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
                 {citationList.map((item) => {
-                  if (item.active) {
+                  if (item.is_cited) {
                     return(
                     <ListGroup.Item key={item.source_id}>
                       {item.apa}
@@ -223,7 +223,7 @@ export default function Bibliography() {
               </ListGroup>
               <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
                 {citationList.map((item) => {
-                  if (!item.active) {
+                  if (!item.is_cited) {
                     return(
                     <ListGroup.Item variant='dark' key={item.source_id}>
                       {item.apa}

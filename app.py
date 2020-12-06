@@ -166,7 +166,7 @@ def create_citation(source_id: str, project_id: str, project_name: str) -> None:
     with app.app_context():
         log.info("Added new citation to project <%s>", project_name)
         new_citation = Citations(
-            project_id, source_id, last, True, mla_citation, apa_citation
+            project_id, source_id, last, mla_citation, apa_citation
         )
         db.session.add(new_citation)
         db.session.commit()
@@ -365,8 +365,6 @@ def get_all_sources(data):
 def get_all_citations(data):
     email = session.get("user")
     project_name = data["project_name"]
-    mla_citation_list = []
-    apa_citation_list = []
     citation_list = []
     with app.app_context():
         user_info = db.session.query(Users).filter(Users.email == email).one()
@@ -389,14 +387,14 @@ def get_all_citations(data):
                 .all()
             )
             for citation in citations:
-                mla_citation_list.append(citation.mla_citation)
-                apa_citation_list.append(citation.apa_citation)
-                citation_list.append({
-                    'mla':citation.mla_citation,
-                    'apa':citation.apa_citation,
-                    'source_id':citation.source_id,
-                    'active':citation.active,
-                })
+                citation_list.append(
+                    {
+                        "mla": citation.mla_citation,
+                        "apa": citation.apa_citation,
+                        "source_id": citation.source_id,
+                        "is_cited": citation.is_cited,
+                    }
+                )
             socketio.emit(
                 "all_citations",
                 {
@@ -507,6 +505,52 @@ def on_request_project():
             "give_project_name", {"project_name": selected_project}, room=request.sid
         )
         log.info("Returning project name <%s> for <%s>", selected_project, email)
+    else:
+        log.warning("No login found")
+
+
+@socketio.on("add_to_bibliography")
+def add_to_bibliography(data):
+    if "user" in session:
+        email = session.get("user")
+        source_id = data["source_id"]
+        with app.app_context():
+            citation = (
+                db.session.query(Citations)
+                .filter(Citations.source_id == source_id)
+                .one()
+            )
+            citation.is_cited = True
+            db.session.commit()
+
+        log.debug(
+            "Added citation to bibliography with source ID <%s> for <%s>",
+            source_id,
+            email,
+        )
+    else:
+        log.warning("No login found")
+
+
+@socketio.on("remove_from_bibliography")
+def remove_from_bibliography(data):
+    if "user" in session:
+        email = session.get("user")
+        source_id = data["source_id"]
+        with app.app_context():
+            citation = (
+                db.session.query(Citations)
+                .filter(Citations.source_id == source_id)
+                .one()
+            )
+            citation.is_cited = False
+            db.session.commit()
+
+        log.debug(
+            "Removed citation from bibliography with source ID <%s> for <%s>",
+            source_id,
+            email,
+        )
     else:
         log.warning("No login found")
 

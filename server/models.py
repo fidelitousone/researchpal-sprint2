@@ -155,7 +155,6 @@ class Citations(db.Model):
     source_id = db.Column(db.String(36))
     is_cited = db.Column(db.Boolean, unique=False, default=True)
     author = db.Column(db.Text)
-    active = db.Column(db.Boolean)
     mla_citation = db.Column(db.Text)
     apa_citation = db.Column(db.Text)
 
@@ -164,14 +163,13 @@ class Citations(db.Model):
         project_id: str,
         source_id: str,
         author: str,
-        active: bool,
         mla_citation: str,
         apa_citation: str,
     ):
         self.project_id = project_id
         self.source_id = source_id
+        self.is_cited = True
         self.author = author
-        self.active = active
         self.mla_citation = mla_citation
         self.apa_citation = apa_citation
 
@@ -181,7 +179,6 @@ class Citations(db.Model):
             self.source_id,
             self.is_cited,
             self.author,
-            self.active,
             self.mla_citation,
             self.apa_citation,
         )
@@ -192,7 +189,6 @@ class Citations(db.Model):
             "source_id": self.source_id,
             "is_cited": self.is_cited,
             "author": self.author,
-            "active": self.active,
             "mla_citation": self.mla_citation,
             "apa_citation": self.apa_citation,
         }
