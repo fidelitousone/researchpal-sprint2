@@ -71,12 +71,19 @@ export default function Bibliography() {
   GetCitations();
 
   function download() {
+    let i;
+    const list = [];
     const element = document.createElement('a');
+    for (i = 0; i < citationList.length; i += 1) {
+      if (citationList[i].active) {
+        list.push(citationList[i]);
+      }
+    }
     let stringData = '';
     if (styleSelection === 'mla') {
-      stringData = citationList.map((item) => `${item.mla}\n`);
+      stringData = list.map((item) => `${item.mla}\n`);
     } else {
-      stringData = citationList.map((item) => `${item.apa}\n`);
+      stringData = list.map((item) => `${item.apa}\n`);
     }
     const data = `data:text/plain;charset=utf-8,${encodeURIComponent(stringData)}`;
     element.setAttribute('href', data);
