@@ -273,8 +273,22 @@ export default function CreateSource(props) {
       <ConfirmDelete />
 
       <Row xs={1}>
+        <h3>{usingProject}</h3>
         <Col>
-          <h3>{usingProject}</h3>
+          <ButtonGroup toggle className="mb-2">
+            <ToggleButton
+              type="checkbox"
+              variant="outline-secondary"
+              checked={checked}
+              value="1"
+              onChange={(e) => setChecked(e.currentTarget.checked)}
+            >
+              {toggleText}
+            </ToggleButton>
+          </ButtonGroup>
+          <ToggleInput checked={checked} />
+          <br />
+          <Button onClick={download} style={{ float: 'center' }}>Download</Button>
         </Col>
         <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
           {Object.entries(sourcesMapList).map(([sourceID, sourceName]) => (
@@ -300,20 +314,6 @@ export default function CreateSource(props) {
           ))}
         </ListGroup>
         <Col>
-          <ButtonGroup toggle className="mb-2">
-            <ToggleButton
-              type="checkbox"
-              variant="outline-secondary"
-              checked={checked}
-              value="1"
-              onChange={(e) => setChecked(e.currentTarget.checked)}
-            >
-              {toggleText}
-            </ToggleButton>
-          </ButtonGroup>
-          <ToggleInput checked={checked} />
-          <br />
-          <Button onClick={download} style={{ float: 'center' }}>Download</Button>
           <br />
           <br />
           <SpinnerObject spinning={spinning} />
