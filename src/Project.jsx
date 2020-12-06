@@ -76,7 +76,7 @@ export default function Project() {
 
   return (
     <div className="Project">
-      <UserInfoBar headerInfo={projectName} badgeInfo={user.email} profilePicture={image} />
+      <UserInfoBar headerInfo="Project" badgeInfo={user.email} profilePicture={image} />
       <SpinnerObject spinning={spinning} />
       {renderProject()}
     </div>
