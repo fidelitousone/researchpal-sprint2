@@ -160,6 +160,23 @@ export default function CreateSource(props) {
 
   GetAllSources();
 
+  function download() {
+    const element = document.createElement('a');
+    let stringData = '';
+    const newSourcesList = Object.values(sourcesMapList);
+    console.log(newSourcesList);
+    newSourcesList.forEach((item) => {
+      stringData = stringData.concat(`${item}\n`);
+    });
+    const data = `data:text/plain;charset=utf-8,${encodeURIComponent(stringData)}`;
+    element.setAttribute('href', data);
+    element.setAttribute('download', 'Sources.txt');
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+
   function ConfirmDelete() {
     // eslint-disable-next-line
     console.log('IN CONFIRM DELETE');
@@ -270,6 +287,9 @@ export default function CreateSource(props) {
               Upload
             </Button>
           </Form>
+          <br />
+          <Button onClick={download} style={{ float: 'center' }}>Download</Button>
+          <br />
           <br />
           <SpinnerObject spinning={spinning} />
         </Col>
