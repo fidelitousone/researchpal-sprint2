@@ -33,6 +33,7 @@ export default function CreateSource(props) {
   const handleClose = () => setConfirm(false);
 
   const [spinning, setSpinning] = useState(false);
+  const [fileSpinning, setFileSpinning] = useState(false);
   const [checked, setChecked] = useState(false);
 
   function emptyError(message) {
@@ -57,7 +58,15 @@ export default function CreateSource(props) {
     return null;
   }
 
+  function FileSpinnerObject() {
+    if (fileSpinning) {
+      return <Spinner animation="border" variant="primary" />;
+    }
+    return null;
+  }
+
   function addSourceFromUpload(sourceLink) {
+    setFileSpinning(true);
     console.log(sourceLink);
     console.log(sourcesList);
     console.log(sourcesMapList);
@@ -72,6 +81,7 @@ export default function CreateSource(props) {
   }
 
   function handleUpload(event) {
+    setFileSpinning(true);
     const reader = new FileReader();
     event.preventDefault();
     const file = document.getElementById('bulk-import');
@@ -81,11 +91,10 @@ export default function CreateSource(props) {
     reader.onload = function () {
       console.log(reader.result);
       const arr = reader.result.trim().split(/\s+/);
-      setSpinning(true);
       arr.forEach((URL) => {
         addSourceFromUpload(URL);
       });
-      setSpinning(false);
+      // setFileSpinning(false);
     };
 
     reader.onerror = function () {
@@ -326,6 +335,7 @@ export default function CreateSource(props) {
           <br />
           <br />
           <SpinnerObject spinning={spinning} />
+          <FileSpinnerObject fileSpinning={fileSpinning} />
         </Col>
       </Row>
     </Container>
