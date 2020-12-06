@@ -168,6 +168,7 @@ class Citations(db.Model):
     ):
         self.project_id = project_id
         self.source_id = source_id
+        self.is_cited = True
         self.author = author
         self.mla_citation = mla_citation
         self.apa_citation = apa_citation

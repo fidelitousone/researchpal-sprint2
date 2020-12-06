@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import {
   Button, Container, Row, ListGroup, ButtonGroup, ToggleButton, Spinner,
 } from 'react-bootstrap';
-import { BsFillDashCircleFill } from 'react-icons/bs';
+import {
+  BsFillDashCircleFill, BsFillPlusCircleFill,
+} from 'react-icons/bs';
 import Socket from './Socket';
 import UserInfoBar from './UserInfoBar';
 
 export default function Bibliography() {
   const [citationList, setCitationList] = React.useState([]);
-  const [mlaCitationList, setmlaCitationList] = React.useState([]);
-  const [apaCitationList, setapaCitationList] = React.useState([]);
   const [projectName, setProjectName] = React.useState('');
   const [styleSelection, setStyleSelection] = React.useState('mla');
   const [user, setUser] = React.useState(0);
@@ -45,14 +45,12 @@ export default function Bibliography() {
 
   function SpinnerObject() {
     if (spinning) {
-      console.log('SPINNING');
       return (
         <div align="center">
           <Spinner animation="border" variant="primary" />
         </div>
       );
     }
-    console.log('NOT SPINNING');
     return null;
   }
 
@@ -64,22 +62,28 @@ export default function Bibliography() {
           project_name: projectName,
         });
         Socket.on('all_citations', (data) => {
-          setCitationList(data.apa_citation_list);
-          setmlaCitationList(data.mla_citation_list);
-          setapaCitationList(data.apa_citation_list);
+          setCitationList(data.citation_list);
         });
         setSpinning(false);
       }
     }, [projectName]);
   }
   GetCitations();
+
   function download() {
+    let i;
+    const list = [];
     const element = document.createElement('a');
+    for (i = 0; i < citationList.length; i += 1) {
+      if (citationList[i].is_cited) {
+        list.push(citationList[i]);
+      }
+    }
     let stringData = '';
     if (styleSelection === 'mla') {
-      stringData = mlaCitationList.map((item) => `${item}\n`);
+      stringData = list.map((item) => `${item.mla}\n`);
     } else {
-      stringData = apaCitationList.map((item) => `${item}\n`);
+      stringData = list.map((item) => `${item.apa}\n`);
     }
     const data = `data:text/plain;charset=utf-8,${encodeURIComponent(stringData)}`;
     element.setAttribute('href', data);
@@ -92,18 +96,45 @@ export default function Bibliography() {
 
   function getCitation(style) {
     if (style === 'APA') {
-      setCitationList(apaCitationList);
       setStyleSelection('apa');
     } else {
-      setCitationList(mlaCitationList);
       setStyleSelection('mla');
     }
+  }
+
+  function add(sourceID) {
+    Socket.emit('add_to_bibliography', {
+      source_id: sourceID,
+    });
+  }
+
+  function remove(sourceID) {
+    Socket.emit('remove_from_bibliography', {
+      source_id: sourceID,
+    });
+  }
+
+  function setStatus(sourceID) {
+    let i;
+    const list = citationList;
+    for (i = 0; i < list.length; i += 1) {
+      if (list[i].source_id === sourceID) {
+        if (list[i].is_cited) {
+          list[i].is_cited = false;
+          remove(sourceID);
+        } else {
+          list[i].is_cited = true;
+          add(sourceID);
+        }
+      }
+    }
+    setCitationList([...list]);
   }
   const radios = [
     { name: 'APA7', value: 'APA' },
     { name: 'MLA8', value: 'MLA' },
   ];
-  const [radioValue, setRadioValue] = useState('APA');
+  const [radioValue, setRadioValue] = useState('MLA');
   return (
     <div className="Bibliography">
       <UserInfoBar headerInfo="Bibliography" badgeInfo={user.email} profilePicture={image} />
@@ -135,14 +166,78 @@ export default function Bibliography() {
       <SpinnerObject spinning={spinning} />
       <Container style={{ textAlign: 'center' }}>
         <Row xs={1}>
-          <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
-            {Object.entries(citationList).map(([sourceID, sourceName]) => (
-              <ListGroup.Item key={sourceID}>
-                {sourceName}
-                <Button variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
+          {/* eslint-disable */
+          styleSelection === 'mla'
+          && 
+            <div>
+              <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
+                {citationList.map((item) => {
+                  if (item.is_cited) {
+                    return(
+                    <ListGroup.Item key={item.source_id}>
+                      {item.mla}
+                      <Button onClick={
+                        (e) => {
+                          setStatus(item.source_id);
+                        }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
+                    </ListGroup.Item>
+                    )
+                  }
+                })}
+              </ListGroup>
+              <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
+                {citationList.map((item) => {
+                  if (item.is_cited === false) {
+                    return(
+                    <ListGroup.Item variant='dark' key={item.source_id}>
+                      {item.mla}
+                      <Button onClick={
+                        (e) => {
+                          setStatus(item.source_id);
+                        }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillPlusCircleFill /></Button>
+                    </ListGroup.Item>
+                    )
+                  }
+                })}
+              </ListGroup>
+            </div>
+          }
+          {
+          styleSelection === 'apa'
+          && 
+            <div>
+              <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
+                {citationList.map((item) => {
+                  if (item.is_cited) {
+                    return(
+                    <ListGroup.Item key={item.source_id}>
+                      {item.apa}
+                      <Button onClick={
+                        (e) => {
+                          setStatus(item.source_id);
+                        }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
+                    </ListGroup.Item>
+                    )
+                  }
+                })}
+              </ListGroup>
+              <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
+                {citationList.map((item) => {
+                  if (!item.is_cited) {
+                    return(
+                    <ListGroup.Item variant='dark' key={item.source_id}>
+                      {item.apa}
+                      <Button onClick={
+                        (e) => {
+                          setStatus(item.source_id);
+                        }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillPlusCircleFill /></Button>
+                    </ListGroup.Item>
+                    )
+                  }
+                })}
+              </ListGroup>
+            </div>
+/* eslint-enable */}
         </Row>
       </Container>
     </div>
