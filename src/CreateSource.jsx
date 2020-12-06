@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useRef, useState } from 'react';
 import {
-  Button, Col, Container, Form, Row, Alert, ListGroup, Modal, Spinner,
+  Button, Col, Container, Form, Row, Alert, ListGroup, Modal, Spinner, ButtonGroup, ToggleButton,
 } from 'react-bootstrap';
 import validator from 'validator';
 import PropTypes from 'prop-types';
@@ -12,6 +12,8 @@ export default function CreateSource(props) {
   const [sourcesList, setSourcesList] = useState([]);
   const [sourcesMapList, setSourcesMapList] = useState([]);
 
+  const [toggleText, setToggleText] = useState('Single Source');
+
   const [show, setShow] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -19,7 +21,7 @@ export default function CreateSource(props) {
   const [dupErrorMessage, setDupErrorMessage] = useState('');
 
   const [invalidShow, setInvalidShow] = useState(false);
-  const [invalidErrorMessage, setInvalidErrorMessage] = useState('');
+  const [invalidErrorMessage, setInvalidErrorMessage] = useState('Single Source');
 
   const myRef = useRef(null);
   const { usingProject } = props;
@@ -31,6 +33,7 @@ export default function CreateSource(props) {
   const handleClose = () => setConfirm(false);
 
   const [spinning, setSpinning] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   function emptyError(message) {
     setShow(true);
@@ -177,6 +180,34 @@ export default function CreateSource(props) {
     document.body.removeChild(element);
   }
 
+  function ToggleInput() {
+    if (checked) {
+      setToggleText('File Upload');
+      return (
+        <Form inline onSubmit={handleUpload} style={{ justifyContent: 'center' }}>
+          <Form.File>
+            <Form.File.Input id="bulk-import" />
+          </Form.File>
+          <Button variant="primary" type="submit">
+            Upload
+          </Button>
+        </Form>
+      );
+    }
+    setToggleText('Single Source');
+    return (
+      <Form inline onSubmit={handleSubmit} style={{ justifyContent: 'center' }}>
+        <Form.Group id="name_input">
+          <Form.Label>Source</Form.Label>
+          <Form.Control ref={myRef} type="text" placeholder="Enter Source name" />
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          Submit
+        </Button>
+      </Form>
+    );
+  }
+
   function ConfirmDelete() {
     // eslint-disable-next-line
     console.log('IN CONFIRM DELETE');
@@ -269,24 +300,18 @@ export default function CreateSource(props) {
           ))}
         </ListGroup>
         <Col>
-          <Form inline onSubmit={handleSubmit} style={{ justifyContent: 'center' }}>
-            <Form.Group id="name_input">
-              <Form.Label>Source</Form.Label>
-              <Form.Control ref={myRef} type="text" placeholder="Enter Source name" />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              Submit
-            </Button>
-          </Form>
-          <br />
-          <Form inline onSubmit={handleUpload} style={{ justifyContent: 'center' }}>
-            <Form.File>
-              <Form.File.Input id="bulk-import" />
-            </Form.File>
-            <Button variant="primary" type="submit">
-              Upload
-            </Button>
-          </Form>
+          <ButtonGroup toggle className="mb-2">
+            <ToggleButton
+              type="checkbox"
+              variant="outline-secondary"
+              checked={checked}
+              value="1"
+              onChange={(e) => setChecked(e.currentTarget.checked)}
+            >
+              {toggleText}
+            </ToggleButton>
+          </ButtonGroup>
+          <ToggleInput checked={checked} />
           <br />
           <Button onClick={download} style={{ float: 'center' }}>Download</Button>
           <br />
