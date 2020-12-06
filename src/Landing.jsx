@@ -25,9 +25,7 @@ export default function Landing() {
                 Learn more about what set&apos;s us apart
                 {' '}
                 <Link to="/about">
-                  <a href="/about">
-                    here
-                  </a>
+                  here
                 </Link>
                 .
               </p>

@@ -12,8 +12,8 @@ export default function Bibliography() {
   const [citationList, setCitationList] = React.useState([]);
   const [projectName, setProjectName] = React.useState('');
   const [styleSelection, setStyleSelection] = React.useState('mla');
-  const [user, setUser] = React.useState(0);
-  const [image, setImage] = React.useState(0);
+  const [user, setUser] = React.useState({ email: '' });
+  const [image, setImage] = React.useState('');
   const [spinning, setSpinning] = useState(true);
 
   function GetUserInfo() {
@@ -28,6 +28,9 @@ export default function Bibliography() {
         }
         setImage(imagelink);
       });
+      return () => {
+        Socket.off('user_info');
+      };
     }, []);
   }
   GetUserInfo();
@@ -38,6 +41,9 @@ export default function Bibliography() {
       Socket.on('give_project_name', (data) => {
         setProjectName(data.project_name);
       });
+      return () => {
+        Socket.off('give_project_name');
+      };
     }, []);
   }
 
@@ -66,6 +72,9 @@ export default function Bibliography() {
         });
         setSpinning(false);
       }
+      return () => {
+        Socket.off('all_citations');
+      };
     }, [projectName]);
   }
   GetCitations();

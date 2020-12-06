@@ -11,31 +11,23 @@ export default function UserInfoBar(props) {
   return (
     <>
       <Navbar bg="dark" variant="dark">
-        <Link to="/">
-          <Navbar.Brand href="/">
-            <img
-              src="ResearchPal.svg"
-              width="30"
-              height="30"
-              className="d-inline-block align-top"
-              alt=""
-            />
-            {' '}
-            ResearchPal
-          </Navbar.Brand>
-        </Link>
+        <Navbar.Brand as={Link} to="/">
+          <img
+            src="ResearchPal.svg"
+            width="30"
+            height="30"
+            className="d-inline-block align-top"
+            alt=""
+          />
+          {' '}
+          ResearchPal
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
-            <Link to="/home">
-              <Nav.Link href="/home">Dashboard</Nav.Link>
-            </Link>
-            <Link to="/project">
-              <Nav.Link href="/project">Project</Nav.Link>
-            </Link>
-            <Link to="/bibliography">
-              <Nav.Link href="/bibliography">Bibliography</Nav.Link>
-            </Link>
+            <Nav.Link as={Link} to="/home">Dashboard</Nav.Link>
+            <Nav.Link as={Link} to="/project">Project</Nav.Link>
+            <Nav.Link as={Link} to="/bibliography">Bibliography</Nav.Link>
           </Nav>
           <DropdownButton
             id="dropdown-basic-button"
