@@ -1,9 +1,21 @@
 import * as React from 'react';
 import { Nav, Navbar, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import Socket from './Socket';
 import 'bootstrap/dist/css/bootstrap.css';
 
 export default function MainNavBar() {
+  const history = useHistory();
+  React.useEffect(() => {
+    Socket.on('login_response', (data) => {
+      console.log(data);
+      history.push('/home');
+    });
+    return () => {
+      Socket.off('login_response');
+    };
+  });
+
   return (
     <Navbar bg="dark" variant="dark">
       <Navbar.Brand as={Link} to="/">
