@@ -41,6 +41,7 @@ export default function Project() {
     if (spinning) {
       return (
         <div align="center">
+          <br />
           <Spinner animation="border" variant="primary" />
         </div>
       );
@@ -75,8 +76,7 @@ export default function Project() {
 
   return (
     <div className="Project">
-      <UserInfoBar headerInfo="Project" badgeInfo={user.email} profilePicture={image} />
-      <br />
+      <UserInfoBar headerInfo={projectName} badgeInfo={user.email} profilePicture={image} />
       <SpinnerObject spinning={spinning} />
       {renderProject()}
     </div>
