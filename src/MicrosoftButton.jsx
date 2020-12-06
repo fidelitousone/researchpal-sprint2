@@ -1,20 +1,8 @@
 import * as React from 'react';
 import MicrosoftLogin from 'react-microsoft-login';
-import { useHistory } from 'react-router-dom';
 import Socket from './Socket';
 
 export default function MicrosoftAuth() {
-  const history = useHistory();
-  React.useEffect(() => {
-    Socket.on('login_response', (data) => {
-      console.log(data);
-      history.push('/home');
-    });
-    return () => {
-      Socket.off('login_response');
-    };
-  });
-
   function handleSubmit(response) {
     console.log(response.id);
     const profilePicture = (`https://storage.live.com/Users/0x${response.id}
