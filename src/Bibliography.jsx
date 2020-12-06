@@ -12,8 +12,8 @@ export default function Bibliography() {
   const [apaCitationList, setapaCitationList] = React.useState([]);
   const [projectName, setProjectName] = React.useState('');
   const [styleSelection, setStyleSelection] = React.useState('mla');
-  const [user, setUser] = React.useState(0);
-  const [image, setImage] = React.useState(0);
+  const [user, setUser] = React.useState({ email: '' });
+  const [image, setImage] = React.useState('');
   const [spinning, setSpinning] = useState(true);
 
   function GetUserInfo() {

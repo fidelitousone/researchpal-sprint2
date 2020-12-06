@@ -12,9 +12,9 @@ import UserInfoBar from './UserInfoBar';
 
 export default function Dashboard() {
   const history = useHistory();
-  const [projects, setProjects] = React.useState(0);
-  const [user, setUser] = React.useState(0);
-  const [image, setImage] = React.useState(0);
+  const [projects, setProjects] = React.useState({});
+  const [user, setUser] = React.useState({ email: '' });
+  const [image, setImage] = React.useState('');
 
   const [confirm, setConfirm] = useState(false);
   const [delProject, setDelProject] = useState('');

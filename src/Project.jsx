@@ -6,8 +6,8 @@ import UserInfoBar from './UserInfoBar';
 
 export default function Project() {
   const [projectName, setProjectName] = React.useState('');
-  const [user, setUser] = React.useState(0);
-  const [image, setImage] = React.useState(0);
+  const [user, setUser] = React.useState({ email: '' });
+  const [image, setImage] = React.useState('');
   const [spinning, setSpinning] = React.useState(true);
 
   function GetUserInfo() {
