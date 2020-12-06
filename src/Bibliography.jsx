@@ -10,8 +10,6 @@ import UserInfoBar from './UserInfoBar';
 
 export default function Bibliography() {
   const [citationList, setCitationList] = React.useState([]);
-  const [activeList, setActiveList] = React.useState([]);
-  const [inactiveList, setInactiveList] = React.useState([]);
   const [projectName, setProjectName] = React.useState('');
   const [styleSelection, setStyleSelection] = React.useState('mla');
   const [user, setUser] = React.useState(0);
@@ -54,23 +52,6 @@ export default function Bibliography() {
       );
     }
     return null;
-  }
-
-  function setActive() {
-    let i;
-    const active = [];
-    const inactive = [];
-    for (i = 0; i < citationList.length; i += 1) {
-      if (citationList[i].active === true) {
-        active.push(citationList[i]);
-      } else {
-        inactive.push(citationList[i]);
-      }
-    }
-    React.useEffect(() => {
-      setActiveList(active);
-      setInactiveList(inactive);
-    }, [citationList]);
   }
 
   function GetCitations() {
@@ -116,18 +97,18 @@ export default function Bibliography() {
 
   function setStatus(sourceID) {
     let i;
-    for (i = 0; i < citationList.length; i += 1) {
-      if (citationList[i].source_id === sourceID) {
-        if (citationList[i].active === true) {
-          citationList[i].active = false;
+    const list = citationList;
+    for (i = 0; i < list.length; i += 1) {
+      if (list[i].source_id === sourceID) {
+        if (list[i].active === true) {
+          list[i].active = false;
         } else {
-          citationList[i].active = true;
+          list[i].active = true;
         }
       }
     }
-    setActive();
+    setCitationList(list);
   }
-  setActive();
   const radios = [
     { name: 'APA7', value: 'APA' },
     { name: 'MLA8', value: 'MLA' },
@@ -169,20 +150,30 @@ export default function Bibliography() {
           && 
             <div>
               <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
-                {activeList.map((item) => (
-                      <ListGroup.Item key={item.active}>
-                        {item.mla}
-                        <Button onClick={() => setStatus(item.source_id)} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
-                      </ListGroup.Item>
-                ))}
+                {citationList.map((item) => {
+                  console.log(item);
+                  if (item.active) {
+                    return(
+                    <ListGroup.Item key={item.source_id}>
+                      {item.mla}
+                      <Button onClick={() => setStatus(item.source_id)} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
+                    </ListGroup.Item>
+                    )
+                  }
+                })}
               </ListGroup>
               <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
-                {inactiveList.map((item) => (
-                      <ListGroup.Item key={item.active}>
-                        {item.mla}
-                        <Button onClick={() => setStatus(item.source_id)} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillPlusCircleFill /></Button>
-                      </ListGroup.Item>
-                ))}
+                {citationList.map((item) => {
+                  console.log(item);
+                  if (!item.active) {
+                    return(
+                    <ListGroup.Item variant='dark' key={item.source_id}>
+                      {item.mla}
+                      <Button onClick={() => setStatus(item.source_id)} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillPlusCircleFill /></Button>
+                    </ListGroup.Item>
+                    )
+                  }
+                })}
               </ListGroup>
             </div>
           }
@@ -191,20 +182,30 @@ export default function Bibliography() {
           && 
             <div>
               <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
-                {activeList.map((item) => (
-                      <ListGroup.Item key={item.active}>
-                        {item.apa}
-                        <Button onClick={() => setStatus(item.source_id)} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
-                      </ListGroup.Item>
-                ))}
+                {citationList.map((item) => {
+                  console.log(item);
+                  if (item.active) {
+                    return(
+                    <ListGroup.Item key={item.source_id}>
+                      {item.apa}
+                      <Button onClick={() => setStatus(item.source_id)} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
+                    </ListGroup.Item>
+                    )
+                  }
+                })}
               </ListGroup>
               <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
-                {inactiveList.map((item) => (
-                      <ListGroup.Item key={item.active}>
-                        {item.apa}
-                        <Button onClick={() => setStatus(item.source_id)} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillPlusCircleFill /></Button>
-                      </ListGroup.Item>
-                ))}
+                {citationList.map((item) => {
+                  console.log(item);
+                  if (!item.active) {
+                    return(
+                    <ListGroup.Item variant='dark' key={item.source_id}>
+                      {item.apa}
+                      <Button onClick={() => setStatus(item.source_id)} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillPlusCircleFill /></Button>
+                    </ListGroup.Item>
+                    )
+                  }
+                })}
               </ListGroup>
             </div>
 /* eslint-enable */}
