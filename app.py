@@ -263,6 +263,7 @@ def on_request_user_info():
         socketio.emit("user_info", user_info, room=request.sid)
         emit_projects(user_info["user_id"])
     else:
+        socketio.emit("redirect_to_login")
         log.warning("No login found")
 
 

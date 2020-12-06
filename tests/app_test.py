@@ -208,7 +208,7 @@ class TestUserInfo:
     def test_on_request_user_info_no_login(self, db_session, socketio_client):
         socketio_client.emit("request_user_info")
         recieved = socketio_client.get_received()
-        assert recieved == []
+        assert recieved[0]["name"] == "redirect_to_login"
 
     def test_on_request_user_info(
         self,
