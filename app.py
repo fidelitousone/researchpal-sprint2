@@ -166,7 +166,7 @@ def create_citation(source_id: str, project_id: str, project_name: str) -> None:
     with app.app_context():
         log.info("Added new citation to project <%s>", project_name)
         new_citation = Citations(
-            project_id, source_id, last, mla_citation, apa_citation
+            project_id, source_id, last, True, mla_citation, apa_citation
         )
         db.session.add(new_citation)
         db.session.commit()
@@ -367,6 +367,7 @@ def get_all_citations(data):
     project_name = data["project_name"]
     mla_citation_list = []
     apa_citation_list = []
+    citation_list = []
     with app.app_context():
         user_info = db.session.query(Users).filter(Users.email == email).one()
         project_info = (
@@ -390,11 +391,16 @@ def get_all_citations(data):
             for citation in citations:
                 mla_citation_list.append(citation.mla_citation)
                 apa_citation_list.append(citation.apa_citation)
+                citation_list.append({
+                    'mla':citation.mla_citation,
+                    'apa':citation.apa_citation,
+                    'source_id':citation.source_id,
+                    'active':citation.active,
+                })
             socketio.emit(
                 "all_citations",
                 {
-                    "mla_citation_list": mla_citation_list,
-                    "apa_citation_list": apa_citation_list,
+                    "citation_list": citation_list,
                 },
                 room=request.sid,
             )
