@@ -95,6 +95,18 @@ export default function Bibliography() {
     }
   }
 
+  function add(sourceID) {
+    Socket.emit('add_to_bibliography', {
+      source_id: sourceID,
+    });
+  }
+
+  function remove(sourceID) {
+    Socket.emit('remove_from_bibliography', {
+      source_id: sourceID,
+    });
+  }
+
   function setStatus(sourceID) {
     let i;
     const list = citationList;
@@ -102,8 +114,10 @@ export default function Bibliography() {
       if (list[i].source_id === sourceID) {
         if (list[i].active === true) {
           list[i].active = false;
+          remove(sourceID);
         } else {
           list[i].active = true;
+          add(sourceID);
         }
       }
     }
