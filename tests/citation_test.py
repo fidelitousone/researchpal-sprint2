@@ -134,6 +134,7 @@ class TestBibliographyFlow:
         # Simulate login
         with client.session_transaction() as sess:
             sess["user"] = mocked_user_model.email
+        mocked_citation_model.is_cited = True
         db_session.add_all(
             [
                 mocked_citation_model,
