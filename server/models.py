@@ -154,6 +154,7 @@ class Citations(db.Model):
     project_id = db.Column(db.String(36))
     source_id = db.Column(db.String(36))
     author = db.Column(db.Text)
+    active = db.Column(db.Boolean)
     mla_citation = db.Column(db.Text)
     apa_citation = db.Column(db.Text)
 
@@ -162,20 +163,23 @@ class Citations(db.Model):
         project_id: str,
         source_id: str,
         author: str,
+        active: bool,
         mla_citation: str,
         apa_citation: str,
     ):
         self.project_id = project_id
         self.source_id = source_id
         self.author = author
+        self.active = active
         self.mla_citation = mla_citation
         self.apa_citation = apa_citation
 
     def __repr__(self):
-        return "Citation(project_id={}, source_id={}, author={}, mla_citation={}, apa_citation={})".format(  # pylint: disable = line-too-long
+        return "Citation(project_id={}, source_id={}, author={}, active={}, mla_citation={}, apa_citation={})".format(  # pylint: disable = line-too-long
             self.project_id,
             self.source_id,
             self.author,
+            self.active,
             self.mla_citation,
             self.apa_citation,
         )
@@ -185,6 +189,7 @@ class Citations(db.Model):
             "project_id": self.project_id,
             "source_id": self.source_id,
             "author": self.author,
+            "active": self.active,
             "mla_citation": self.mla_citation,
             "apa_citation": self.apa_citation,
         }
