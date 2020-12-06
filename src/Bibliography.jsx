@@ -107,7 +107,7 @@ export default function Bibliography() {
         }
       }
     }
-    setCitationList(list);
+    setCitationList([...list]);
   }
   const radios = [
     { name: 'APA7', value: 'APA' },
@@ -151,12 +151,14 @@ export default function Bibliography() {
             <div>
               <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
                 {citationList.map((item) => {
-                  console.log(item);
                   if (item.active) {
                     return(
                     <ListGroup.Item key={item.source_id}>
                       {item.mla}
-                      <Button onClick={() => setStatus(item.source_id)} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
+                      <Button onClick={
+                        (e) => {
+                          setStatus(item.source_id);
+                        }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
                     </ListGroup.Item>
                     )
                   }
@@ -164,12 +166,14 @@ export default function Bibliography() {
               </ListGroup>
               <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
                 {citationList.map((item) => {
-                  console.log(item);
-                  if (!item.active) {
+                  if (item.active === false) {
                     return(
                     <ListGroup.Item variant='dark' key={item.source_id}>
                       {item.mla}
-                      <Button onClick={() => setStatus(item.source_id)} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillPlusCircleFill /></Button>
+                      <Button onClick={
+                        (e) => {
+                          setStatus(item.source_id);
+                        }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillPlusCircleFill /></Button>
                     </ListGroup.Item>
                     )
                   }
@@ -183,12 +187,14 @@ export default function Bibliography() {
             <div>
               <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
                 {citationList.map((item) => {
-                  console.log(item);
                   if (item.active) {
                     return(
                     <ListGroup.Item key={item.source_id}>
                       {item.apa}
-                      <Button onClick={() => setStatus(item.source_id)} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
+                      <Button onClick={
+                        (e) => {
+                          setStatus(item.source_id);
+                        }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
                     </ListGroup.Item>
                     )
                   }
@@ -196,12 +202,14 @@ export default function Bibliography() {
               </ListGroup>
               <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
                 {citationList.map((item) => {
-                  console.log(item);
                   if (!item.active) {
                     return(
                     <ListGroup.Item variant='dark' key={item.source_id}>
                       {item.apa}
-                      <Button onClick={() => setStatus(item.source_id)} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillPlusCircleFill /></Button>
+                      <Button onClick={
+                        (e) => {
+                          setStatus(item.source_id);
+                        }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillPlusCircleFill /></Button>
                     </ListGroup.Item>
                     )
                   }
