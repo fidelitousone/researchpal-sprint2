@@ -108,9 +108,13 @@ export default function Bibliography() {
     }
     let stringData = '';
     if (styleSelection === 'mla') {
-      stringData = list.map((item) => `${item.mla}\n`);
+      list.forEach((item) => {
+        stringData = stringData.concat(`${item.mla}\n`);
+      });
     } else {
-      stringData = list.map((item) => `${item.apa}\n`);
+      list.forEach((item) => {
+        stringData = stringData.concat(`${item.apa}\n`);
+      });
     }
     const data = `data:text/plain;charset=utf-8,${encodeURIComponent(stringData)}`;
     element.setAttribute('href', data);
