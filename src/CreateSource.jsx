@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useRef, useState } from 'react';
 import {
-  Button, Col, Container, Form, Row, Alert, ListGroup, Modal,
+  Button, Col, Container, Form, Row, Alert, ListGroup, Modal, Spinner, ButtonGroup, ToggleButton,
 } from 'react-bootstrap';
 import validator from 'validator';
 import PropTypes from 'prop-types';
@@ -11,8 +11,18 @@ import Socket from './Socket';
 export default function CreateSource(props) {
   const [sourcesList, setSourcesList] = useState([]);
   const [sourcesMapList, setSourcesMapList] = useState([]);
+
+  const [toggleText, setToggleText] = useState('Single Source');
+
   const [show, setShow] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const [dupShow, setDupShow] = useState(false);
+  const [dupErrorMessage, setDupErrorMessage] = useState('');
+
+  const [invalidShow, setInvalidShow] = useState(false);
+  const [invalidErrorMessage, setInvalidErrorMessage] = useState('Single Source');
+
   const myRef = useRef(null);
   const { usingProject } = props;
 
@@ -22,18 +32,78 @@ export default function CreateSource(props) {
   const handleShow = () => setConfirm(true);
   const handleClose = () => setConfirm(false);
 
-  function displayError(message) {
+  const [spinning, setSpinning] = useState(false);
+  const [checked, setChecked] = useState(false);
+
+  function emptyError(message) {
     setShow(true);
     setErrorMessage(message);
   }
 
+  function dupError(message) {
+    setDupShow(true);
+    setDupErrorMessage(message);
+  }
+
+  function invalidError(message) {
+    setInvalidShow(true);
+    setInvalidErrorMessage(message);
+  }
+
+  function SpinnerObject() {
+    if (spinning) {
+      return <Spinner animation="border" variant="primary" />;
+    }
+    return null;
+  }
+
+  function addSourceFromUpload(sourceLink) {
+    console.log(sourceLink);
+    console.log(sourcesList);
+    console.log(sourcesMapList);
+    if (Object.values(sourcesMapList).some((name) => sourceLink === name)) {
+      dupError('Some uploaded source URLs were found to be duplicates of existing URLs in the project.');
+    } else {
+      Socket.emit('add_source_to_project', {
+        project_name: usingProject,
+        source_link: sourceLink,
+      });
+    }
+  }
+
+  function handleUpload(event) {
+    const reader = new FileReader();
+    event.preventDefault();
+    const file = document.getElementById('bulk-import');
+
+    reader.readAsText(file.files[0]);
+
+    reader.onload = function () {
+      console.log(reader.result);
+      const arr = reader.result.trim().split(/\s+/);
+      setSpinning(true);
+      arr.forEach((URL) => {
+        addSourceFromUpload(URL);
+      });
+      setSpinning(false);
+    };
+
+    reader.onerror = function () {
+      console.log(reader.error);
+    };
+  }
+
   function handleSubmit(event) {
     const sourceLink = myRef.current.value;
+    console.log(sourceLink);
+    console.log(sourcesList);
+    console.log(sourcesMapList);
     if (validator.isEmpty(validator.trim(sourceLink))) {
-      displayError('Source name was empty or only whitespace. Please try again with a valid project name.');
-    } else if (sourcesList.some((name) => sourceLink === name)) {
-      displayError('Source name is taken. Please try again with a unique project name.');
+      emptyError('Source URL was empty or only whitespace. Please try again with a valid source URL.');
+    } else if (Object.values(sourcesMapList).some((name) => sourceLink === name)) {
+      dupError('Source URL already exists. Please try again with a unique source URL.');
     } else {
+      setSpinning(true);
       Socket.emit('add_source_to_project', {
         project_name: usingProject,
         source_link: sourceLink,
@@ -56,9 +126,13 @@ export default function CreateSource(props) {
 
   function InvalidURLError() {
     React.useEffect(() => {
-      Socket.on('invalid_url', (data) => {
-        displayError(`Invalid URL: [ ${data.source_link} ]  Please ensure that you have copied the entire URL (including the protocol)`);
+      Socket.on('invalid_url', () => {
+        setSpinning(false);
+        invalidError('Invalid URL for one or more sources added');
       });
+      return () => {
+        Socket.off('invalid_url');
+      };
     });
   }
 
@@ -67,9 +141,13 @@ export default function CreateSource(props) {
   function GetSourcesFromServer() {
     React.useEffect(() => {
       Socket.on('all_sources_server', (data) => {
+        setSpinning(false);
         setSourcesList(data.source_list);
         setSourcesMapList(data.source_map);
       });
+      return () => {
+        Socket.off('all_sources_server');
+      };
     });
   }
 
@@ -86,10 +164,58 @@ export default function CreateSource(props) {
         setSourcesList(data.source_list);
         setSourcesMapList(data.source_map);
       });
+      return () => {
+        Socket.off('all_sources');
+      };
     });
   }
 
   GetAllSources();
+
+  function download() {
+    const element = document.createElement('a');
+    let stringData = '';
+    const newSourcesList = Object.values(sourcesMapList);
+    console.log(newSourcesList);
+    newSourcesList.forEach((item) => {
+      stringData = stringData.concat(`${item}\n`);
+    });
+    const data = `data:text/plain;charset=utf-8,${encodeURIComponent(stringData)}`;
+    element.setAttribute('href', data);
+    element.setAttribute('download', 'Sources.txt');
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  }
+
+  function ToggleInput() {
+    if (checked) {
+      setToggleText('File Upload');
+      return (
+        <Form inline onSubmit={handleUpload} style={{ justifyContent: 'center' }}>
+          <Form.File>
+            <Form.File.Input id="bulk-import" />
+          </Form.File>
+          <Button variant="primary" type="submit">
+            Upload
+          </Button>
+        </Form>
+      );
+    }
+    setToggleText('Single Source');
+    return (
+      <Form inline onSubmit={handleSubmit} style={{ justifyContent: 'center' }}>
+        <Form.Group id="name_input">
+          <Form.Label>Source</Form.Label>
+          <Form.Control ref={myRef} type="text" placeholder="Enter Source name" />
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          Submit
+        </Button>
+      </Form>
+    );
+  }
 
   function ConfirmDelete() {
     // eslint-disable-next-line
@@ -139,13 +265,39 @@ export default function CreateSource(props) {
             {errorMessage}
           </p>
         </Alert>
+        <Alert show={dupShow} style={{ width: '40%' }} variant="danger" onClose={() => setDupShow(false)} dismissible>
+          <Alert.Heading>Error!</Alert.Heading>
+          <p>
+            {dupErrorMessage}
+          </p>
+        </Alert>
+        <Alert show={invalidShow} style={{ width: '40%' }} variant="danger" onClose={() => setInvalidShow(false)} dismissible>
+          <Alert.Heading>Error!</Alert.Heading>
+          <p>
+            {invalidErrorMessage}
+          </p>
+        </Alert>
       </div>
 
       <ConfirmDelete />
 
       <Row xs={1}>
+        <h3>{usingProject}</h3>
         <Col>
-          <h3>{usingProject}</h3>
+          <ButtonGroup toggle className="mb-2">
+            <ToggleButton
+              type="checkbox"
+              variant="outline-secondary"
+              checked={checked}
+              value="1"
+              onChange={(e) => setChecked(e.currentTarget.checked)}
+            >
+              {toggleText}
+            </ToggleButton>
+          </ButtonGroup>
+          <ToggleInput checked={checked} />
+          <br />
+          <Button onClick={download} style={{ float: 'center' }}>Download</Button>
         </Col>
         <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
           {Object.entries(sourcesMapList).map(([sourceID, sourceName]) => (
@@ -171,15 +323,9 @@ export default function CreateSource(props) {
           ))}
         </ListGroup>
         <Col>
-          <Form inline onSubmit={handleSubmit} style={{ justifyContent: 'center' }}>
-            <Form.Group id="name_input">
-              <Form.Label>Source</Form.Label>
-              <Form.Control ref={myRef} type="text" placeholder="Enter Source name" />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              Submit
-            </Button>
-          </Form>
+          <br />
+          <br />
+          <SpinnerObject spinning={spinning} />
         </Col>
       </Row>
     </Container>

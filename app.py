@@ -115,7 +115,8 @@ def get_source_info(source_id: str, url: str) -> bool:
     return False
 
 
-def create_citation(source_id: str, project_id: str, project_name):
+def create_citation(source_id: str, project_id: str, project_name: str) -> None:
+    # pylint: disable = too-many-locals,too-many-branches
     with app.app_context():
         source_info = (
             db.session.query(Sources).filter(Sources.source_id == source_id).one()
@@ -262,6 +263,7 @@ def on_request_user_info():
         socketio.emit("user_info", user_info, room=request.sid)
         emit_projects(user_info["user_id"])
     else:
+        socketio.emit("redirect_to_login")
         log.warning("No login found")
 
 
@@ -364,8 +366,7 @@ def get_all_sources(data):
 def get_all_citations(data):
     email = session.get("user")
     project_name = data["project_name"]
-    mla_citation_list = []
-    apa_citation_list = []
+    citation_list = []
     with app.app_context():
         user_info = db.session.query(Users).filter(Users.email == email).one()
         project_info = (
@@ -386,14 +387,19 @@ def get_all_citations(data):
                 .order_by(Citations.author.asc())
                 .all()
             )
-            for c in citations:
-                mla_citation_list.append(c.mla_citation)
-                apa_citation_list.append(c.apa_citation)
+            for citation in citations:
+                citation_list.append(
+                    {
+                        "mla": citation.mla_citation,
+                        "apa": citation.apa_citation,
+                        "source_id": citation.source_id,
+                        "is_cited": citation.is_cited,
+                    }
+                )
             socketio.emit(
                 "all_citations",
                 {
-                    "mla_citation_list": mla_citation_list,
-                    "apa_citation_list": apa_citation_list,
+                    "citation_list": citation_list,
                 },
                 room=request.sid,
             )
@@ -427,6 +433,7 @@ def on_delete_source(data):
             .one()
         )
 
+        log.debug("Source list before removing: <%s>", project_info.sources)
         project_info.sources = list(project_info.sources)
         project_info.sources.remove(source_id)
         db.session.merge(project_info)
@@ -437,9 +444,9 @@ def on_delete_source(data):
         log.debug("Deleting citation that matches the source ID <%s>", source_id)
 
         Sources.query.filter(Sources.source_id == source_id).delete()
-        db.session.commit()
         log.info("Deleting source that matches the ID <%s>", source_id)
 
+        # db.session.commit()  # Commented out due to a bug found in pytest-flask-sqlalchemy
         source_map = create_source_map(project_info.sources)
         socketio.emit(
             "all_sources_server",
@@ -503,14 +510,60 @@ def on_request_project():
         log.warning("No login found")
 
 
+@socketio.on("add_to_bibliography")
+def add_to_bibliography(data):
+    if "user" in session:
+        email = session.get("user")
+        source_id = data["source_id"]
+        with app.app_context():
+            citation = (
+                db.session.query(Citations)
+                .filter(Citations.source_id == source_id)
+                .one()
+            )
+            citation.is_cited = True
+            db.session.commit()
+
+        log.debug(
+            "Added citation to bibliography with source ID <%s> for <%s>",
+            source_id,
+            email,
+        )
+    else:
+        log.warning("No login found")
+
+
+@socketio.on("remove_from_bibliography")
+def remove_from_bibliography(data):
+    if "user" in session:
+        email = session.get("user")
+        source_id = data["source_id"]
+        with app.app_context():
+            citation = (
+                db.session.query(Citations)
+                .filter(Citations.source_id == source_id)
+                .one()
+            )
+            citation.is_cited = False
+            db.session.commit()
+
+        log.debug(
+            "Removed citation from bibliography with source ID <%s> for <%s>",
+            source_id,
+            email,
+        )
+    else:
+        log.warning("No login found")
+
+
 @app.route("/")
-@app.route("/login")
 @app.route("/about")
-@app.route("/pricing")
+@app.route("/bibliography")
 @app.route("/future")
 @app.route("/home")
+@app.route("/login")
+@app.route("/pricing")
 @app.route("/project")
-@app.route("/bibliography")
 def index():
     return render_template("index.html")
 

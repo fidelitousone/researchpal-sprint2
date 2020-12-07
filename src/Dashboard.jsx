@@ -2,7 +2,7 @@
 /* eslint-disable no-restricted-globals */
 import React, { useState } from 'react';
 import {
-  Button, Col, Container, ListGroup, Row, Modal, Card,
+  Button, Col, Container, ListGroup, Row, Modal, Spinner, Card,
 } from 'react-bootstrap';
 import { BsFillDashCircleFill } from 'react-icons/bs';
 import { useHistory } from 'react-router-dom';
@@ -12,15 +12,24 @@ import UserInfoBar from './UserInfoBar';
 
 export default function Dashboard() {
   const history = useHistory();
-  const [projects, setProjects] = React.useState(0);
-  const [user, setUser] = React.useState(0);
-  const [image, setImage] = React.useState(0);
+  const [projects, setProjects] = React.useState({});
+  const [user, setUser] = React.useState({ email: '' });
+  const [image, setImage] = React.useState('');
 
   const [confirm, setConfirm] = useState(false);
   const [delProject, setDelProject] = useState('');
 
   const handleShow = () => setConfirm(true);
   const handleClose = () => setConfirm(false);
+
+  const [spinning, setSpinning] = useState(true);
+
+  function SpinnerObject() {
+    if (spinning) {
+      return <Spinner animation="border" variant="primary" />;
+    }
+    return null;
+  }
 
   function deleteProject() {
     handleClose();
@@ -44,6 +53,7 @@ export default function Dashboard() {
 
   function GetUserInfo() {
     React.useEffect(() => {
+      setSpinning(true);
       Socket.emit('request_user_info');
       Socket.on('user_info', (data) => {
         setUser(data);
@@ -55,7 +65,11 @@ export default function Dashboard() {
           imagelink = data.profile_picture;
         }
         setImage(imagelink);
+        setSpinning(false);
       });
+      return () => {
+        Socket.off('user_info');
+      };
     }, []);
   }
   GetUserInfo();
@@ -65,6 +79,9 @@ export default function Dashboard() {
       Socket.on('all_projects', (data) => {
         setProjects(data);
       });
+      return () => {
+        Socket.off('all_projects');
+      };
     });
   }
 
@@ -101,7 +118,17 @@ export default function Dashboard() {
 
   return (
     <>
-      <UserInfoBar headerInfo="Dashboard" badgeInfo={user.email} profilePicture={image} />
+      <UserInfoBar
+        headerInfo="Dashboard"
+        badgeInfo={user.email}
+        profilePicture={image}
+        leftLink=""
+        leftLabel=""
+        leftEnabled="false"
+        rightLink="/project"
+        rightLabel="Project"
+        rightEnabled="true"
+      />
       <Container>
         <Row xs={1}>
           <Col>
@@ -148,6 +175,10 @@ export default function Dashboard() {
           </Col>
         </Row>
       </Container>
+      <br />
+      <div align="center">
+        <SpinnerObject spinning={spinning} />
+      </div>
     </>
   );
 }

@@ -35,10 +35,10 @@ def mocked_facebook_response():
 def mocked_microsoft_response():
     mocked_response = {
         "response": {
-                "userPrincipalName": "fake@e.mail",
-                "displayName": "A Name",
+            "userPrincipalName": "fake@e.mail",
+            "displayName": "A Name",
         },
-        "profilePicture": "link"
+        "profilePicture": "link",
     }
     return mocked_response
 
@@ -49,11 +49,6 @@ def mocked_invalid_response():
 
 
 @pytest.fixture
-def microlink_api():
-    return "https://api.microlink.io?url="
-
-
-@pytest.fixture
 def mocked_login_request():
     mocked_request = {"email": "fake@e.mail"}
     return mocked_request
@@ -61,7 +56,19 @@ def mocked_login_request():
 
 # pylint: disable = invalid-name,no-self-use,unused-argument
 class TestRenderTemplate:
-    @pytest.mark.parametrize("route", ["/", "/home", "/project"])
+    @pytest.mark.parametrize(
+        "route",
+        [
+            "/",
+            "/about",
+            "/bibliography",
+            "/future",
+            "/home",
+            "/login",
+            "/pricing",
+            "/project",
+        ],
+    )
     def test_routes(self, client, route):
         page = client.get(route)
         assert b"ResearchPal" in page.data
@@ -123,8 +130,37 @@ class TestNewUser:
             .filter(Users.email == mocked_user_model.email)
             .first()
         )
-
         assert user_info is None
+
+    @pytest.mark.parametrize(
+        "emit_name,mocked_response,auth_type",
+        [
+            ("new_microsoft_user", mocked_microsoft_response, AuthType.MICROSOFT),
+            ("new_google_user", mocked_google_response, AuthType.GOOGLE),
+            ("new_facebook_user", mocked_facebook_response, AuthType.FACEBOOK),
+        ],
+    )
+    def test_on_new_user_already_registered(
+        self,
+        db_session,
+        socketio_client,
+        mocked_user_model,
+        emit_name,
+        mocked_response,
+        auth_type,
+    ):
+        with pytest.raises(TypeError):
+            socketio_client.emit(emit_name)
+
+        mocked_user_model.auth_type = auth_type.value
+        db_session.add(mocked_user_model)
+        db_session.commit()
+
+        socketio_client.emit(emit_name, mocked_response())
+        user_info = (
+            db_session.query(Users).filter(Users.email == mocked_user_model.email).one()
+        )
+        assert user_info.json() == mocked_user_model.json()
 
 
 class TestLoginFlow:
@@ -172,7 +208,7 @@ class TestUserInfo:
     def test_on_request_user_info_no_login(self, db_session, socketio_client):
         socketio_client.emit("request_user_info")
         recieved = socketio_client.get_received()
-        assert recieved == []
+        assert recieved[0]["name"] == "redirect_to_login"
 
     def test_on_request_user_info(
         self,

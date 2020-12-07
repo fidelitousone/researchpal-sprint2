@@ -153,11 +153,12 @@ class Citations(db.Model):
     citation_id = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(db.String(36))
     source_id = db.Column(db.String(36))
+    is_cited = db.Column(db.Boolean, unique=False, default=True)
     author = db.Column(db.Text)
     mla_citation = db.Column(db.Text)
     apa_citation = db.Column(db.Text)
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         project_id: str,
         source_id: str,
@@ -167,14 +168,16 @@ class Citations(db.Model):
     ):
         self.project_id = project_id
         self.source_id = source_id
+        self.is_cited = True
         self.author = author
         self.mla_citation = mla_citation
         self.apa_citation = apa_citation
 
     def __repr__(self):
-        return "Citation(project_id={}, source_id={}, author={}, mla_citation={}, apa_citation={})".format(  # pylint: disable = line-too-long
+        return "Citation(project_id={}, source_id={}, is_cited={}, author={}, mla_citation={}, apa_citation={})".format(  # pylint: disable = line-too-long
             self.project_id,
             self.source_id,
+            self.is_cited,
             self.author,
             self.mla_citation,
             self.apa_citation,
@@ -184,6 +187,7 @@ class Citations(db.Model):
         data = {
             "project_id": self.project_id,
             "source_id": self.source_id,
+            "is_cited": self.is_cited,
             "author": self.author,
             "mla_citation": self.mla_citation,
             "apa_citation": self.apa_citation,

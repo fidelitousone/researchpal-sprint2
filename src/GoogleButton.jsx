@@ -1,10 +1,8 @@
 import * as React from 'react';
 import GoogleLogin from 'react-google-login';
-import { useHistory } from 'react-router-dom';
 import Socket from './Socket';
 
 export default function GoogleAuth() {
-  const history = useHistory();
   function handleSubmit(response) {
     Socket.emit('new_google_user', {
       response,
@@ -13,11 +11,6 @@ export default function GoogleAuth() {
     Socket.emit('login_request', {
       email: response.profileObj.email,
     });
-
-    Socket.on('login_response', (data) => {
-      console.log(data);
-    });
-    history.push('/home');
   }
 
   function responseGoogleSuccess(response) {

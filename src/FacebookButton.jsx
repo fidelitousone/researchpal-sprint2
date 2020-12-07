@@ -1,10 +1,8 @@
 import * as React from 'react';
 import FacebookLogin from 'react-facebook-login';
-import { useHistory } from 'react-router-dom';
 import Socket from './Socket';
 
 export default function FacebookAuth() {
-  const history = useHistory();
   function handleSubmit(response) {
     Socket.emit('new_facebook_user', {
       response,
@@ -14,12 +12,6 @@ export default function FacebookAuth() {
     Socket.emit('login_request', {
       email: response.email,
     });
-
-    Socket.on('login_response', (data) => {
-      console.log(data);
-    });
-
-    history.push('/home');
   }
 
   function responseFacebookSuccess(response) {
