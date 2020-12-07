@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Spinner } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import CreateSource from './CreateSource';
 import Socket from './Socket';
 import UserInfoBar from './UserInfoBar';
@@ -37,6 +38,9 @@ export default function Project() {
         setProjectName(data.project_name);
         setSpinning(false);
       });
+      if (projectName === null && projectName === '') {
+        setSpinning(false);
+      }
       return () => {
         Socket.off('give_project_name');
       };
@@ -71,9 +75,18 @@ export default function Project() {
     }
     return (
       <div>
-        <span className="d-flex justify-content-center">
-          A project is not selected, please select a project from the Dashboard.
-        </span>
+        <br />
+        <p className="d-flex justify-content-center">
+          <span>
+            A project is not selected, please select a project from the&nbsp;
+          </span>
+          <Link to="/home">
+            <a href="/home">
+              Dashboard
+            </a>
+          </Link>
+          .
+        </p>
       </div>
     );
   }

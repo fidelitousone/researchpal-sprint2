@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   Button, Container, Row, ListGroup, ButtonGroup, ToggleButton, Spinner,
 } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import {
   BsFillDashCircleFill, BsFillPlusCircleFill,
 } from 'react-icons/bs';
@@ -15,6 +16,12 @@ export default function Bibliography() {
   const [user, setUser] = React.useState({ email: '' });
   const [image, setImage] = React.useState('');
   const [spinning, setSpinning] = useState(true);
+
+  const radios = [
+    { name: 'APA7', value: 'APA' },
+    { name: 'MLA8', value: 'MLA' },
+  ];
+  const [radioValue, setRadioValue] = useState('MLA');
 
   function GetUserInfo() {
     React.useEffect(() => {
@@ -37,9 +44,11 @@ export default function Bibliography() {
 
   function GetProject() {
     React.useEffect(() => {
+      setSpinning(true);
       Socket.emit('request_selected_project');
       Socket.on('give_project_name', (data) => {
         setProjectName(data.project_name);
+        setSpinning(false);
       });
       return () => {
         Socket.off('give_project_name');
@@ -71,6 +80,8 @@ export default function Bibliography() {
           setCitationList(data.citation_list);
         });
         setSpinning(false);
+      } else {
+        setSpinning(false);
       }
       return () => {
         Socket.off('all_citations');
@@ -78,6 +89,13 @@ export default function Bibliography() {
     }, [projectName]);
   }
   GetCitations();
+
+  function projectSelected() {
+    if (projectName === '' || projectName === null) {
+      return false;
+    }
+    return true;
+  }
 
   function download() {
     let i;
@@ -139,11 +157,141 @@ export default function Bibliography() {
     }
     setCitationList([...list]);
   }
-  const radios = [
-    { name: 'APA7', value: 'APA' },
-    { name: 'MLA8', value: 'MLA' },
-  ];
-  const [radioValue, setRadioValue] = useState('MLA');
+
+  function renderAll() {
+    return (
+      <>
+        <br />
+        <div align="center">
+          <Button onClick={download} style={{ float: 'center' }}>Download</Button>
+          {' '}
+          <ButtonGroup toggle>
+            {radios.map((radio) => (
+              <ToggleButton
+                key={radio.name}
+                type="radio"
+                variant="primary"
+                name="radio"
+                value={radio.value}
+                checked={radioValue === radio.value}
+                onChange={
+                  (e) => {
+                    setRadioValue(e.currentTarget.value);
+                    getCitation(e.currentTarget.value);
+                  }
+                }
+              >
+                {radio.name}
+              </ToggleButton>
+            ))}
+          </ButtonGroup>
+        </div>
+        <Container style={{ textAlign: 'center' }}>
+          <Row xs={1}>
+            {/* eslint-disable */
+            styleSelection === 'mla'
+            && 
+              <div>
+                <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
+                  {citationList.map((item) => {
+                    if (item.is_cited) {
+                      return(
+                      <ListGroup.Item key={item.source_id}>
+                        {item.mla}
+                        <Button onClick={
+                          (e) => {
+                            setStatus(item.source_id);
+                          }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
+                      </ListGroup.Item>
+                      )
+                    }
+                  })}
+                </ListGroup>
+                <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
+                  {citationList.map((item) => {
+                    if (item.is_cited === false) {
+                      return(
+                      <ListGroup.Item variant='dark' key={item.source_id}>
+                        {item.mla}
+                        <Button onClick={
+                          (e) => {
+                            setStatus(item.source_id);
+                          }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillPlusCircleFill /></Button>
+                      </ListGroup.Item>
+                      )
+                    }
+                  })}
+                </ListGroup>
+              </div>
+            }
+            {
+            styleSelection === 'apa'
+            && 
+              <div>
+                <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
+                  {citationList.map((item) => {
+                    if (item.is_cited) {
+                      return(
+                      <ListGroup.Item key={item.source_id}>
+                        {item.apa}
+                        <Button onClick={
+                          (e) => {
+                            setStatus(item.source_id);
+                          }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
+                      </ListGroup.Item>
+                      )
+                    }
+                  })}
+                </ListGroup>
+                <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
+                  {citationList.map((item) => {
+                    if (!item.is_cited) {
+                      return(
+                      <ListGroup.Item variant='dark' key={item.source_id}>
+                        {item.apa}
+                        <Button onClick={
+                          (e) => {
+                            setStatus(item.source_id);
+                          }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillPlusCircleFill /></Button>
+                      </ListGroup.Item>
+                      )
+                    }
+                  })}
+                </ListGroup>
+              </div>
+    /* eslint-enable */}
+          </Row>
+        </Container>
+      </>
+    );
+  }
+
+  function renderBibliography() {
+    console.log('Project', projectName);
+    if (projectSelected()) {
+      return renderAll();
+    }
+    if (spinning) {
+      return null;
+    }
+    return (
+      <div>
+        <br />
+        <p className="d-flex justify-content-center">
+          <span>
+            A project is not selected, please select a project from the&nbsp;
+          </span>
+          <Link to="/home">
+            <a href="/home">
+              Dashboard
+            </a>
+          </Link>
+          .
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="Bibliography">
       <UserInfoBar
@@ -157,109 +305,8 @@ export default function Bibliography() {
         rightLabel=""
         rightEnabled="false"
       />
-      <br />
-      <div align="center">
-        <Button onClick={download} style={{ float: 'center' }}>Download</Button>
-        {' '}
-        <ButtonGroup toggle>
-          {radios.map((radio) => (
-            <ToggleButton
-              key={radio.name}
-              type="radio"
-              variant="primary"
-              name="radio"
-              value={radio.value}
-              checked={radioValue === radio.value}
-              onChange={
-                (e) => {
-                  setRadioValue(e.currentTarget.value);
-                  getCitation(e.currentTarget.value);
-                }
-              }
-            >
-              {radio.name}
-            </ToggleButton>
-          ))}
-        </ButtonGroup>
-      </div>
-      <br />
       <SpinnerObject spinning={spinning} />
-      <Container style={{ textAlign: 'center' }}>
-        <Row xs={1}>
-          {/* eslint-disable */
-          styleSelection === 'mla'
-          && 
-            <div>
-              <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
-                {citationList.map((item) => {
-                  if (item.is_cited) {
-                    return(
-                    <ListGroup.Item key={item.source_id}>
-                      {item.mla}
-                      <Button onClick={
-                        (e) => {
-                          setStatus(item.source_id);
-                        }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
-                    </ListGroup.Item>
-                    )
-                  }
-                })}
-              </ListGroup>
-              <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
-                {citationList.map((item) => {
-                  if (item.is_cited === false) {
-                    return(
-                    <ListGroup.Item variant='dark' key={item.source_id}>
-                      {item.mla}
-                      <Button onClick={
-                        (e) => {
-                          setStatus(item.source_id);
-                        }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillPlusCircleFill /></Button>
-                    </ListGroup.Item>
-                    )
-                  }
-                })}
-              </ListGroup>
-            </div>
-          }
-          {
-          styleSelection === 'apa'
-          && 
-            <div>
-              <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
-                {citationList.map((item) => {
-                  if (item.is_cited) {
-                    return(
-                    <ListGroup.Item key={item.source_id}>
-                      {item.apa}
-                      <Button onClick={
-                        (e) => {
-                          setStatus(item.source_id);
-                        }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillDashCircleFill /></Button>
-                    </ListGroup.Item>
-                    )
-                  }
-                })}
-              </ListGroup>
-              <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
-                {citationList.map((item) => {
-                  if (!item.is_cited) {
-                    return(
-                    <ListGroup.Item variant='dark' key={item.source_id}>
-                      {item.apa}
-                      <Button onClick={
-                        (e) => {
-                          setStatus(item.source_id);
-                        }} variant="danger" style={{ float: 'right', marginLeft: '20px' }}><BsFillPlusCircleFill /></Button>
-                    </ListGroup.Item>
-                    )
-                  }
-                })}
-              </ListGroup>
-            </div>
-/* eslint-enable */}
-        </Row>
-      </Container>
+      {renderBibliography()}
     </div>
   );
 }
