@@ -1,8 +1,9 @@
 import React from 'react';
 import {
-  Image, DropdownButton, Navbar, Nav, Dropdown,
+  Image, DropdownButton, Navbar, Nav, Dropdown, Container, Row, Col, Button,
 } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
+import { BsFillCaretLeftFill, BsFillCaretRightFill } from 'react-icons/bs';
 import PropTypes from 'prop-types';
 import Logout from './LogoutButton';
 import Socket from './Socket';
@@ -63,10 +64,23 @@ export default function UserInfoBar(props) {
           </DropdownButton>
         </Navbar.Collapse>
       </Navbar>
-      <div align="center">
-        <h1>
-          {headerInfo}
-        </h1>
+      <div style={{ backgroundColor: 'rgb(233, 236, 239)', paddingBottom: '10px' }}>
+        <div align="center">
+          <h1>
+            {headerInfo}
+          </h1>
+        </div>
+        <Container>
+          <Row>
+            <Col>
+              <div align="center">
+                <Button variant="primary"><BsFillCaretLeftFill /></Button>
+                {' '}
+                <Button variant="primary"><BsFillCaretRightFill /></Button>
+              </div>
+            </Col>
+          </Row>
+        </Container>
       </div>
     </>
   );

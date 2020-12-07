@@ -147,6 +147,7 @@ export default function Bibliography() {
   return (
     <div className="Bibliography">
       <UserInfoBar headerInfo="Bibliography" badgeInfo={user.email} profilePicture={image} />
+      <br />
       <div align="center">
         <Button onClick={download} style={{ float: 'center' }}>Download</Button>
         {' '}
