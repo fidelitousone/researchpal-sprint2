@@ -10,7 +10,10 @@ import Socket from './Socket';
 
 export default function UserInfoBar(props) {
   const {
-    headerInfo, badgeInfo, profilePicture, leftLink, leftLabel, rightLink, rightLabel,
+    headerInfo, badgeInfo,
+    profilePicture, leftLink,
+    leftLabel, rightLink, rightLabel,
+    leftEnabled, rightEnabled,
   } = props;
   const history = useHistory();
 
@@ -76,19 +79,31 @@ export default function UserInfoBar(props) {
           <Row>
             <Col>
               <div align="center">
-                <Link to={leftLink}>
-                  <Button variant="primary">
-                    <BsFillCaretLeftFill />
-                    {leftLabel}
-                  </Button>
-                </Link>
+                {
+                  (leftEnabled !== 'false')
+                    ? (
+                      <Link to={leftLink}>
+                        <Button variant="primary">
+                          <BsFillCaretLeftFill />
+                          {leftLabel}
+                        </Button>
+                      </Link>
+                    )
+                    : null
+                }
                 {' '}
-                <Link to={rightLink}>
-                  <Button variant="primary">
-                    {rightLabel}
-                    <BsFillCaretRightFill />
-                  </Button>
-                </Link>
+                {
+                  (rightEnabled !== 'false')
+                    ? (
+                      <Link to={rightLink}>
+                        <Button variant="primary">
+                          {rightLabel}
+                          <BsFillCaretRightFill />
+                        </Button>
+                      </Link>
+                    )
+                    : null
+                }
               </div>
             </Col>
           </Row>
@@ -106,4 +121,6 @@ UserInfoBar.propTypes = {
   rightLink: PropTypes.string.isRequired,
   leftLabel: PropTypes.string.isRequired,
   rightLabel: PropTypes.string.isRequired,
+  leftEnabled: PropTypes.string.isRequired,
+  rightEnabled: PropTypes.string.isRequired,
 };

@@ -118,7 +118,17 @@ export default function Dashboard() {
 
   return (
     <>
-      <UserInfoBar headerInfo="Dashboard" badgeInfo={user.email} profilePicture={image} leftLink="/" leftLabel="Home" rightLink="/project" rightLabel="Project" />
+      <UserInfoBar
+        headerInfo="Dashboard"
+        badgeInfo={user.email}
+        profilePicture={image}
+        leftLink=""
+        leftLabel=""
+        leftEnabled="false"
+        rightLink="/project"
+        rightLabel="Project"
+        rightEnabled="true"
+      />
       <Container>
         <Row xs={1}>
           <Col>
