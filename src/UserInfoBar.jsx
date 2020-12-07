@@ -9,7 +9,9 @@ import Logout from './LogoutButton';
 import Socket from './Socket';
 
 export default function UserInfoBar(props) {
-  const { headerInfo, badgeInfo, profilePicture } = props;
+  const {
+    headerInfo, badgeInfo, profilePicture, leftLink, leftLabel, rightLink, rightLabel,
+  } = props;
   const history = useHistory();
 
   React.useEffect(() => {
@@ -74,9 +76,19 @@ export default function UserInfoBar(props) {
           <Row>
             <Col>
               <div align="center">
-                <Button variant="primary"><BsFillCaretLeftFill /></Button>
+                <Link to={leftLink}>
+                  <Button variant="primary">
+                    <BsFillCaretLeftFill />
+                    {leftLabel}
+                  </Button>
+                </Link>
                 {' '}
-                <Button variant="primary"><BsFillCaretRightFill /></Button>
+                <Link to={rightLink}>
+                  <Button variant="primary">
+                    {rightLabel}
+                    <BsFillCaretRightFill />
+                  </Button>
+                </Link>
               </div>
             </Col>
           </Row>
@@ -90,4 +102,8 @@ UserInfoBar.propTypes = {
   headerInfo: PropTypes.string.isRequired,
   badgeInfo: PropTypes.string.isRequired,
   profilePicture: PropTypes.string.isRequired,
+  leftLink: PropTypes.string.isRequired,
+  rightLink: PropTypes.string.isRequired,
+  leftLabel: PropTypes.string.isRequired,
+  rightLabel: PropTypes.string.isRequired,
 };
