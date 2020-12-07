@@ -1,14 +1,20 @@
 import React from 'react';
 import {
-  Image, DropdownButton, Navbar, Nav, Dropdown,
+  Image, DropdownButton, Navbar, Nav, Dropdown, Container, Row, Col, Button,
 } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
+import { BsFillCaretLeftFill, BsFillCaretRightFill } from 'react-icons/bs';
 import PropTypes from 'prop-types';
 import Logout from './LogoutButton';
 import Socket from './Socket';
 
 export default function UserInfoBar(props) {
-  const { headerInfo, badgeInfo, profilePicture } = props;
+  const {
+    headerInfo, badgeInfo,
+    profilePicture, leftLink,
+    leftLabel, rightLink, rightLabel,
+    leftEnabled, rightEnabled,
+  } = props;
   const history = useHistory();
 
   React.useEffect(() => {
@@ -63,10 +69,45 @@ export default function UserInfoBar(props) {
           </DropdownButton>
         </Navbar.Collapse>
       </Navbar>
-      <div align="center">
-        <h1>
-          {headerInfo}
-        </h1>
+      <div style={{ backgroundColor: 'rgb(233, 236, 239)', paddingBottom: '10px' }}>
+        <div align="center">
+          <h1>
+            {headerInfo}
+          </h1>
+        </div>
+        <Container>
+          <Row>
+            <Col>
+              <div align="center">
+                {
+                  (leftEnabled !== 'false')
+                    ? (
+                      <Link to={leftLink}>
+                        <Button variant="primary">
+                          <BsFillCaretLeftFill />
+                          {leftLabel}
+                        </Button>
+                      </Link>
+                    )
+                    : null
+                }
+                {' '}
+                {
+                  (rightEnabled !== 'false')
+                    ? (
+                      <Link to={rightLink}>
+                        <Button variant="primary">
+                          {rightLabel}
+                          <BsFillCaretRightFill />
+                        </Button>
+                      </Link>
+                    )
+                    : null
+                }
+              </div>
+            </Col>
+          </Row>
+        </Container>
       </div>
     </>
   );
@@ -76,4 +117,10 @@ UserInfoBar.propTypes = {
   headerInfo: PropTypes.string.isRequired,
   badgeInfo: PropTypes.string.isRequired,
   profilePicture: PropTypes.string.isRequired,
+  leftLink: PropTypes.string.isRequired,
+  rightLink: PropTypes.string.isRequired,
+  leftLabel: PropTypes.string.isRequired,
+  rightLabel: PropTypes.string.isRequired,
+  leftEnabled: PropTypes.string.isRequired,
+  rightEnabled: PropTypes.string.isRequired,
 };

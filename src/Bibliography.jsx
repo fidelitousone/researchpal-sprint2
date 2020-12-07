@@ -146,7 +146,18 @@ export default function Bibliography() {
   const [radioValue, setRadioValue] = useState('MLA');
   return (
     <div className="Bibliography">
-      <UserInfoBar headerInfo="Bibliography" badgeInfo={user.email} profilePicture={image} />
+      <UserInfoBar
+        headerInfo="Bibliography"
+        badgeInfo={user.email}
+        profilePicture={image}
+        leftLink="/project"
+        leftLabel="Project"
+        leftEnabled="true"
+        rightLink=""
+        rightLabel=""
+        rightEnabled="false"
+      />
+      <br />
       <div align="center">
         <Button onClick={download} style={{ float: 'center' }}>Download</Button>
         {' '}
