@@ -1,8 +1,7 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/no-array-index-key */
 import React, { useRef, useState } from 'react';
 import {
-  Button, Col, Container, Form, Row, Alert, Modal, Spinner, ButtonGroup, ToggleButton,
+  Button, Col, Container, Form, Row, Alert, Spinner, ButtonGroup, ToggleButton,
 } from 'react-bootstrap';
 import validator from 'validator';
 import PropTypes from 'prop-types';
@@ -26,12 +25,6 @@ export default function CreateSource(props) {
 
   const myRef = useRef(null);
   const { usingProject } = props;
-
-  const [confirm, setConfirm] = useState(false);
-  const [delSource, setDelSource] = useState('');
-
-  const handleShow = () => setConfirm(true);
-  const handleClose = () => setConfirm(false);
 
   const [spinning, setSpinning] = useState(false);
   const [checked, setChecked] = useState(false);
@@ -112,17 +105,6 @@ export default function CreateSource(props) {
       myRef.current.value = '';
     }
     event.preventDefault();
-  }
-
-  function deleteSource(index, projectName) {
-    handleClose();
-    Socket.emit(
-      'delete_source',
-      {
-        source_id: index,
-        project_name: projectName,
-      },
-    );
   }
 
   function InvalidURLError() {
@@ -218,45 +200,6 @@ export default function CreateSource(props) {
     );
   }
 
-  function ConfirmDelete() {
-    // eslint-disable-next-line
-    console.log('IN CONFIRM DELETE');
-
-    return (
-      <Modal show={confirm} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Warning</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to delete source
-          {' '}
-          <b>
-            {sourcesMapList[delSource]}
-          </b>
-          ?
-          <br />
-          <br />
-          This will also delete its associated citation information.
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button
-            variant="danger"
-            onClick={
-              () => {
-                deleteSource(delSource, usingProject);
-              }
-            }
-          >
-            Delete Source
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  }
-
   return (
     <Container style={{ textAlign: 'center' }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5%' }}>
@@ -279,8 +222,6 @@ export default function CreateSource(props) {
           </p>
         </Alert>
       </div>
-
-      <ConfirmDelete />
 
       <Row xs={2}>
         <Col>
