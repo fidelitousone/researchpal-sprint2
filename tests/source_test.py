@@ -215,6 +215,9 @@ class TestSourceDataFlow:
         [all_sources_server] = recieved[0]["args"]
         assert all_sources_server == mocked_source_map()
 
+        # Cannot add a test to check if the entry is still in the database
+        # Doing so will cause a notorious pytest-flask-sqlalchemy bug and prevent this test from passing
+
 
 class TestSourceInfoFlow:
     def test_get_all_sources(
