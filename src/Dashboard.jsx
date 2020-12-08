@@ -131,16 +131,16 @@ export default function Dashboard() {
       />
       <Container>
         <Row xs={1}>
-          <Col>
-            <CreateProject projects={projects} />
-          </Col>
 
           <ConfirmDelete />
-          <Card style={{ height: '600px' }}>
+          <CreateProject projects={projects} />
+          <Card style={{ height: '600px', marginTop: '3%' }}>
             <Card.Header style={{ textAlign: 'center' }}>My Projects</Card.Header>
-            <ListGroup style={{
-              marginLeft: '5%', paddingBottom: '5%', float: 'left', paddingRight: '5%', overflow: 'auto',
-            }}
+            <ListGroup
+              variant="flush"
+              style={{
+                overflow: 'auto',
+              }}
             >
               {Object.keys(projects).map((id) => (
                 <ListGroup.Item key={id} style={{ width: '100%' }}>
@@ -162,17 +162,6 @@ export default function Dashboard() {
               ))}
             </ListGroup>
           </Card>
-        </Row>
-        <Row style={{ paddingTop: '1%', textAlign: 'center' }}>
-          <Col>
-            <Button variant="primary">Add Project</Button>
-          </Col>
-          <Col>
-            <Button variant="primary">Open Project</Button>
-          </Col>
-          <Col>
-            <Button variant="danger">Delete Project</Button>
-          </Col>
         </Row>
       </Container>
       <br />

@@ -1,12 +1,13 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/no-array-index-key */
 import React, { useRef, useState } from 'react';
 import {
-  Button, Col, Container, Form, Row, Alert, ListGroup, Modal, Spinner, ButtonGroup, ToggleButton,
+  Button, Col, Container, Form, Row, Alert, Modal, Spinner, ButtonGroup, ToggleButton,
 } from 'react-bootstrap';
 import validator from 'validator';
 import PropTypes from 'prop-types';
-import { BsFillDashCircleFill } from 'react-icons/bs';
 import Socket from './Socket';
+import DisplaySources from './DisplaySources';
 
 export default function CreateSource(props) {
   const [sourcesList, setSourcesList] = useState([]);
@@ -281,8 +282,7 @@ export default function CreateSource(props) {
 
       <ConfirmDelete />
 
-      <Row xs={1}>
-        <h3>{usingProject}</h3>
+      <Row xs={2}>
         <Col>
           <ButtonGroup toggle className="mb-2">
             <ToggleButton
@@ -296,38 +296,13 @@ export default function CreateSource(props) {
             </ToggleButton>
           </ButtonGroup>
           <ToggleInput checked={checked} />
-          <br />
-          <Button onClick={download} style={{ float: 'center' }}>Download</Button>
-        </Col>
-        <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
-          {Object.entries(sourcesMapList).map(([sourceID, sourceName]) => (
-            <ListGroup.Item key={sourceID}>
-              {sourceName}
-              <Button
-                onClick={
-                  () => {
-                    setDelSource(sourceID);
-                    // eslint-disable-next-line
-                    console.log('CLICK');
-                    handleShow();
-                  }
-                }
-                variant="danger"
-                style={
-                  { float: 'right', marginLeft: '20px' }
-                }
-              >
-                <BsFillDashCircleFill />
-              </Button>
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
-        <Col>
-          <br />
-          <br />
           <SpinnerObject spinning={spinning} />
         </Col>
+        <Col>
+          <Button onClick={download} style={{ float: 'center' }}>Download</Button>
+        </Col>
       </Row>
+      <DisplaySources usingProject={usingProject} />
     </Container>
   );
 }
