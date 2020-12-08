@@ -1,15 +1,11 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import {
-  Container, ListGroup, Button, Card, Spinner,
+  Container, ListGroup, Button, Card, Spinner, Modal,
 } from 'react-bootstrap';
-import { BsFillDashCircleFill } from 'react-icons/bs';
 import Socket from './Socket';
-import DeleteConfirmation from './DeleteConfirmation';
 
 export default function DisplaySources(props) {
-  const [sourcesList, setSourcesList] = useState([]);
   const [sourcesMapList, setSourcesMapList] = useState([]);
   const [spinning, setSpinning] = useState(false);
   const [delSource, setDelSource] = useState('');
@@ -17,19 +13,57 @@ export default function DisplaySources(props) {
 
   const { usingProject } = props;
 
-  const handleConfirmation = () => (
-    setConfirm(true)
-  );
+  const handleClose = () => setConfirm(false);
+  const handleShow = () => setConfirm(true);
 
-  const triggerConfirmation = () => (
-    <DeleteConfirmation />
+  function deleteSource(index, projectName) {
+    handleClose();
+    Socket.emit(
+      'delete_source',
+      {
+        source_id: index,
+        project_name: projectName,
+      },
+    );
+  }
+
+  const confirmDelete = () => (
+    <Modal show={confirm} onHide={handleClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>Warning</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>
+          Are you sure you want to delete source
+        </p>
+        <p>
+          {' '}
+          {sourcesMapList[delSource]}
+        </p>
+        <p>This will also delete its related citation information</p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+          Close
+        </Button>
+        <Button
+          variant="danger"
+          onClick={
+            () => {
+              deleteSource(delSource, usingProject);
+            }
+          }
+        >
+          Delete Source
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 
   const GetSourcesFromServer = () => (
     useEffect(() => {
       Socket.on('all_sources_server', (data) => {
         setSpinning(false);
-        setSourcesList(data.source_list);
         setSourcesMapList(data.source_map);
       });
       return () => {
@@ -38,7 +72,6 @@ export default function DisplaySources(props) {
     })
   );
 
-  const handleShow = () => setConfirm(true);
   function SpinnerObject() {
     if (spinning) {
       return <Spinner animation="border" variant="primary" />;
@@ -56,7 +89,6 @@ export default function DisplaySources(props) {
     }, []);
     useEffect(() => {
       Socket.on('all_sources', (data) => {
-        setSourcesList(data.source_list);
         setSourcesMapList(data.source_map);
       });
       return () => {
@@ -68,7 +100,7 @@ export default function DisplaySources(props) {
 
   return (
     <Container>
-      <DeleteConfirmation showState={confirm} />
+      {confirmDelete()}
       <Card style={{ height: '600px' }}>
         <Card.Header>
           {usingProject}
@@ -80,7 +112,12 @@ export default function DisplaySources(props) {
             <ListGroup.Item key={sourceID}>
               {sourceName}
               <Button
-                onClick={handleConfirmation}
+                onClick={
+                  () => {
+                    setDelSource(sourceID);
+                    handleShow();
+                  }
+                }
                 variant="danger"
                 style={
                   { float: 'right', marginLeft: '20px' }
@@ -91,8 +128,8 @@ export default function DisplaySources(props) {
             </ListGroup.Item>
           ))}
         </ListGroup>
+        <SpinnerObject spinning={spinning} />
       </Card>
-
     </Container>
   );
 }
