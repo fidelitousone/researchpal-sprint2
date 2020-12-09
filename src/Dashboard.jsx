@@ -2,7 +2,7 @@
 /* eslint-disable no-restricted-globals */
 import React, { useState } from 'react';
 import {
-  Button, Col, Container, ListGroup, Row, Modal, Spinner,
+  Button, Col, Container, ListGroup, Row, Modal, Spinner, Card,
 } from 'react-bootstrap';
 import { BsFillDashCircleFill } from 'react-icons/bs';
 import { useHistory } from 'react-router-dom';
@@ -131,33 +131,37 @@ export default function Dashboard() {
       />
       <Container>
         <Row xs={1}>
-          <Col>
-            <CreateProject projects={projects} />
-          </Col>
 
           <ConfirmDelete />
-
-          <ListGroup style={{ paddingTop: '2%', alignItems: 'center' }}>
-            {Object.keys(projects).map((id) => (
-              <ListGroup.Item key={id} style={{ width: '50%' }}>
-                {projects[id].project_name}
-                <Button
-                  variant="danger"
-                  onClick={
-                    () => {
-                      setDelProject(projects[id].project_name);
-                      handleShow();
-                    }
+          <CreateProject projects={projects} />
+          <Card style={{ height: '600px', marginTop: '3%' }}>
+            <Card.Header style={{ textAlign: 'center' }}>My Projects</Card.Header>
+            <ListGroup
+              variant="flush"
+              style={{
+                overflow: 'auto',
+              }}
+            >
+              {Object.keys(projects).map((id) => (
+                <ListGroup.Item key={id} style={{ width: '100%' }}>
+                  {projects[id].project_name}
+                  <Button
+                    variant="danger"
+                    onClick={
+                  () => {
+                    setDelProject(projects[id].project_name);
+                    handleShow();
                   }
-                  style={{ float: 'right' }}
-                >
-                  DELETE
-                </Button>
-                <Button variant="success" onClick={() => getStatus(projects[id].project_name)} style={{ float: 'right' }}>SELECT</Button>
-              </ListGroup.Item>
-            ))}
-
-          </ListGroup>
+                }
+                    style={{ float: 'right' }}
+                  >
+                    DELETE
+                  </Button>
+                  <Button variant="success" onClick={() => getStatus(projects[id].project_name)} style={{ float: 'right' }}>SELECT</Button>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </Card>
         </Row>
       </Container>
       <br />

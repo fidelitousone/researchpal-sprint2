@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Button, Container, Row, ListGroup, ButtonGroup, ToggleButton, Spinner,
+  Button, Container, Row, ListGroup, ButtonGroup, ToggleButton, Spinner, Card,
 } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import {
@@ -162,41 +162,20 @@ export default function Bibliography() {
     setCitationList([...list]);
   }
 
+  // eslint-disable-next-line no-unused-vars
   function renderAll() {
     return (
       <>
         <br />
-        <div align="center">
-          <Button onClick={download} style={{ float: 'center' }}>Download</Button>
-          {' '}
-          <ButtonGroup toggle>
-            {radios.map((radio) => (
-              <ToggleButton
-                key={radio.name}
-                type="radio"
-                variant="primary"
-                name="radio"
-                value={radio.value}
-                checked={radioValue === radio.value}
-                onChange={
-                  (e) => {
-                    setRadioValue(e.currentTarget.value);
-                    getCitation(e.currentTarget.value);
-                  }
-                }
-              >
-                {radio.name}
-              </ToggleButton>
-            ))}
-          </ButtonGroup>
-        </div>
         <Container style={{ textAlign: 'center' }}>
           <Row xs={1}>
             {/* eslint-disable */
             styleSelection === 'mla'
             && 
               <div>
-                <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
+                <Card style={{height: '600px'}}>
+                  <Card.Header>{projectName} Citations</Card.Header>
+                  <ListGroup variant="flush" style={{ alignItems: 'center' }}>
                   {citationList.map((item) => {
                     if (item.is_cited) {
                       return(
@@ -211,6 +190,7 @@ export default function Bibliography() {
                     }
                   })}
                 </ListGroup>
+                </Card>
                 <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
                   {citationList.map((item) => {
                     if (item.is_cited === false) {
@@ -232,7 +212,9 @@ export default function Bibliography() {
             styleSelection === 'apa'
             && 
               <div>
-                <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
+                <Card style={{height: '600px'}}>
+                  <Card.Header>{projectName} Citations</Card.Header>
+                  <ListGroup variant="flush" style={{ alignItems: 'center' }}>
                   {citationList.map((item) => {
                     if (item.is_cited) {
                       return(
@@ -247,6 +229,7 @@ export default function Bibliography() {
                     }
                   })}
                 </ListGroup>
+                </Card>
                 <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
                   {citationList.map((item) => {
                     if (!item.is_cited) {
@@ -309,6 +292,30 @@ export default function Bibliography() {
         rightLabel=""
         rightEnabled="false"
       />
+      <Container>
+        <Button onClick={download} style={{ float: 'center' }}>Download</Button>
+        {' '}
+        <ButtonGroup toggle style={{ marginBottom: '1%', marginTop: '1%' }}>
+          {radios.map((radio) => (
+            <ToggleButton
+              key={radio.name}
+              type="radio"
+              variant="primary"
+              name="radio"
+              value={radio.value}
+              checked={radioValue === radio.value}
+              onChange={
+                  (e) => {
+                    setRadioValue(e.currentTarget.value);
+                    getCitation(e.currentTarget.value);
+                  }
+                }
+            >
+              {radio.name}
+            </ToggleButton>
+          ))}
+        </ButtonGroup>
+      </Container>
       <SpinnerObject spinning={spinning} />
       {renderBibliography()}
     </div>
