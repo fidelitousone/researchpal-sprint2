@@ -74,16 +74,33 @@ export default function About() {
             <Card className="text-center">
               <Card.Header>How did we build it?</Card.Header>
               <Card.Body>
-                We are a project group for CS 490-001, a software engineering course at NJIT.
+                We built this app over the course of two main milestones: the MVP and Sprint 2.
                 <br />
-                Our names are Robert Argasinski, Eugene Cha, Mark Galesi, and Jatinder Singh.
+                This would break down into weekly sprints that were monitored by an
+                Industry Mentor (in our case, Sailesh Kumar).
                 <br />
-                If you would like to reach out to us, click
-                {' '}
-                <Link to="/contact">
-                  here
-                </Link>
-                .
+                We used the Kanban board feature of GitHub projects to keep track of progress.
+                <br />
+                <br />
+                Below is a summary of the technologies we used:
+                <hr />
+                <u>FRONT-END</u>
+                <br />
+                React, React-Bootstrap, Validator, Google/Facebook/Microsoft OAuth, React-Icons,
+                ReactRouter
+                <hr />
+                <u>BACK-END</u>
+                <br />
+                Python, Flask, Flask-Session, SQLAlchemy, PostgreSQL, MicroLink API, requests
+                <hr />
+                <u>MIDDLE</u>
+                <br />
+                SocketIO
+                <hr />
+                <u>DEPLOYMENT/TESTING</u>
+                <br />
+                GitHub, Heroku, CircleCI, Webpack, pytest, eslint, pylint, gunicorn, eventlet,
+                coverage, black, pip-upgrader
               </Card.Body>
             </Card>
             <br />
@@ -96,7 +113,7 @@ export default function About() {
                 Because of this, we chose to create a simple, intuitive, FREE tool
                 to help manage the research process.
                 <br />
-                To learn more about what sets us apart click
+                To learn more about what sets us apart, click
                 {' '}
                 <Link to="/pricing">
                   here
@@ -111,6 +128,25 @@ export default function About() {
                 Our live deployment is available at
                 {' '}
                 <a href="https://rocky-sea-29898.herokuapp.com/">https://rocky-sea-29898.herokuapp.com/</a>
+                .
+              </Card.Body>
+            </Card>
+            <br />
+            <Card className="text-center">
+              <Card.Header>What lies ahead for ResearchPal?</Card.Header>
+              <Card.Body>
+                At the time of submission, our project has met the
+                goals we set out in our proposal for the class.
+                <br />
+                However, we believe there is still plenty of ways
+                to improve our app experience and deliver more
+                functionality to our end users.
+                <br />
+                To learn more about what lies ahead, click
+                {' '}
+                <Link to="/future">
+                  here
+                </Link>
                 .
               </Card.Body>
             </Card>
