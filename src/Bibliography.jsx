@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import {
-  Button, Container, Row, ListGroup, ButtonGroup, ToggleButton, Spinner,
+  Button, Container, Row, ListGroup, ButtonGroup, ToggleButton, Spinner, Card,
 } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import {
@@ -9,8 +8,6 @@ import {
 } from 'react-icons/bs';
 import Socket from './Socket';
 import UserInfoBar from './UserInfoBar';
-import DisplayCitations from './DisplayCitations';
-import DisplayCitationsAPA from './DisplayCitationsAPA';
 
 export default function Bibliography() {
   const [citationList, setCitationList] = React.useState([]);
@@ -176,7 +173,9 @@ export default function Bibliography() {
             styleSelection === 'mla'
             && 
               <div>
-                <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
+                <Card style={{height: '600px'}}>
+                  <Card.Header>{projectName} Citations</Card.Header>
+                  <ListGroup variant="flush" style={{ alignItems: 'center' }}>
                   {citationList.map((item) => {
                     if (item.is_cited) {
                       return(
@@ -191,6 +190,7 @@ export default function Bibliography() {
                     }
                   })}
                 </ListGroup>
+                </Card>
                 <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
                   {citationList.map((item) => {
                     if (item.is_cited === false) {
@@ -212,7 +212,9 @@ export default function Bibliography() {
             styleSelection === 'apa'
             && 
               <div>
-                <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
+                <Card style={{height: '600px'}}>
+                  <Card.Header>{projectName} Citations</Card.Header>
+                  <ListGroup variant="flush" style={{ alignItems: 'center' }}>
                   {citationList.map((item) => {
                     if (item.is_cited) {
                       return(
@@ -227,6 +229,7 @@ export default function Bibliography() {
                     }
                   })}
                 </ListGroup>
+                </Card>
                 <ListGroup style={{ paddingTop: '2%', paddingBottom: '2%', alignItems: 'center' }}>
                   {citationList.map((item) => {
                     if (!item.is_cited) {
@@ -250,11 +253,30 @@ export default function Bibliography() {
     );
   }
 
-  function showSources() {
-    if (styleSelection === 'mla') {
-      return <DisplayCitations citationList={citationList} projectName={projectName} />;
+  function renderBibliography() {
+    console.log('Project', projectName);
+    if (projectSelected()) {
+      return renderAll();
     }
-    return <DisplayCitationsAPA citationList={citationList} projectName={projectName} />;
+    if (spinning) {
+      return null;
+    }
+    return (
+      <div>
+        <br />
+        <p className="d-flex justify-content-center">
+          <span>
+            A project is not selected, please select a project from the&nbsp;
+          </span>
+          <Link to="/home">
+            <a href="/home">
+              Dashboard
+            </a>
+          </Link>
+          .
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -295,7 +317,7 @@ export default function Bibliography() {
         </ButtonGroup>
       </Container>
       <SpinnerObject spinning={spinning} />
-      {showSources()}
+      {renderBibliography()}
     </div>
   );
 }
