@@ -62,8 +62,8 @@ npm install
 ```
 3. Install the Python dependencies:
 ```bash
-pip install -r dev-requirements.txt
 pip install -r requirements.txt
+pip install -r dev-requirements.txt
 ```
 - Note: `dev-requirements.txt` is not needed for production.
 
@@ -86,10 +86,9 @@ pip install -r requirements.txt
 9. Add a password to the user you added in step 4: `psql -c "ALTER ROLE $USER WITH PASSWORD '<your-password>'"`
 - Remember to replace `<your-password>`. You will need to remember it for local deployment.
 
-
 ## Setup Google Authentication
-1. Create your google API account [here](https://console.developers.google.com/apis/dashboard)
-2. Credentials>Create Credentials
+1. Create your Google API account [here](https://console.developers.google.com/apis/dashboard)
+2. Go to Credentials > Create Credentials
 - OAuth client ID
 - Application type>Web App
 - Name your client
@@ -99,17 +98,15 @@ pip install -r requirements.txt
 - inside the GoogleAuth() function, replace `clientId=<client id>` with `clientId=<your client id">`
 
 ## Local Development - Front End
-1. cd into `front-end`
-2. Run `npm install`
-3. Run `npm run start` NOTE: Run flask server in a separate terminal otherwise Sockets will not function
-4. When ready to deploy, run `npm run build`
-5. Move all files except for `index.html` to the outside `/static/` folder
-6. Move `index.html` to `templates` folder
+1. Run `npm run start`
+- Warning: Run the Flask server in a separate terminal, otherwise the app will not function.
+2. When it is ready for production, run `npm run build`
 
 ## Local Development - Back End
-1. Create a `.env` file in the root directory with the following content:
+1. Create a `.env` file in the root directory with the following:
 ```sh
 DATABASE_URL=postgresql://<your-username>:<your-password>@localhost/
+SECRET_KEY=<some-secret-key>
 ```
-- Remember to replace `<your-username>` and `<your-password>`.
+- Remember to replace `<some-secret-key>`, `<your-username>` and `<your-password>`.
 2. In a separate terminal, run: `python app.py`
