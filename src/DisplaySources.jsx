@@ -107,7 +107,7 @@ export default function DisplaySources(props) {
           {' '}
           Sources
         </Card.Header>
-        <ListGroup style={{ textAlign: 'left' }} variant="flush">
+        <ListGroup style={{ textAlign: 'left', overflow: 'auto' }} variant="flush">
           {Object.entries(sourcesMapList).map(([sourceID, sourceName]) => (
             <ListGroup.Item key={sourceID}>
               {sourceName}

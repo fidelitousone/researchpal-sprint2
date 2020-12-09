@@ -175,7 +175,7 @@ export default function Bibliography() {
               <div>
                 <Card style={{height: '600px'}}>
                   <Card.Header>{projectName} Citations</Card.Header>
-                  <ListGroup variant="flush" style={{ alignItems: 'center' }}>
+                  <ListGroup variant="flush" style={{ overflow: 'auto' }}>
                   {citationList.map((item) => {
                     if (item.is_cited) {
                       return(
@@ -214,7 +214,7 @@ export default function Bibliography() {
               <div>
                 <Card style={{height: '600px'}}>
                   <Card.Header>{projectName} Citations</Card.Header>
-                  <ListGroup variant="flush" style={{ alignItems: 'center' }}>
+                  <ListGroup variant="flush" style={{ overflow: 'auto' }}>
                   {citationList.map((item) => {
                     if (item.is_cited) {
                       return(
