@@ -50,9 +50,6 @@ Robert Argasinski, Eugene Cha, Mark Galesi, Jatinder Singh
 * The user cannotcompletely delete a citation without deleting the source information, instead, a citation can be deactivated before downloading, deactivated citations will not be inclued in the download.
 
 ## Linting
-- We have one pylint warning where the `Sources` model was not used in `app.py`. This table was not used yet because it will be implemented during Sprint 2.
-- ESLint returned 28 errors. Most of them are due to `react-bootstrap` being installed under devDependencies instead of the regular dependencies.
-- We tried autofixing some errors, but it caused the React app to behave in unexpected ways. This will be addressed in Sprint 2.
 
 ## Setup the App
 1. Clone the repository:
