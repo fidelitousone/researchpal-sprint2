@@ -206,7 +206,7 @@ export default function CreateSource(props) {
     }
     setToggleText('Single Source');
     return (
-      <Form inline onSubmit={handleSubmit} style={{ justifyContent: 'center' }}>
+      <Form inline onSubmit={handleSubmit} style={{ justifyContent: 'center', marginBottom: '2%' }}>
         <Form.Group id="name_input">
           <Form.Label>Source</Form.Label>
           <Form.Control ref={myRef} type="text" placeholder="Enter Source name" />
