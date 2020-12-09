@@ -49,8 +49,6 @@ Robert Argasinski, Eugene Cha, Mark Galesi, Jatinder Singh
 * The user cannot set a citation style on project creation, instead, a citation will be created for each style, and the user can select the style when the download their citations.
 * The user cannotcompletely delete a citation without deleting the source information, instead, a citation can be deactivated before downloading, deactivated citations will not be inclued in the download.
 
-## Linting
-
 ## Setup the App
 1. Clone the repository:
 ```bash
