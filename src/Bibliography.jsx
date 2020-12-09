@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import {
   Button, Container, Row, ListGroup, ButtonGroup, ToggleButton, Spinner,
@@ -8,6 +9,8 @@ import {
 } from 'react-icons/bs';
 import Socket from './Socket';
 import UserInfoBar from './UserInfoBar';
+import DisplayCitations from './DisplayCitations';
+import DisplayCitationsAPA from './DisplayCitationsAPA';
 
 export default function Bibliography() {
   const [citationList, setCitationList] = React.useState([]);
@@ -162,34 +165,11 @@ export default function Bibliography() {
     setCitationList([...list]);
   }
 
+  // eslint-disable-next-line no-unused-vars
   function renderAll() {
     return (
       <>
         <br />
-        <div align="center">
-          <Button onClick={download} style={{ float: 'center' }}>Download</Button>
-          {' '}
-          <ButtonGroup toggle>
-            {radios.map((radio) => (
-              <ToggleButton
-                key={radio.name}
-                type="radio"
-                variant="primary"
-                name="radio"
-                value={radio.value}
-                checked={radioValue === radio.value}
-                onChange={
-                  (e) => {
-                    setRadioValue(e.currentTarget.value);
-                    getCitation(e.currentTarget.value);
-                  }
-                }
-              >
-                {radio.name}
-              </ToggleButton>
-            ))}
-          </ButtonGroup>
-        </div>
         <Container style={{ textAlign: 'center' }}>
           <Row xs={1}>
             {/* eslint-disable */
@@ -270,30 +250,11 @@ export default function Bibliography() {
     );
   }
 
-  function renderBibliography() {
-    console.log('Project', projectName);
-    if (projectSelected()) {
-      return renderAll();
+  function showSources() {
+    if (styleSelection === 'mla') {
+      return <DisplayCitations citationList={citationList} projectName={projectName} />;
     }
-    if (spinning) {
-      return null;
-    }
-    return (
-      <div>
-        <br />
-        <p className="d-flex justify-content-center">
-          <span>
-            A project is not selected, please select a project from the&nbsp;
-          </span>
-          <Link to="/home">
-            <a href="/home">
-              Dashboard
-            </a>
-          </Link>
-          .
-        </p>
-      </div>
-    );
+    return <DisplayCitationsAPA citationList={citationList} projectName={projectName} />;
   }
 
   return (
@@ -309,8 +270,32 @@ export default function Bibliography() {
         rightLabel=""
         rightEnabled="false"
       />
+      <Container>
+        <Button onClick={download} style={{ float: 'center' }}>Download</Button>
+        {' '}
+        <ButtonGroup toggle style={{ marginBottom: '1%', marginTop: '1%' }}>
+          {radios.map((radio) => (
+            <ToggleButton
+              key={radio.name}
+              type="radio"
+              variant="primary"
+              name="radio"
+              value={radio.value}
+              checked={radioValue === radio.value}
+              onChange={
+                  (e) => {
+                    setRadioValue(e.currentTarget.value);
+                    getCitation(e.currentTarget.value);
+                  }
+                }
+            >
+              {radio.name}
+            </ToggleButton>
+          ))}
+        </ButtonGroup>
+      </Container>
       <SpinnerObject spinning={spinning} />
-      {renderBibliography()}
+      {showSources()}
     </div>
   );
 }
