@@ -1,5 +1,5 @@
 # ResearchPal
-https://rocky-sea-29898.herokuapp.com/home
+https://rocky-sea-29898.herokuapp.com/
 
 ## Description
 An all-in-one research gathering app, complete with citation generators and other tools to make the research process a breeze. 
@@ -9,61 +9,45 @@ Final Project for **CS 490: Design in Software Engineering**
 
 Robert Argasinski, Eugene Cha, Mark Galesi, Jatinder Singh
 
-## MVP Work Completed
+## Sprint 2 Work Completed
 #### Robert Argasinski
-* Facebook OAuth
-* Add Bootstrap integration to front-end
-* Add navigation and multi-page support
-* Pull profile picture on login
-* Detect empty project name and notify user
-
+* Download sources button
+* Bulk import file upload
+* Loading spinners
+* Bibliography page front-end
+* Log-out dropdown menu
+* NavBar
+* Source/Project deletion confirmation windows
+* URL validation
+* Delete Project Buttons
+* Duplicate source and project detection
 #### Eugene Cha
-* Set up PostgreSQL database
-* Build database models
-* Set up Python back-end, including SocketIO and SQLAlchemy
-* Set up back-end unit testing
-* Deploy production on gunicorn
-* Set up coverage tests on CircleCI
-
+* React Cleanup
+* Citation deactivation/activation
+* Bulk source upload back-end
+* Unit Tests
+* Restructure front-end directory
+* Server logging
+* Mocking Metascraper
+* DB schema for citations
 #### Mark Galesi
-* Google and Microsoft OAuth
-* Add support for project creation and retrieval
-* Login and logout flow with sessions
-* Pull email on login
-
+* Citation deactivation/activation
+* Bulk source upload back-end
+* Citation download button
+* Bibliography page
+* Citation generation
+* Metascraper API implimentation
+* Add source info to db
 #### Jatinder Singh
-* Set up GitHub and Heroku
-* Set up CircleCI for automatic deployment and integration testing
-* Add support for source input and retrieval
-* Link each project button to a unique project page with corresponding sources
-* Create basic React app
-* Add error handling to OAuth buttons
+* React Linting
+* Bulk source upload back-end
+* Source deletion front-end
+* Refactor React
+* Rewrite React with create-react-app template
 
-## MVP Pending Work
-#### Dashboard functionality
-* Detect duplicate project name and notify user
-* Detect invalid project names
-* Improve styling and layout
-
-#### Project Page functionality
-* Provide the option of a bulk import (comma or whitespace separated list of URLs)
-* Detect duplicate sources and notify user
-* Detect invalid source URLs
-* Improve styling and layout
-
-## Known Issues
-* Facebook authentication is not behaving properly.  It works, but it takes two login attempts back-to-back (without logging out) in order for the session to be set.  It seems to be specifically related to the Facebook button, since the same issue does not exist on either the Google or Microsoft button.  We will be actively looking into fixing this bug for the next project milestone.
-
-## Deviations from MVP Proposal
-* In the original mockups, the logout option was supposed to be placed in a dropdown menu, but in our current implementation, it is a standalone button.
-* Our Dashboard interface is a little different, but the same basic functionality is there.
-* Our navigation to the Project Page interface is very different in this implementation.  What you have to do is first select the button, then click the "Project" button.  This will take you to the Project Page for the specified project.  In future iterations, we will improve this workflow so that users are redirected automatically after selecting their desired project.
-* Bulk import support is missing, although it will likely be added in future iterations.
-
-## Linting
-- We have one pylint warning where the `Sources` model was not used in `app.py`. This table was not used yet because it will be implemented during Sprint 2.
-- ESLint returned 28 errors. Most of them are due to `react-bootstrap` being installed under devDependencies instead of the regular dependencies.
-- We tried autofixing some errors, but it caused the React app to behave in unexpected ways. This will be addressed in Sprint 2.
+## Deviations from Proposal
+* The user cannot set a citation style on project creation, instead, a citation will be created for each style, and the user can select the style when the download their citations.
+* The user cannotcompletely delete a citation without deleting the source information, instead, a citation can be deactivated before downloading, deactivated citations will not be inclued in the download.
 
 ## Setup the App
 1. Clone the repository:
@@ -76,8 +60,8 @@ npm install
 ```
 3. Install the Python dependencies:
 ```bash
-pip install -r dev-requirements.txt
 pip install -r requirements.txt
+pip install -r dev-requirements.txt
 ```
 - Note: `dev-requirements.txt` is not needed for production.
 
@@ -100,10 +84,9 @@ pip install -r requirements.txt
 9. Add a password to the user you added in step 4: `psql -c "ALTER ROLE $USER WITH PASSWORD '<your-password>'"`
 - Remember to replace `<your-password>`. You will need to remember it for local deployment.
 
-
 ## Setup Google Authentication
-1. Create your google API account [here](https://console.developers.google.com/apis/dashboard)
-2. Credentials>Create Credentials
+1. Create your Google API account [here](https://console.developers.google.com/apis/dashboard)
+2. Go to Credentials > Create Credentials
 - OAuth client ID
 - Application type>Web App
 - Name your client
@@ -113,17 +96,15 @@ pip install -r requirements.txt
 - inside the GoogleAuth() function, replace `clientId=<client id>` with `clientId=<your client id">`
 
 ## Local Development - Front End
-1. cd into `front-end`
-2. Run `npm install`
-3. Run `npm run start` NOTE: Run flask server in a separate terminal otherwise Sockets will not function
-4. When ready to deploy, run `npm run build`
-5. Move all files except for `index.html` to the outside `/static/` folder
-6. Move `index.html` to `templates` folder
+1. Run `npm run start`
+- Warning: Run the Flask server in a separate terminal, otherwise the app will not function.
+2. When it is ready for production, run `npm run build`
 
 ## Local Development - Back End
-1. Create a `.env` file in the root directory with the following content:
+1. Create a `.env` file in the root directory with the following:
 ```sh
 DATABASE_URL=postgresql://<your-username>:<your-password>@localhost/
+SECRET_KEY=<some-secret-key>
 ```
-- Remember to replace `<your-username>` and `<your-password>`.
+- Remember to replace `<some-secret-key>`, `<your-username>` and `<your-password>`.
 2. In a separate terminal, run: `python app.py`
