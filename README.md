@@ -1,5 +1,5 @@
 # ResearchPal
-https://rocky-sea-29898.herokuapp.com/home
+https://rocky-sea-29898.herokuapp.com/
 
 ## Description
 An all-in-one research gathering app, complete with citation generators and other tools to make the research process a breeze. 
@@ -9,56 +9,45 @@ Final Project for **CS 490: Design in Software Engineering**
 
 Robert Argasinski, Eugene Cha, Mark Galesi, Jatinder Singh
 
-## MVP Work Completed
+## Sprint 2 Work Completed
 #### Robert Argasinski
-* Facebook OAuth
-* Add Bootstrap integration to front-end
-* Add navigation and multi-page support
-* Pull profile picture on login
-* Detect empty project name and notify user
-
+* Download sources button
+* Bulk import file upload
+* Loading spinners
+* Bibliography page front-end
+* Log-out dropdown menu
+* NavBar
+* Source/Project deletion confirmation windows
+* URL validation
+* Delete Project Buttons
+* Duplicate source and project detection
 #### Eugene Cha
-* Set up PostgreSQL database
-* Build database models
-* Set up Python back-end, including SocketIO and SQLAlchemy
-* Set up back-end unit testing
-* Deploy production on gunicorn
-* Set up coverage tests on CircleCI
-
+* React Cleanup
+* Citation deactivation/activation
+* Bulk source upload back-end
+* Unit Tests
+* Restructure front-end directory
+* Server logging
+* Mocking Metascraper
+* DB schema for citations
 #### Mark Galesi
-* Google and Microsoft OAuth
-* Add support for project creation and retrieval
-* Login and logout flow with sessions
-* Pull email on login
-
+* Citation deactivation/activation
+* Bulk source upload back-end
+* Citation download button
+* Bibliography page
+* Citation generation
+* Metascraper API implimentation
+* Add source info to db
 #### Jatinder Singh
-* Set up GitHub and Heroku
-* Set up CircleCI for automatic deployment and integration testing
-* Add support for source input and retrieval
-* Link each project button to a unique project page with corresponding sources
-* Create basic React app
-* Add error handling to OAuth buttons
+* React Linting
+* Bulk source upload back-end
+* Source deletion front-end
+* Refactor React
+* Rewrite React with create-react-app template
 
-## MVP Pending Work
-#### Dashboard functionality
-* Detect duplicate project name and notify user
-* Detect invalid project names
-* Improve styling and layout
-
-#### Project Page functionality
-* Provide the option of a bulk import (comma or whitespace separated list of URLs)
-* Detect duplicate sources and notify user
-* Detect invalid source URLs
-* Improve styling and layout
-
-## Known Issues
-* Facebook authentication is not behaving properly.  It works, but it takes two login attempts back-to-back (without logging out) in order for the session to be set.  It seems to be specifically related to the Facebook button, since the same issue does not exist on either the Google or Microsoft button.  We will be actively looking into fixing this bug for the next project milestone.
-
-## Deviations from MVP Proposal
-* In the original mockups, the logout option was supposed to be placed in a dropdown menu, but in our current implementation, it is a standalone button.
-* Our Dashboard interface is a little different, but the same basic functionality is there.
-* Our navigation to the Project Page interface is very different in this implementation.  What you have to do is first select the button, then click the "Project" button.  This will take you to the Project Page for the specified project.  In future iterations, we will improve this workflow so that users are redirected automatically after selecting their desired project.
-* Bulk import support is missing, although it will likely be added in future iterations.
+## Deviations from Proposal
+* The user cannot set a citation style on project creation, instead, a citation will be created for each style, and the user can select the style when the download their citations.
+* The user cannotcompletely delete a citation without deleting the source information, instead, a citation can be deactivated before downloading, deactivated citations will not be inclued in the download.
 
 ## Linting
 - We have one pylint warning where the `Sources` model was not used in `app.py`. This table was not used yet because it will be implemented during Sprint 2.
